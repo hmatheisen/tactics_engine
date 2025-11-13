@@ -1,3 +1,4 @@
+#include <SDL3/SDL_surface.h>
 #include <Tactics/Core/Texture.hpp>
 
 namespace Tactics
@@ -39,6 +40,22 @@ namespace Tactics
     {
         Texture texture;
         texture.m_texture = SDL_CreateTextureFromSurface(renderer, surface);
+        return texture;
+    }
+
+    auto Texture::load_from_file(SDL_Renderer *renderer, const std::string &file_path) -> Texture
+    {
+        Texture texture;
+
+        SDL_Surface *surface = SDL_LoadBMP(file_path.c_str());
+        if (surface == nullptr)
+        {
+            return texture; // Return invalid texture
+        }
+
+        texture.m_texture = SDL_CreateTextureFromSurface(renderer, surface);
+        SDL_DestroySurface(surface);
+
         return texture;
     }
 
@@ -230,6 +247,53 @@ namespace Tactics
             SDL_DestroyTexture(m_texture);
             m_texture = nullptr;
         }
+    }
+
+    auto Texture::render(SDL_Renderer *renderer) const -> bool
+    {
+        if (m_texture == nullptr || renderer == nullptr)
+        {
+            return false;
+        }
+        return SDL_RenderTexture(renderer, m_texture, nullptr, nullptr);
+    }
+
+    auto Texture::render(SDL_Renderer *renderer, const Rectf &dst_rect) const -> bool
+    {
+        if (m_texture == nullptr || renderer == nullptr)
+        {
+            return false;
+        }
+        SDL_FRect sdl_rect = {dst_rect.x, dst_rect.y, dst_rect.width, dst_rect.height};
+        return SDL_RenderTexture(renderer, m_texture, nullptr, &sdl_rect);
+    }
+
+    auto Texture::render(SDL_Renderer *renderer, const Rectf &src_rect, const Rectf &dst_rect) const
+        -> bool
+    {
+        if (m_texture == nullptr || renderer == nullptr)
+        {
+            return false;
+        }
+        SDL_FRect sdl_src = {src_rect.x, src_rect.y, src_rect.width, src_rect.height};
+        SDL_FRect sdl_dst = {dst_rect.x, dst_rect.y, dst_rect.width, dst_rect.height};
+        return SDL_RenderTexture(renderer, m_texture, &sdl_src, &sdl_dst);
+    }
+
+    auto Texture::render(SDL_Renderer *renderer, float x_pos, float y_pos) const -> bool
+    {
+        if (m_texture == nullptr || renderer == nullptr)
+        {
+            return false;
+        }
+        Vector2f size = get_size();
+        SDL_FRect dst_rect = {x_pos, y_pos, size.x, size.y};
+        return SDL_RenderTexture(renderer, m_texture, nullptr, &dst_rect);
+    }
+
+    auto Texture::render(SDL_Renderer *renderer, const Vector2f &position) const -> bool
+    {
+        return render(renderer, position.x, position.y);
     }
 
 } // namespace Tactics

@@ -1,7 +1,9 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+#include <Tactics/Core/Rect.hpp>
 #include <Tactics/Core/Vector2.hpp>
+#include <string>
 
 namespace Tactics
 {
@@ -27,6 +29,9 @@ namespace Tactics
 
         // Create texture from surface
         static auto create_from_surface(SDL_Renderer *renderer, SDL_Surface *surface) -> Texture;
+
+        // Load texture from file (BMP format)
+        static auto load_from_file(SDL_Renderer *renderer, const std::string &file_path) -> Texture;
 
         // Check if texture is valid
         [[nodiscard]] auto is_valid() const -> bool;
@@ -70,6 +75,14 @@ namespace Tactics
 
         // Release the texture (call SDL_DestroyTexture)
         void release();
+
+        // Render texture to renderer
+        auto render(SDL_Renderer *renderer) const -> bool;
+        auto render(SDL_Renderer *renderer, const Rectf &dst_rect) const -> bool;
+        auto render(SDL_Renderer *renderer, const Rectf &src_rect, const Rectf &dst_rect) const
+            -> bool;
+        auto render(SDL_Renderer *renderer, float x_pos, float y_pos) const -> bool;
+        auto render(SDL_Renderer *renderer, const Vector2f &position) const -> bool;
 
     private:
         SDL_Texture *m_texture;
