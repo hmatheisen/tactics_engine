@@ -17,12 +17,20 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++23")
 
 include(FetchContent)
+
 FetchContent_Declare(
   SDL3
   GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
   GIT_TAG release-3.2.26
 )
 FetchContent_MakeAvailable(SDL3)
+
+FetchContent_Declare(
+  Catch2
+  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+  GIT_TAG v3.5.3
+)
+FetchContent_MakeAvailable(Catch2)
 
 set(TACTICS_SOURCES
   src/main.cpp
@@ -32,3 +40,19 @@ add_executable(tactics ${TACTICS_SOURCES})
 
 target_include_directories(tactics PRIVATE include)
 target_link_libraries(tactics PRIVATE SDL3::SDL3)
+
+# Tests
+enable_testing()
+
+set(TEST_SOURCES
+  tests/Core/Vector2Test.cpp
+)
+
+add_executable(tactics_tests ${TEST_SOURCES})
+
+target_include_directories(tactics_tests PRIVATE include)
+target_link_libraries(tactics_tests PRIVATE Catch2::Catch2WithMain)
+
+include(CTest)
+include(Catch)
+catch_discover_tests(tactics_tests)
