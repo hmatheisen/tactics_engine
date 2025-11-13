@@ -4,7 +4,6 @@
 
 namespace Tactics
 {
-
     class Engine
     {
     public:
@@ -44,5 +43,4 @@ namespace Tactics
         Uint64 m_performance_frequency;
         Uint64 m_last_frame_time;
     };
-
 } // namespace Tactics
