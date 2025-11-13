@@ -1,0 +1,6 @@
+Checks: -checks=*, readability-*, modernize-*, bugprone-*, performance-*, portability-*, clang-analyzer-*, cppcoreguidelines-*, google-*
+HeaderFileExtensions:
+  - hpp
+ImplementationFileExtensions:
+  - cpp
+FormatStyle: none
