@@ -16,10 +16,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++23")
 
-find_package(SDL3 REQUIRED CONFIG)
+include(FetchContent)
+FetchContent_Declare(
+  SDL3
+  GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+  GIT_TAG release-3.2.26
+)
+FetchContent_MakeAvailable(SDL3)
 
 set(TACTICS_SOURCES
-  src/main.cpp)
+  src/main.cpp
+  src/Core/Engine.cpp)
 
 add_executable(tactics ${TACTICS_SOURCES})
 
