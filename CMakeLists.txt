@@ -34,7 +34,8 @@ FetchContent_MakeAvailable(Catch2)
 
 set(TACTICS_SOURCES
   src/main.cpp
-  src/Core/Engine.cpp)
+  src/Core/Engine.cpp
+  src/Core/Texture.cpp)
 
 add_executable(tactics ${TACTICS_SOURCES})
 
