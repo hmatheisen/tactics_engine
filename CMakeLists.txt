@@ -46,6 +46,7 @@ enable_testing()
 
 set(TEST_SOURCES
   tests/Core/Vector2Test.cpp
+  tests/Core/RectTest.cpp
 )
 
 add_executable(tactics_tests ${TEST_SOURCES})

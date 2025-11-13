@@ -2,6 +2,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+// NOLINTBEGIN
 using namespace Tactics;
 using Catch::Matchers::WithinRel;
 
@@ -439,3 +440,4 @@ TEST_CASE("Vector2 Integer Operations", "[Vector2]")
         REQUIRE(result == 23); // 2*4 + 3*5 = 8 + 15 = 23
     }
 }
+// NOLINTEND

@@ -116,6 +116,7 @@ namespace Tactics
         }
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     void Engine::update(float delta_time)
     {
         // Game logic update will go here

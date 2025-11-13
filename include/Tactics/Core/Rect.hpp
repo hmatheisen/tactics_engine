@@ -19,15 +19,18 @@ namespace Tactics
         // Constructors
         Rect() : x(0), y(0), width(0), height(0) {}
 
+        // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
         Rect(T x_pos, T y_pos, T width, T height) : x(x_pos), y(y_pos), width(width), height(height)
         {
         }
 
+        // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
         Rect(const Vector2<T> &position, const Vector2<T> &size)
             : x(position.x), y(position.y), width(size.x), height(size.y)
         {
         }
 
+        // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
         Rect(const Vector2<T> &position, T width, T height)
             : x(position.x), y(position.y), width(width), height(height)
         {
@@ -82,12 +85,13 @@ namespace Tactics
             return Vector2<T>(width, height);
         }
 
-        void set_size(const Vector2<T> &s)
+        void set_size(const Vector2<T> &size)
         {
-            width = s.x;
-            height = s.y;
+            width = size.x;
+            height = size.y;
         }
 
+        // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
         void set_size(T width, T height)
         {
             this->width = width;
@@ -139,8 +143,10 @@ namespace Tactics
         // Center accessor
         [[nodiscard]] auto center() const -> Vector2<float>
         {
+            // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
             return {static_cast<float>(x) + (static_cast<float>(width) * 0.5F),
                     static_cast<float>(y) + (static_cast<float>(height) * 0.5F)};
+            // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
         }
 
         // Area
@@ -328,11 +334,13 @@ namespace Tactics
             return Rect(left_edge, top_edge, right_edge - left_edge, bottom_edge - top_edge);
         }
 
+        // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
         static auto from_center(const Vector2<T> &center_pos, T width, T height) -> Rect
         {
             return Rect(static_cast<T>(center_pos.x - width * 0.5F),
                         static_cast<T>(center_pos.y - height * 0.5F), width, height);
         }
+        // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
 
         static auto from_center(const Vector2<T> &center_pos, const Vector2<T> &size) -> Rect
         {
