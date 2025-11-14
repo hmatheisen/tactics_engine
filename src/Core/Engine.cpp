@@ -99,6 +99,11 @@ namespace Tactics
         log_info("Game loop ended");
     }
 
+    auto Engine::get_renderer() const -> SDL_Renderer *
+    {
+        return m_renderer.get();
+    }
+
     void Engine::shutdown()
     {
         log_info("Shutting down Engine...");

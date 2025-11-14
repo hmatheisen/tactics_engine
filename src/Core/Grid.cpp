@@ -1,3 +1,4 @@
+#include "SDL3/SDL_stdinc.h"
 #include <Tactics/Core/Grid.hpp>
 #include <Tactics/Core/Logger.hpp>
 #include <fstream>
@@ -218,17 +219,108 @@ namespace Tactics
         return position.x >= 0 && position.x < m_width && position.y >= 0 && position.y < m_height;
     }
 
-    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-    auto Grid::render(SDL_Renderer *renderer) const -> bool
+    namespace
+    {
+        // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
+        auto tile_type_to_color(TileType type) -> SDL_Color
+        {
+            switch (type)
+            {
+            case TileType::Grass:
+                return {34, 139, 34, 255}; // Green
+            case TileType::Water:
+                return {0, 119, 190, 255}; // Blue
+            case TileType::Mountain:
+                return {139, 137, 137, 255}; // Gray
+            case TileType::Forest:
+                return {34, 100, 34, 255}; // Dark green
+            case TileType::Desert:
+                return {238, 203, 173, 255}; // Beige
+            case TileType::Road:
+                return {105, 105, 105, 255}; // Dark gray
+            case TileType::Wall:
+                return {64, 64, 64, 255}; // Very dark gray
+            default:
+                return {128, 128, 128, 255}; // Gray
+            }
+        }
+        // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
+
+    } // namespace
+
+    auto Grid::render(SDL_Renderer *renderer, const Camera &camera) const -> bool
     {
         if (renderer == nullptr)
         {
             return false;
         }
 
-        // Grid rendering will be implemented when we have a visual representation
-        // For now, this is a placeholder
-        (void)renderer; // Suppress unused parameter warning
+        constexpr float TILE_SIZE = 32.0F; // Size of each tile in world units
+
+        // Get the camera's view rectangle to only render visible tiles
+        const Rectf view_rect = camera.get_view_rect();
+
+        // Calculate which tiles are visible
+        const int start_x = static_cast<int>((view_rect.left() - TILE_SIZE) / TILE_SIZE);
+        const int end_x = static_cast<int>((view_rect.right() + TILE_SIZE) / TILE_SIZE);
+        const int start_y = static_cast<int>((view_rect.top() - TILE_SIZE) / TILE_SIZE);
+        const int end_y = static_cast<int>((view_rect.bottom() + TILE_SIZE) / TILE_SIZE);
+
+        // Render visible tiles
+        for (int y_pos = start_y; y_pos <= end_y; ++y_pos)
+        {
+            for (int x_pos = start_x; x_pos <= end_x; ++x_pos)
+            {
+                const Vector2i tile_pos(x_pos, y_pos);
+                if (!is_valid_position(tile_pos))
+                {
+                    continue;
+                }
+
+                const Tile *tile = get_tile(tile_pos);
+                if (tile == nullptr)
+                {
+                    continue;
+                }
+
+                // Calculate world position of tile
+                const float world_x = static_cast<float>(x_pos) * TILE_SIZE;
+                const float world_y = static_cast<float>(y_pos) * TILE_SIZE;
+
+                // Convert to screen coordinates
+                const Vector2f screen_pos = camera.world_to_screen({world_x, world_y});
+
+                // Calculate screen size (tile size in screen space)
+                const float screen_tile_size = TILE_SIZE * camera.get_zoom();
+
+                // Create screen rectangle
+                const Rectf screen_rect(screen_pos.x - (screen_tile_size * 0.5F),
+                                        screen_pos.y - (screen_tile_size * 0.5F), screen_tile_size,
+                                        screen_tile_size);
+
+                // Only render if on screen
+                if (screen_rect.right() < 0.0F ||
+                    screen_rect.left() > camera.get_viewport_width() ||
+                    screen_rect.bottom() < 0.0F || screen_rect.top() > camera.get_viewport_height())
+                {
+                    continue;
+                }
+
+                // Get color for tile type
+                const SDL_Color color = tile_type_to_color(tile->get_type());
+
+                // Draw filled rectangle
+                SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+                SDL_FRect sdl_rect = {screen_rect.x, screen_rect.y, screen_rect.width,
+                                      screen_rect.height};
+                SDL_RenderFillRect(renderer, &sdl_rect);
+
+                // Draw border
+                SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_MAX_UINT8);
+                SDL_RenderRect(renderer, &sdl_rect);
+            }
+        }
+
         return true;
     }
 

@@ -54,6 +54,9 @@ namespace Tactics
         // Cleanup resources
         void shutdown();
 
+        // Get the renderer (for rendering operations)
+        [[nodiscard]] auto get_renderer() const -> SDL_Renderer *;
+
     private:
         // Handle SDL events
         void process_events();
