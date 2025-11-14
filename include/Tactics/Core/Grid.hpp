@@ -3,6 +3,8 @@
 #include <SDL3/SDL.h>
 #include <Tactics/Core/Camera.hpp>
 #include <Tactics/Core/Tile.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/vector.hpp>
 #include <string>
 #include <vector>
 
@@ -41,8 +43,14 @@ namespace Tactics
         // Initialize grid with default tiles
         void initialize(int width, int height);
 
-        // Load grid from JSON file
+        // Load grid from JSON file (deprecated, use load_from_file instead)
         auto load_from_json(const std::string &file_path) -> bool;
+
+        // Save grid to file using Boost serialization
+        [[nodiscard]] auto save_to_file(const std::string &file_path) const -> bool;
+
+        // Load grid from file using Boost serialization
+        auto load_from_file(const std::string &file_path) -> bool;
 
         // Check if coordinates are valid
         [[nodiscard]] auto is_valid_position(const Vector2i &position) const -> bool;
@@ -57,5 +65,14 @@ namespace Tactics
 
         // Convert 2D coordinates to 1D index
         [[nodiscard]] auto index_of(int x_pos, int y_pos) const -> size_t;
+
+        // Boost serialization
+        friend class boost::serialization::access;
+
+        template <class Archive>
+        void serialize(Archive &archive, [[maybe_unused]] const unsigned int version)
+        {
+            archive & m_width & m_height & m_tiles;
+        }
     };
 } // namespace Tactics

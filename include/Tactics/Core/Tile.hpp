@@ -1,6 +1,9 @@
 #pragma once
 
 #include <Tactics/Core/Vector2.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <cstdint>
 
 namespace Tactics
 {
@@ -40,5 +43,26 @@ namespace Tactics
         Vector2i m_position;
         TileType m_type;
         int m_move_cost;
+
+        // Boost serialization
+        friend class boost::serialization::access;
+
+        template <class Archive>
+        void save(Archive &archive, [[maybe_unused]] const unsigned int version) const
+        {
+            archive & m_position.x & m_position.y;
+            archive & m_type;
+            archive & m_move_cost;
+        }
+
+        template <class Archive>
+        void load(Archive &archive, [[maybe_unused]] const unsigned int version)
+        {
+            archive & m_position.x & m_position.y;
+            archive & m_type;
+            archive & m_move_cost;
+        }
+
+        BOOST_SERIALIZATION_SPLIT_MEMBER()
     };
 } // namespace Tactics

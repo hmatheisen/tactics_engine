@@ -1,6 +1,8 @@
 #include "SDL3/SDL_stdinc.h"
 #include <Tactics/Core/Grid.hpp>
 #include <Tactics/Core/Logger.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 #include <fstream>
 #include <nlohmann/json.hpp>
 
@@ -212,6 +214,58 @@ namespace Tactics
                  std::to_string(height) + " with " + std::to_string(tiles_loaded) + " tiles");
 
         return true;
+    }
+
+    auto Grid::save_to_file(const std::string &file_path) const -> bool
+    {
+        log_info("Saving grid to file: " + file_path);
+
+        std::ofstream file(file_path, std::ios::binary);
+        if (!file.is_open())
+        {
+            log_error("Failed to open file for writing: " + file_path);
+            return false;
+        }
+
+        try
+        {
+            boost::archive::binary_oarchive archive(file);
+            archive << *this;
+            log_info("Grid saved successfully: " + file_path);
+            return true;
+        }
+        catch (const std::exception &e)
+        {
+            log_error("Failed to serialize grid: " + std::string(e.what()));
+            return false;
+        }
+    }
+
+    auto Grid::load_from_file(const std::string &file_path) -> bool
+    {
+        log_info("Loading grid from file: " + file_path);
+
+        std::ifstream file(file_path, std::ios::binary);
+        if (!file.is_open())
+        {
+            log_error("Failed to open file for reading: " + file_path);
+            return false;
+        }
+
+        try
+        {
+            boost::archive::binary_iarchive archive(file);
+            archive >> *this;
+            log_info("Grid loaded successfully: " + file_path + " (" + std::to_string(m_width) +
+                     "x" + std::to_string(m_height) + " with " + std::to_string(m_tiles.size()) +
+                     " tiles)");
+            return true;
+        }
+        catch (const std::exception &e)
+        {
+            log_error("Failed to deserialize grid: " + std::string(e.what()));
+            return false;
+        }
     }
 
     auto Grid::is_valid_position(const Vector2i &position) const -> bool

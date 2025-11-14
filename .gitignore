@@ -1,5 +1,5 @@
 .cache
 .cursor
 build
-map.json
+map.bin
 tactics.log

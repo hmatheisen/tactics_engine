@@ -13,7 +13,8 @@ namespace
     constexpr float TILE_SIZE = 32.0F;
 } // namespace
 
-// NOLINTNEXTLINE(readability-function-cognitive-complexity)
+// NOLINTBEGIN(readability-function-cognitive-complexity, cppcoreguidelines-avoid-magic-numbers,
+// readability-magic-numbers)
 auto main() -> int
 {
     // Initialize logger
@@ -30,13 +31,27 @@ auto main() -> int
         return EXIT_FAILURE;
     }
 
-    // Load grid from JSON file
+    // Load grid from Boost serialization file
     Tactics::Grid grid;
-    if (!grid.load_from_json("map.json"))
+    if (!grid.load_from_file("map.bin"))
     {
-        Tactics::log_error("Failed to load grid from map.json");
-        engine.shutdown();
-        return EXIT_FAILURE;
+        Tactics::log_info("map.bin not found, creating new grid from map.json");
+        // Fallback to JSON if binary file doesn't exist
+        if (!grid.load_from_json("map.json"))
+        {
+            Tactics::log_error("Failed to load grid from map.json");
+            engine.shutdown();
+            return EXIT_FAILURE;
+        }
+        // Save as binary for next time
+        if (!grid.save_to_file("map.bin"))
+        {
+            Tactics::log_error("Failed to save grid to map.bin");
+            engine.shutdown();
+            return EXIT_FAILURE;
+        }
+
+        Tactics::log_info("Grid saved to map.bin");
     }
 
     const int GRID_WIDTH = grid.get_width();
@@ -150,3 +165,5 @@ auto main() -> int
     Tactics::log_info("=== Tactics Engine Shutting Down ===");
     return EXIT_SUCCESS;
 }
+// NOLINTEND(readability-function-cognitive-complexity, cppcoreguidelines-avoid-magic-numbers,
+// readability-magic-numbers)

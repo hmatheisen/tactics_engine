@@ -39,6 +39,15 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json)
 
+# Boost serialization is required
+# Install with: brew install boost
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+find_package(Boost REQUIRED CONFIG COMPONENTS serialization)
+
 set(TACTICS_SOURCES
   src/main.cpp
   src/Core/Engine.cpp
@@ -53,7 +62,7 @@ set(TACTICS_SOURCES
 add_executable(tactics ${TACTICS_SOURCES})
 
 target_include_directories(tactics PRIVATE include)
-target_link_libraries(tactics PRIVATE SDL3::SDL3 nlohmann_json::nlohmann_json)
+target_link_libraries(tactics PRIVATE SDL3::SDL3 Boost::serialization nlohmann_json::nlohmann_json)
 
 # Tests
 enable_testing()
