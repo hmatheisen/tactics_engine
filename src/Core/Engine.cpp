@@ -14,10 +14,7 @@ namespace Tactics
         constexpr Uint8 CLEAR_COLOR_A = 0xFF;
     } // namespace
 
-    Engine::Engine()
-        : m_window(nullptr), m_renderer(nullptr), m_running(false), m_performance_frequency(0),
-          m_last_frame_time(0)
-    {}
+    Engine::Engine() : m_running(false), m_performance_frequency(0), m_last_frame_time(0) {}
 
     Engine::~Engine()
     {
@@ -36,21 +33,23 @@ namespace Tactics
         m_performance_frequency = SDL_GetPerformanceFrequency();
 
         // Create window (1280x720)
-        m_window = SDL_CreateWindow("Tactics", WINDOW_WIDTH, WINDOW_HEIGHT, 0);
-        if (m_window == nullptr)
+        SDL_Window *window = SDL_CreateWindow("Tactics", WINDOW_WIDTH, WINDOW_HEIGHT, 0);
+        if (window == nullptr)
         {
             SDL_Quit();
             return false;
         }
+        m_window = SDLWindowPtr(window);
 
         // Create renderer
-        m_renderer = SDL_CreateRenderer(m_window, nullptr);
-        if (m_renderer == nullptr)
+        SDL_Renderer *renderer = SDL_CreateRenderer(m_window.get(), nullptr);
+        if (renderer == nullptr)
         {
-            SDL_DestroyWindow(m_window);
+            m_window.reset(); // Destroy window before quitting
             SDL_Quit();
             return false;
         }
+        m_renderer = SDLRendererPtr(renderer);
 
         // Initialize timing
         m_last_frame_time = SDL_GetPerformanceCounter();
@@ -87,17 +86,10 @@ namespace Tactics
 
     void Engine::shutdown()
     {
-        if (m_renderer != nullptr)
-        {
-            SDL_DestroyRenderer(m_renderer);
-            m_renderer = nullptr;
-        }
-
-        if (m_window != nullptr)
-        {
-            SDL_DestroyWindow(m_window);
-            m_window = nullptr;
-        }
+        // Smart pointers will automatically destroy renderer and window
+        // Renderer is destroyed first (declared after window), then window
+        m_renderer.reset();
+        m_window.reset();
 
         SDL_Quit();
         m_running = false;
@@ -125,12 +117,12 @@ namespace Tactics
     void Engine::render()
     {
         // Clear screen to a color (dark gray)
-        SDL_SetRenderDrawColor(m_renderer, CLEAR_COLOR_R, CLEAR_COLOR_G, CLEAR_COLOR_B,
+        SDL_SetRenderDrawColor(m_renderer.get(), CLEAR_COLOR_R, CLEAR_COLOR_G, CLEAR_COLOR_B,
                                CLEAR_COLOR_A);
-        SDL_RenderClear(m_renderer);
+        SDL_RenderClear(m_renderer.get());
 
         // Present the rendered frame
-        SDL_RenderPresent(m_renderer);
+        SDL_RenderPresent(m_renderer.get());
     }
 
 } // namespace Tactics

@@ -1,9 +1,36 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+#include <memory>
 
 namespace Tactics
 {
+    // Custom deleters for SDL resources
+    struct SDLWindowDeleter
+    {
+        void operator()(SDL_Window *window) const
+        {
+            if (window != nullptr)
+            {
+                SDL_DestroyWindow(window);
+            }
+        }
+    };
+
+    struct SDLRendererDeleter
+    {
+        void operator()(SDL_Renderer *renderer) const
+        {
+            if (renderer != nullptr)
+            {
+                SDL_DestroyRenderer(renderer);
+            }
+        }
+    };
+
+    using SDLWindowPtr = std::unique_ptr<SDL_Window, SDLWindowDeleter>;
+    using SDLRendererPtr = std::unique_ptr<SDL_Renderer, SDLRendererDeleter>;
+
     class Engine
     {
     public:
@@ -37,8 +64,8 @@ namespace Tactics
         // Render the frame
         void render();
 
-        SDL_Window *m_window;
-        SDL_Renderer *m_renderer;
+        SDLWindowPtr m_window;
+        SDLRendererPtr m_renderer;
         bool m_running;
         Uint64 m_performance_frequency;
         Uint64 m_last_frame_time;
