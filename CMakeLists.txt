@@ -32,13 +32,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-FetchContent_Declare(
-  json
-  GIT_REPOSITORY https://github.com/nlohmann/json.git
-  GIT_TAG v3.11.3
-)
-FetchContent_MakeAvailable(json)
-
 # Boost serialization is required
 # Install with: brew install boost
 if(POLICY CMP0167)
@@ -63,7 +56,7 @@ set(TACTICS_SOURCES
 add_executable(tactics ${TACTICS_SOURCES})
 
 target_include_directories(tactics PRIVATE include)
-target_link_libraries(tactics PRIVATE SDL3::SDL3 Boost::serialization nlohmann_json::nlohmann_json)
+target_link_libraries(tactics PRIVATE SDL3::SDL3 Boost::serialization)
 
 # Tests
 enable_testing()

@@ -43,9 +43,6 @@ namespace Tactics
         // Initialize grid with default tiles
         void initialize(int width, int height);
 
-        // Load grid from JSON file (deprecated, use load_from_file instead)
-        auto load_from_json(const std::string &file_path) -> bool;
-
         // Save grid to file using Boost serialization
         [[nodiscard]] auto save_to_file(const std::string &file_path) const -> bool;
 

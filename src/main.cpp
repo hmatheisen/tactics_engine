@@ -38,23 +38,9 @@ auto main() -> int
     Tactics::Grid grid;
     if (!grid.load_from_file("map.bin"))
     {
-        Tactics::log_info("map.bin not found, creating new grid from map.json");
-        // Fallback to JSON if binary file doesn't exist
-        if (!grid.load_from_json("map.json"))
-        {
-            Tactics::log_error("Failed to load grid from map.json");
-            engine.shutdown();
-            return EXIT_FAILURE;
-        }
-        // Save as binary for next time
-        if (!grid.save_to_file("map.bin"))
-        {
-            Tactics::log_error("Failed to save grid to map.bin");
-            engine.shutdown();
-            return EXIT_FAILURE;
-        }
-
-        Tactics::log_info("Grid saved to map.bin");
+        Tactics::log_error("Failed to load grid from map.bin");
+        engine.shutdown();
+        return EXIT_FAILURE;
     }
 
     const int GRID_WIDTH = grid.get_width();
