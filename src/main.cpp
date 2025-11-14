@@ -2,6 +2,7 @@
 #include <Tactics/Core/Engine.hpp>
 #include <Tactics/Core/Logger.hpp>
 #include <Tactics/Core/SceneManager.hpp>
+#include <Tactics/Core/TimeManager.hpp>
 #include <Tactics/Scenes/GridScene.hpp>
 #include <cstdlib>
 #include <memory>
@@ -26,22 +27,25 @@ auto main() -> int
     Tactics::SceneManager scene_manager;
     scene_manager.change_scene(std::make_unique<Tactics::GridScene>());
 
-    // Main game loop
-    Uint64 last_frame_time = SDL_GetPerformanceCounter();
-    const Uint64 performance_frequency = SDL_GetPerformanceFrequency();
+    // Create time manager
+    Tactics::TimeManager time_manager;
+    time_manager.initialize();
+    constexpr float TARGET_FPS = 60.0F;
+    time_manager.set_target_fps(TARGET_FPS);
 
+    // Main game loop
     while (scene_manager.is_running())
     {
-        // Calculate delta time
-        Uint64 current_time = SDL_GetPerformanceCounter();
-        float delta_time = static_cast<float>(current_time - last_frame_time) /
-                           static_cast<float>(performance_frequency);
-        last_frame_time = current_time;
+        // Update timing and get delta time
+        time_manager.update();
 
         // Update and render current scene
-        scene_manager.update(delta_time);
+        scene_manager.update(time_manager.get_delta_time());
         scene_manager.render(engine.get_renderer());
         SDL_RenderPresent(engine.get_renderer());
+
+        // Cap frame rate
+        time_manager.cap_frame_rate();
     }
 
     engine.shutdown();

@@ -55,6 +55,7 @@ set(TACTICS_SOURCES
   src/Core/SceneManager.cpp
   src/Core/CameraController.cpp
   src/Core/CursorController.cpp
+  src/Core/TimeManager.cpp
   src/Scenes/GridScene.cpp)
 
 add_executable(tactics ${TACTICS_SOURCES})

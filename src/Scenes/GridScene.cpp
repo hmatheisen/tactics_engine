@@ -13,11 +13,13 @@ namespace Tactics
         log_info("Entering GridScene");
 
         // Load grid from Boost serialization file
-        if (!m_grid.load_from_file(m_map_path))
+        auto grid_opt = Grid::load_from_file(m_map_path);
+        if (!grid_opt.has_value())
         {
             log_error("Failed to load grid from " + m_map_path);
             return false;
         }
+        m_grid = std::move(grid_opt.value());
 
         const int grid_width = m_grid.get_width();
         const int grid_height = m_grid.get_height();

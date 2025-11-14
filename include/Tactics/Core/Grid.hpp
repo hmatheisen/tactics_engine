@@ -5,6 +5,7 @@
 #include <Tactics/Core/Tile.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/vector.hpp>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -14,7 +15,6 @@ namespace Tactics
     {
     public:
         Grid();
-        Grid(int width, int height);
 
         // Delete copy constructor and assignment operator
         Grid(const Grid &) = delete;
@@ -40,14 +40,11 @@ namespace Tactics
         // Set tile at position
         void set_tile(const Vector2i &position, const Tile &tile);
 
-        // Initialize grid with default tiles
-        void initialize(int width, int height);
-
         // Save grid to file using Boost serialization
         [[nodiscard]] auto save_to_file(const std::string &file_path) const -> bool;
 
-        // Load grid from file using Boost serialization
-        auto load_from_file(const std::string &file_path) -> bool;
+        // Static factory: Load grid from file using Boost serialization
+        static auto load_from_file(const std::string &file_path) -> std::optional<Grid>;
 
         // Check if coordinates are valid
         [[nodiscard]] auto is_valid_position(const Vector2i &position) const -> bool;

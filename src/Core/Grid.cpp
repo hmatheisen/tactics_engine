@@ -9,11 +9,6 @@ namespace Tactics
 {
     Grid::Grid() : m_width(0), m_height(0) {}
 
-    Grid::Grid(int width, int height) : m_width(width), m_height(height)
-    {
-        initialize(width, height);
-    }
-
     auto Grid::get_width() const -> int
     {
         return m_width;
@@ -63,26 +58,6 @@ namespace Tactics
                   ", move_cost: " + std::to_string(tile.get_move_cost()));
     }
 
-    void Grid::initialize(int width, int height)
-    {
-        log_info("Initializing grid: " + std::to_string(width) + "x" + std::to_string(height));
-        m_width = width;
-        m_height = height;
-        m_tiles.clear();
-        m_tiles.resize(static_cast<size_t>(width) * static_cast<size_t>(height));
-
-        // Initialize all tiles with default values
-        for (int y_pos = 0; y_pos < height; ++y_pos)
-        {
-            for (int x_pos = 0; x_pos < width; ++x_pos)
-            {
-                Tile tile(Vector2i(x_pos, y_pos), TileType::Grass, 1);
-                m_tiles[index_of(x_pos, y_pos)] = tile;
-            }
-        }
-        log_debug("Grid initialized with " + std::to_string(m_tiles.size()) + " tiles");
-    }
-
     auto Grid::save_to_file(const std::string &file_path) const -> bool
     {
         log_info("Saving grid to file: " + file_path);
@@ -108,7 +83,7 @@ namespace Tactics
         }
     }
 
-    auto Grid::load_from_file(const std::string &file_path) -> bool
+    auto Grid::load_from_file(const std::string &file_path) -> std::optional<Grid>
     {
         log_info("Loading grid from file: " + file_path);
 
@@ -116,22 +91,23 @@ namespace Tactics
         if (!file.is_open())
         {
             log_error("Failed to open file for reading: " + file_path);
-            return false;
+            return std::nullopt;
         }
 
+        Grid grid;
         try
         {
             boost::archive::binary_iarchive archive(file);
-            archive >> *this;
-            log_info("Grid loaded successfully: " + file_path + " (" + std::to_string(m_width) +
-                     "x" + std::to_string(m_height) + " with " + std::to_string(m_tiles.size()) +
-                     " tiles)");
-            return true;
+            archive >> grid;
+            log_info("Grid loaded successfully: " + file_path + " (" + std::to_string(grid.m_width) +
+                     "x" + std::to_string(grid.m_height) + " with " +
+                     std::to_string(grid.m_tiles.size()) + " tiles)");
+            return grid;
         }
         catch (const std::exception &e)
         {
             log_error("Failed to deserialize grid: " + std::string(e.what()));
-            return false;
+            return std::nullopt;
         }
     }
 
