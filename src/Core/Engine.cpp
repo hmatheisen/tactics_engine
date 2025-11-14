@@ -17,8 +17,7 @@ namespace Tactics
     Engine::Engine()
         : m_window(nullptr), m_renderer(nullptr), m_running(false), m_performance_frequency(0),
           m_last_frame_time(0)
-    {
-    }
+    {}
 
     Engine::~Engine()
     {

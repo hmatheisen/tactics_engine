@@ -19,22 +19,18 @@ namespace Tactics
         // Constructors
         Rect() : x(0), y(0), width(0), height(0) {}
 
-        // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+        // NOLINTBEGIN(bugprone-easily-swappable-parameters)
         Rect(T x_pos, T y_pos, T width, T height) : x(x_pos), y(y_pos), width(width), height(height)
-        {
-        }
+        {}
 
-        // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
         Rect(const Vector2<T> &position, const Vector2<T> &size)
             : x(position.x), y(position.y), width(size.x), height(size.y)
-        {
-        }
+        {}
 
-        // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
         Rect(const Vector2<T> &position, T width, T height)
             : x(position.x), y(position.y), width(width), height(height)
-        {
-        }
+        {}
+        // NOLINTEND(bugprone-easily-swappable-parameters)
 
         // Copy constructor
         Rect(const Rect &other) = default;
@@ -143,10 +139,10 @@ namespace Tactics
         // Center accessor
         [[nodiscard]] auto center() const -> Vector2<float>
         {
-            // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
-            return {static_cast<float>(x) + (static_cast<float>(width) * 0.5F),
-                    static_cast<float>(y) + (static_cast<float>(height) * 0.5F)};
-            // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
+            constexpr float half = 0.5F;
+
+            return {static_cast<float>(x) + (static_cast<float>(width) * half),
+                    static_cast<float>(y) + (static_cast<float>(height) * half)};
         }
 
         // Area
@@ -318,6 +314,7 @@ namespace Tactics
         {
             T clamped_x = std::clamp(point.x, x, x + width);
             T clamped_y = std::clamp(point.y, y, y + height);
+
             return Vector2<T>(clamped_x, clamped_y);
         }
 
@@ -325,6 +322,7 @@ namespace Tactics
         auto distance_to_point(const Vector2<T> &point) const -> float
         {
             Vector2<T> clamped = clamp_point(point);
+
             return clamped.distance_to(point);
         }
 
@@ -334,13 +332,13 @@ namespace Tactics
             return Rect(left_edge, top_edge, right_edge - left_edge, bottom_edge - top_edge);
         }
 
-        // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
         static auto from_center(const Vector2<T> &center_pos, T width, T height) -> Rect
         {
-            return Rect(static_cast<T>(center_pos.x - width * 0.5F),
-                        static_cast<T>(center_pos.y - height * 0.5F), width, height);
+            constexpr float half = 0.5F;
+
+            return Rect(static_cast<T>(center_pos.x - width * half),
+                        static_cast<T>(center_pos.y - height * half), width, height);
         }
-        // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
 
         static auto from_center(const Vector2<T> &center_pos, const Vector2<T> &size) -> Rect
         {

@@ -3,14 +3,13 @@
 namespace Tactics
 {
     Sprite::Sprite()
-        : m_position(0.0f, 0.0f), m_size(0.0f, 0.0f), m_source_rect(0.0f, 0.0f, 0.0f, 0.0f),
+        : m_position(0.0F, 0.0F), m_size(0.0F, 0.0F), m_source_rect(0.0F, 0.0F, 0.0F, 0.0F),
           m_use_source_rect(false)
-    {
-    }
+    {}
 
     Sprite::Sprite(Texture texture)
-        : m_texture(std::move(texture)), m_position(0.0f, 0.0f), m_size(0.0f, 0.0f),
-          m_source_rect(0.0f, 0.0f, 0.0f, 0.0f), m_use_source_rect(false)
+        : m_texture(std::move(texture)), m_position(0.0F, 0.0F), m_size(0.0F, 0.0F),
+          m_source_rect(0.0F, 0.0F, 0.0F, 0.0F), m_use_source_rect(false)
     {
         if (m_texture.is_valid())
         {
@@ -21,7 +20,7 @@ namespace Tactics
     void Sprite::set_texture(Texture texture)
     {
         m_texture = std::move(texture);
-        if (m_texture.is_valid() && (m_size.x == 0.0f || m_size.y == 0.0f))
+        if (m_texture.is_valid() && (m_size.x == 0.0F || m_size.y == 0.0F))
         {
             m_size = m_texture.get_size();
         }
@@ -47,12 +46,6 @@ namespace Tactics
         m_position = position;
     }
 
-    void Sprite::set_position(float x_pos, float y_pos)
-    {
-        m_position.x = x_pos;
-        m_position.y = y_pos;
-    }
-
     auto Sprite::get_size() const -> Vector2f
     {
         return m_size;
@@ -63,12 +56,6 @@ namespace Tactics
         m_size = size;
     }
 
-    void Sprite::set_size(float width, float height)
-    {
-        m_size.x = width;
-        m_size.y = height;
-    }
-
     auto Sprite::get_source_rect() const -> Rectf
     {
         return m_source_rect;
@@ -77,16 +64,6 @@ namespace Tactics
     void Sprite::set_source_rect(const Rectf &rect)
     {
         m_source_rect = rect;
-        m_use_source_rect = true;
-    }
-
-    // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-    void Sprite::set_source_rect(float x_pos, float y_pos, float width, float height)
-    {
-        m_source_rect.x = x_pos;
-        m_source_rect.y = y_pos;
-        m_source_rect.width = width;
-        m_source_rect.height = height;
         m_use_source_rect = true;
     }
 
