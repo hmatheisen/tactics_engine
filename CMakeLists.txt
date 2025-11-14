@@ -51,7 +51,11 @@ set(TACTICS_SOURCES
   src/Core/Logger.cpp
   src/Core/InputManager.cpp
   src/Core/Camera.cpp
-  src/Core/Cursor.cpp)
+  src/Core/Cursor.cpp
+  src/Core/SceneManager.cpp
+  src/Core/CameraController.cpp
+  src/Core/CursorController.cpp
+  src/Scenes/GridScene.cpp)
 
 add_executable(tactics ${TACTICS_SOURCES})
 

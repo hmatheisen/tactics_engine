@@ -1,0 +1,85 @@
+#include <Tactics/Core/CameraController.hpp>
+
+namespace Tactics
+{
+    namespace
+    {
+        constexpr float DEFAULT_EDGE_SCROLL_THRESHOLD = 100.0F;
+    } // namespace
+
+    CameraController::CameraController() : m_edge_scroll_threshold(DEFAULT_EDGE_SCROLL_THRESHOLD) {}
+
+    void CameraController::update(Camera &camera, const Cursor &cursor, float tile_size) const
+    {
+        // Get cursor world position
+        const Vector2i cursor_pos = cursor.get_position();
+        const float cursor_world_x = static_cast<float>(cursor_pos.x) * tile_size;
+        const float cursor_world_y = static_cast<float>(cursor_pos.y) * tile_size;
+
+        // Convert to screen coordinates
+        const Vector2f cursor_screen_pos = camera.world_to_screen({cursor_world_x, cursor_world_y});
+
+        // Calculate camera movement based on cursor proximity to edges
+        Vector2f camera_movement(0.0F, 0.0F);
+        const float viewport_width = camera.get_viewport_width();
+        const float viewport_height = camera.get_viewport_height();
+
+        // Check left edge - only scroll if cursor is too close to edge
+        if (cursor_screen_pos.x < m_edge_scroll_threshold)
+        {
+            // Calculate how much we need to move to keep cursor at threshold distance
+            const float distance_to_move = m_edge_scroll_threshold - cursor_screen_pos.x;
+            // Convert screen distance to world distance
+            const float world_distance = distance_to_move / camera.get_zoom();
+            camera_movement.x -= world_distance;
+        }
+
+        // Check right edge
+        if (cursor_screen_pos.x > viewport_width - m_edge_scroll_threshold)
+        {
+            // Calculate how much we need to move to keep cursor at threshold distance
+            const float distance_to_move =
+                cursor_screen_pos.x - (viewport_width - m_edge_scroll_threshold);
+            // Convert screen distance to world distance
+            const float world_distance = distance_to_move / camera.get_zoom();
+            camera_movement.x += world_distance;
+        }
+
+        // Check top edge
+        if (cursor_screen_pos.y < m_edge_scroll_threshold)
+        {
+            // Calculate how much we need to move to keep cursor at threshold distance
+            const float distance_to_move = m_edge_scroll_threshold - cursor_screen_pos.y;
+            // Convert screen distance to world distance
+            const float world_distance = distance_to_move / camera.get_zoom();
+            camera_movement.y -= world_distance;
+        }
+
+        // Check bottom edge
+        if (cursor_screen_pos.y > viewport_height - m_edge_scroll_threshold)
+        {
+            // Calculate how much we need to move to keep cursor at threshold distance
+            const float distance_to_move =
+                cursor_screen_pos.y - (viewport_height - m_edge_scroll_threshold);
+            // Convert screen distance to world distance
+            const float world_distance = distance_to_move / camera.get_zoom();
+            camera_movement.y += world_distance;
+        }
+
+        // Apply camera movement (moves just enough to keep cursor within threshold)
+        if (camera_movement.x != 0.0F || camera_movement.y != 0.0F)
+        {
+            camera.translate(camera_movement);
+        }
+    }
+
+    void CameraController::set_edge_scroll_threshold(float threshold)
+    {
+        m_edge_scroll_threshold = threshold;
+    }
+
+    auto CameraController::get_edge_scroll_threshold() const -> float
+    {
+        return m_edge_scroll_threshold;
+    }
+} // namespace Tactics
