@@ -32,6 +32,13 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
+FetchContent_Declare(
+  json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG v3.11.3
+)
+FetchContent_MakeAvailable(json)
+
 set(TACTICS_SOURCES
   src/main.cpp
   src/Core/Engine.cpp
@@ -45,7 +52,7 @@ set(TACTICS_SOURCES
 add_executable(tactics ${TACTICS_SOURCES})
 
 target_include_directories(tactics PRIVATE include)
-target_link_libraries(tactics PRIVATE SDL3::SDL3)
+target_link_libraries(tactics PRIVATE SDL3::SDL3 nlohmann_json::nlohmann_json)
 
 # Tests
 enable_testing()

@@ -1,5 +1,7 @@
 #include <Tactics/Core/Grid.hpp>
 #include <Tactics/Core/Logger.hpp>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 namespace Tactics
 {
@@ -77,6 +79,138 @@ namespace Tactics
             }
         }
         log_debug("Grid initialized with " + std::to_string(m_tiles.size()) + " tiles");
+    }
+
+    namespace
+    {
+        auto string_to_tile_type(const std::string &type_str) -> TileType
+        {
+            if (type_str == "Grass")
+            {
+                return TileType::Grass;
+            }
+            if (type_str == "Water")
+            {
+                return TileType::Water;
+            }
+            if (type_str == "Mountain")
+            {
+                return TileType::Mountain;
+            }
+            if (type_str == "Forest")
+            {
+                return TileType::Forest;
+            }
+            if (type_str == "Desert")
+            {
+                return TileType::Desert;
+            }
+            if (type_str == "Road")
+            {
+                return TileType::Road;
+            }
+            if (type_str == "Wall")
+            {
+                return TileType::Wall;
+            }
+            log_warning("Unknown tile type: " + type_str + ", defaulting to Grass");
+            return TileType::Grass;
+        }
+    } // namespace
+
+    auto Grid::load_from_json(const std::string &file_path) -> bool
+    {
+        log_info("Loading grid from JSON file: " + file_path);
+
+        std::ifstream file(file_path);
+        if (!file.is_open())
+        {
+            log_error("Failed to open JSON file: " + file_path);
+            return false;
+        }
+
+        nlohmann::json json_data;
+        try
+        {
+            file >> json_data;
+        }
+        catch (const nlohmann::json::exception &e)
+        {
+            log_error("Failed to parse JSON file: " + file_path + " - " + std::string(e.what()));
+            return false;
+        }
+
+        // Validate required fields
+        if (!json_data.contains("width") || !json_data.contains("height") ||
+            !json_data.contains("tiles"))
+        {
+            log_error("JSON file missing required fields: width, height, or tiles");
+            return false;
+        }
+
+        const int width = json_data["width"].get<int>();
+        const int height = json_data["height"].get<int>();
+
+        if (width <= 0 || height <= 0)
+        {
+            log_error("Invalid grid dimensions: " + std::to_string(width) + "x" +
+                      std::to_string(height));
+            return false;
+        }
+
+        // Initialize grid
+        m_width = width;
+        m_height = height;
+        m_tiles.clear();
+        m_tiles.resize(static_cast<size_t>(width) * static_cast<size_t>(height));
+
+        // Parse tiles
+        if (!json_data["tiles"].is_array())
+        {
+            log_error("Tiles field must be an array");
+            return false;
+        }
+
+        const auto &tiles_array = json_data["tiles"];
+        int tiles_loaded = 0;
+
+        for (const auto &tile_json : tiles_array)
+        {
+            if (!tile_json.is_object())
+            {
+                log_warning("Skipping invalid tile entry (not an object)");
+                continue;
+            }
+
+            if (!tile_json.contains("x") || !tile_json.contains("y") || !tile_json.contains("type"))
+            {
+                log_warning("Skipping tile entry missing required fields: x, y, or type");
+                continue;
+            }
+
+            const int x_pos = tile_json["x"].get<int>();
+            const int y_pos = tile_json["y"].get<int>();
+            const std::string type_str = tile_json["type"].get<std::string>();
+            const int move_cost = tile_json.value("move_cost", 1);
+
+            const Vector2i position(x_pos, y_pos);
+            if (!is_valid_position(position))
+            {
+                log_warning("Skipping tile at invalid position: (" + std::to_string(x_pos) + ", " +
+                            std::to_string(y_pos) + ")");
+                continue;
+            }
+
+            const TileType type = string_to_tile_type(type_str);
+            Tile tile(position, type, move_cost);
+            set_tile(position, tile);
+            ++tiles_loaded;
+        }
+
+        log_info("Grid loaded successfully: " + std::to_string(width) + "x" +
+                 std::to_string(height) + " with " + std::to_string(tiles_loaded) + " tiles");
+
+        return true;
     }
 
     auto Grid::is_valid_position(const Vector2i &position) const -> bool

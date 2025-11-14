@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL.h>
 #include <Tactics/Core/Tile.hpp>
+#include <string>
 #include <vector>
 
 namespace Tactics
@@ -38,6 +39,9 @@ namespace Tactics
 
         // Initialize grid with default tiles
         void initialize(int width, int height);
+
+        // Load grid from JSON file
+        auto load_from_json(const std::string &file_path) -> bool;
 
         // Check if coordinates are valid
         [[nodiscard]] auto is_valid_position(const Vector2i &position) const -> bool;

@@ -1,0 +1,48 @@
+{
+  "width": 10,
+  "height": 10,
+  "tiles": [
+    {
+      "x": 0,
+      "y": 0,
+      "type": "Grass",
+      "move_cost": 1
+    },
+    {
+      "x": 1,
+      "y": 0,
+      "type": "Road",
+      "move_cost": 1
+    },
+    {
+      "x": 2,
+      "y": 0,
+      "type": "Water",
+      "move_cost": 2
+    },
+    {
+      "x": 3,
+      "y": 0,
+      "type": "Forest",
+      "move_cost": 2
+    },
+    {
+      "x": 4,
+      "y": 0,
+      "type": "Mountain",
+      "move_cost": 3
+    },
+    {
+      "x": 5,
+      "y": 0,
+      "type": "Desert",
+      "move_cost": 2
+    },
+    {
+      "x": 6,
+      "y": 0,
+      "type": "Wall",
+      "move_cost": -1
+    }
+  ]
+}
