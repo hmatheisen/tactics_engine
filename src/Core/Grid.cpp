@@ -1,4 +1,5 @@
 #include <Tactics/Core/Grid.hpp>
+#include <Tactics/Core/Logger.hpp>
 
 namespace Tactics
 {
@@ -23,6 +24,8 @@ namespace Tactics
     {
         if (!is_valid_position(position))
         {
+            log_warning("Attempted to get tile at invalid position: (" +
+                        std::to_string(position.x) + ", " + std::to_string(position.y) + ")");
             return nullptr;
         }
 
@@ -43,15 +46,22 @@ namespace Tactics
     {
         if (!is_valid_position(position))
         {
+            log_warning("Attempted to set tile at invalid position: (" +
+                        std::to_string(position.x) + ", " + std::to_string(position.y) + ")");
             return;
         }
 
         m_tiles[index_of(position.x, position.y)] = tile;
         m_tiles[index_of(position.x, position.y)].set_position(position);
+        log_debug("Tile set at position (" + std::to_string(position.x) + ", " +
+                  std::to_string(position.y) +
+                  "), type: " + std::to_string(static_cast<int>(tile.get_type())) +
+                  ", move_cost: " + std::to_string(tile.get_move_cost()));
     }
 
     void Grid::initialize(int width, int height)
     {
+        log_info("Initializing grid: " + std::to_string(width) + "x" + std::to_string(height));
         m_width = width;
         m_height = height;
         m_tiles.clear();
@@ -66,6 +76,7 @@ namespace Tactics
                 m_tiles[index_of(x_pos, y_pos)] = tile;
             }
         }
+        log_debug("Grid initialized with " + std::to_string(m_tiles.size()) + " tiles");
     }
 
     auto Grid::is_valid_position(const Vector2i &position) const -> bool

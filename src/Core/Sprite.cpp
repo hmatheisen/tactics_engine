@@ -1,3 +1,4 @@
+#include <Tactics/Core/Logger.hpp>
 #include <Tactics/Core/Sprite.hpp>
 
 namespace Tactics
@@ -14,6 +15,12 @@ namespace Tactics
         if (m_texture.is_valid())
         {
             m_size = m_texture.get_size();
+            log_debug("Sprite created with texture size: " + std::to_string(m_size.x) + "x" +
+                      std::to_string(m_size.y));
+        }
+        else
+        {
+            log_warning("Sprite created with invalid texture");
         }
     }
 
@@ -71,16 +78,30 @@ namespace Tactics
     {
         if (!m_texture.is_valid() || renderer == nullptr)
         {
+            if (!m_texture.is_valid())
+            {
+                log_warning("Attempted to render sprite with invalid texture");
+            }
             return false;
         }
 
         Rectf dst_rect(m_position.x, m_position.y, m_size.x, m_size.y);
 
+        bool result = false;
         if (m_use_source_rect)
         {
-            return m_texture.render(renderer, m_source_rect, dst_rect);
+            result = m_texture.render(renderer, m_source_rect, dst_rect);
+        }
+        else
+        {
+            result = m_texture.render(renderer, dst_rect);
         }
 
-        return m_texture.render(renderer, dst_rect);
+        if (!result)
+        {
+            log_error("Failed to render sprite");
+        }
+
+        return result;
     }
 } // namespace Tactics

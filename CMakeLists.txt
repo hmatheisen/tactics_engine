@@ -38,7 +38,8 @@ set(TACTICS_SOURCES
   src/Core/Texture.cpp
   src/Core/Sprite.cpp
   src/Core/Tile.cpp
-  src/Core/Grid.cpp)
+  src/Core/Grid.cpp
+  src/Core/Logger.cpp)
 
 add_executable(tactics ${TACTICS_SOURCES})
 

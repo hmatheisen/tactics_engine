@@ -1,4 +1,5 @@
 #include <SDL3/SDL_surface.h>
+#include <Tactics/Core/Logger.hpp>
 #include <Tactics/Core/Texture.hpp>
 
 namespace Tactics
@@ -33,6 +34,14 @@ namespace Tactics
     {
         Texture texture;
         texture.m_texture = SDL_CreateTexture(renderer, format, access, width, height);
+        if (texture.m_texture == nullptr)
+        {
+            log_error("Failed to create texture: " + std::string(SDL_GetError()));
+        }
+        else
+        {
+            log_debug("Texture created: " + std::to_string(width) + "x" + std::to_string(height));
+        }
         return texture;
     }
 
@@ -40,21 +49,42 @@ namespace Tactics
     {
         Texture texture;
         texture.m_texture = SDL_CreateTextureFromSurface(renderer, surface);
+        if (texture.m_texture == nullptr)
+        {
+            log_error("Failed to create texture from surface: " + std::string(SDL_GetError()));
+        }
+        else
+        {
+            log_debug("Texture created from surface");
+        }
         return texture;
     }
 
     auto Texture::load_from_file(SDL_Renderer *renderer, const std::string &file_path) -> Texture
     {
+        log_info("Loading texture from file: " + file_path);
         Texture texture;
 
         SDL_Surface *surface = SDL_LoadBMP(file_path.c_str());
         if (surface == nullptr)
         {
+            log_error("Failed to load BMP file: " + file_path + " - " +
+                      std::string(SDL_GetError()));
             return texture; // Return invalid texture
         }
 
         texture.m_texture = SDL_CreateTextureFromSurface(renderer, surface);
         SDL_DestroySurface(surface);
+
+        if (texture.m_texture == nullptr)
+        {
+            log_error("Failed to create texture from loaded surface: " +
+                      std::string(SDL_GetError()));
+        }
+        else
+        {
+            log_info("Texture loaded successfully: " + file_path);
+        }
 
         return texture;
     }
@@ -244,6 +274,7 @@ namespace Tactics
     {
         if (m_texture != nullptr)
         {
+            log_debug("Releasing texture");
             SDL_DestroyTexture(m_texture);
             m_texture = nullptr;
         }
