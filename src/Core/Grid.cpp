@@ -99,14 +99,17 @@ namespace Tactics
         {
             boost::archive::binary_iarchive archive(file);
             archive >> grid;
-            log_info("Grid loaded successfully: " + file_path + " (" + std::to_string(grid.m_width) +
-                     "x" + std::to_string(grid.m_height) + " with " +
+
+            log_info("Grid loaded successfully: " + file_path + " (" +
+                     std::to_string(grid.m_width) + "x" + std::to_string(grid.m_height) + " with " +
                      std::to_string(grid.m_tiles.size()) + " tiles)");
+
             return grid;
         }
         catch (const std::exception &e)
         {
             log_error("Failed to deserialize grid: " + std::string(e.what()));
+
             return std::nullopt;
         }
     }

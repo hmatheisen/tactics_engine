@@ -4,9 +4,21 @@
 #include <Tactics/Core/Cursor.hpp>
 #include <Tactics/Core/InputManager.hpp>
 #include <Tactics/Core/Vector2.hpp>
+#include <functional>
 
 namespace Tactics
 {
+
+    struct KeyState
+    {
+        bool pressed = false;
+        bool just_pressed = false;
+        bool just_released = false;
+        float repeat_timer = 0.0F;
+        SDL_Scancode scancode;
+        std::function<void(Cursor &cursor)> on_press;
+    };
+
     class CursorController
     {
     public:
@@ -22,19 +34,20 @@ namespace Tactics
         auto operator=(CursorController &&) -> CursorController & = delete;
 
         // Update cursor based on input
-        void update(InputManager &input, Cursor &cursor, const Vector2i &grid_size,
+        void update(const InputManager &input, Cursor &cursor, const Vector2i &grid_size,
                     float delta_time);
 
-        // Key repeat settings
-        void set_key_repeat_initial_delay(float initial_delay);
-        void set_key_repeat_rate(float repeat_rate);
-        [[nodiscard]] auto get_key_repeat_initial_delay() const -> float;
-        [[nodiscard]] auto get_key_repeat_rate() const -> float;
-
     private:
-        float m_key_repeat_timer;
-        bool m_any_movement_key_was_pressed;
-        float m_key_repeat_initial_delay;
-        float m_key_repeat_rate;
+        const float m_key_repeat_initial_delay;
+        const float m_key_repeat_rate;
+
+        KeyState m_key_up = {.scancode = SDL_SCANCODE_W,
+                             .on_press = [](Cursor &cursor) -> void { cursor.move_up(); }};
+        KeyState m_key_down = {.scancode = SDL_SCANCODE_S,
+                               .on_press = [](Cursor &cursor) -> void { cursor.move_down(); }};
+        KeyState m_key_left = {.scancode = SDL_SCANCODE_A,
+                               .on_press = [](Cursor &cursor) -> void { cursor.move_left(); }};
+        KeyState m_key_right = {.scancode = SDL_SCANCODE_D,
+                                .on_press = [](Cursor &cursor) -> void { cursor.move_right(); }};
     };
 } // namespace Tactics

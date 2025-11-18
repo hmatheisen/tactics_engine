@@ -67,6 +67,7 @@ namespace Tactics
         {
             return false;
         }
+
         return m_current_keys.at(static_cast<size_t>(index));
     }
 
@@ -77,6 +78,7 @@ namespace Tactics
         {
             return false;
         }
+
         const auto idx = static_cast<size_t>(index);
         return m_current_keys.at(idx) && !m_previous_keys.at(idx);
     }
@@ -88,6 +90,7 @@ namespace Tactics
         {
             return false;
         }
+
         const auto idx = static_cast<size_t>(index);
         return !m_current_keys.at(idx) && m_previous_keys.at(idx);
     }

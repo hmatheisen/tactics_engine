@@ -53,7 +53,7 @@ namespace Tactics
 
     private:
         // Maximum number of scancodes (SDL_NUM_SCANCODES is typically 512)
-        static constexpr int MAX_SCANCODES = 512;
+        static constexpr int MAX_SCANCODES = SDL_SCANCODE_COUNT;
 
         // Keyboard state
         std::array<bool, MAX_SCANCODES> m_current_keys;

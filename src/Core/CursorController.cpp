@@ -1,4 +1,6 @@
+#include "Tactics/Core/Logger.hpp"
 #include <Tactics/Core/CursorController.hpp>
+#include <string>
 
 namespace Tactics
 {
@@ -9,85 +11,63 @@ namespace Tactics
     } // namespace
 
     CursorController::CursorController()
-        : m_key_repeat_timer(0.0F), m_any_movement_key_was_pressed(false),
-          m_key_repeat_initial_delay(DEFAULT_KEY_REPEAT_INITIAL_DELAY),
+        : m_key_repeat_initial_delay(DEFAULT_KEY_REPEAT_INITIAL_DELAY),
           m_key_repeat_rate(DEFAULT_KEY_REPEAT_RATE)
     {}
 
-    void CursorController::update(InputManager &input, Cursor &cursor, const Vector2i &grid_size,
-                                  float delta_time)
+    void CursorController::update(const InputManager &input, Cursor &cursor,
+                                  const Vector2i &grid_size, float delta_time)
     {
-        // Handle input for cursor movement with key repeat
-        const bool key_up =
-            input.is_key_pressed(SDL_SCANCODE_W) || input.is_key_pressed(SDL_SCANCODE_UP);
-        const bool key_down =
-            input.is_key_pressed(SDL_SCANCODE_S) || input.is_key_pressed(SDL_SCANCODE_DOWN);
-        const bool key_left =
-            input.is_key_pressed(SDL_SCANCODE_A) || input.is_key_pressed(SDL_SCANCODE_LEFT);
-        const bool key_right =
-            input.is_key_pressed(SDL_SCANCODE_D) || input.is_key_pressed(SDL_SCANCODE_RIGHT);
+        std::array<KeyState *, 4> key_states = {&m_key_up, &m_key_down, &m_key_left, &m_key_right};
 
-        const bool any_movement_key_pressed = key_up || key_down || key_left || key_right;
-
-        // Update key repeat timer and return if no movement key was pressed
-        if (!any_movement_key_pressed)
+        for (auto *p_key_state : key_states)
         {
-            m_any_movement_key_was_pressed = false;
-            m_key_repeat_timer = 0.0F;
+            p_key_state->just_pressed = input.is_key_just_pressed(p_key_state->scancode);
+            p_key_state->pressed = input.is_key_pressed(p_key_state->scancode);
+            p_key_state->just_released = input.is_key_just_released(p_key_state->scancode);
 
-            return;
+            if (p_key_state->just_released)
+            {
+                p_key_state->repeat_timer = 0.0F;
+            }
         }
 
-        if (!m_any_movement_key_was_pressed || m_key_repeat_timer <= 0.0F)
+        const bool any_key_just_pressed = m_key_up.just_pressed || m_key_down.just_pressed ||
+                                          m_key_left.just_pressed || m_key_right.just_pressed;
+        // Handle initial press
+        if (any_key_just_pressed)
         {
-            // Process movement based on which keys are pressed
-            if (key_up)
+            for (auto *p_key_state : key_states)
             {
-                cursor.move_up();
-            }
-            if (key_down)
-            {
-                cursor.move_down();
-            }
-            if (key_left)
-            {
-                cursor.move_left();
-            }
-            if (key_right)
-            {
-                cursor.move_right();
+                if (p_key_state->just_pressed)
+                {
+                    log_info("Key " + std::to_string(p_key_state->scancode) + " just pressed");
+
+                    p_key_state->on_press(cursor);
+                    p_key_state->repeat_timer = m_key_repeat_initial_delay;
+                }
             }
 
             cursor.clamp_to_grid(grid_size);
-
-            // Reset timer
-            m_key_repeat_timer =
-                m_any_movement_key_was_pressed ? m_key_repeat_rate : m_key_repeat_initial_delay;
-            m_any_movement_key_was_pressed = true;
+            return;
         }
-        else
+
+        // Handle key repeat
+        for (auto *p_key_state : key_states)
         {
-            m_key_repeat_timer -= delta_time;
+            if (p_key_state->pressed)
+            {
+                p_key_state->repeat_timer -= delta_time;
+
+                if (p_key_state->repeat_timer <= 0.0F)
+                {
+                    log_info("Key " + std::to_string(p_key_state->scancode) + " repeated");
+
+                    p_key_state->on_press(cursor);
+                    p_key_state->repeat_timer = m_key_repeat_rate;
+                }
+            }
         }
-    }
-
-    void CursorController::set_key_repeat_initial_delay(float initial_delay)
-    {
-        m_key_repeat_initial_delay = initial_delay;
-    }
-
-    void CursorController::set_key_repeat_rate(float repeat_rate)
-    {
-        m_key_repeat_rate = repeat_rate;
-    }
-
-    auto CursorController::get_key_repeat_initial_delay() const -> float
-    {
-        return m_key_repeat_initial_delay;
-    }
-
-    auto CursorController::get_key_repeat_rate() const -> float
-    {
-        return m_key_repeat_rate;
+        cursor.clamp_to_grid(grid_size);
     }
 } // namespace Tactics
