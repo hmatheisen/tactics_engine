@@ -10,7 +10,7 @@
 auto main() -> int
 {
     // Initialize logger
-    Tactics::Logger::instance().set_level(Tactics::LogLevel::Info);
+    Tactics::Logger::instance().set_level(Tactics::LogLevel::Debug);
     Tactics::Logger::instance().set_file_logging(true, "tactics.log");
 
     Tactics::log_info("=== Tactics Engine Starting ===");

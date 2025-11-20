@@ -1,3 +1,4 @@
+#include "SDL3/SDL_stdinc.h"
 #include <Tactics/Core/Cursor.hpp>
 #include <Tactics/Core/Rect.hpp>
 #include <algorithm>
@@ -20,7 +21,8 @@ namespace Tactics
 
     void Cursor::move(const Vector2i &offset)
     {
-        m_position += offset;
+        m_position.x += offset.x;
+        m_position.y -= offset.y;
     }
 
     void Cursor::move_up()
@@ -79,12 +81,13 @@ namespace Tactics
         }
 
         // Draw cursor highlight (semi-transparent overlay)
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 128); // White with 50% opacity
+        SDL_SetRenderDrawColor(renderer, SDL_MAX_UINT8, SDL_MAX_UINT8, SDL_MAX_UINT8,
+                               SDL_MAX_UINT8 / 2); // White with 50% opacity
         SDL_FRect sdl_rect = {screen_rect.x, screen_rect.y, screen_rect.width, screen_rect.height};
         SDL_RenderFillRect(renderer, &sdl_rect);
 
         // Draw yellow border
-        SDL_SetRenderDrawColor(renderer, 255, 255, 0, SDL_MAX_UINT8); // Yellow
+        SDL_SetRenderDrawColor(renderer, SDL_MAX_UINT8, SDL_MAX_UINT8, 0, SDL_MAX_UINT8); // Yellow
         SDL_RenderRect(renderer, &sdl_rect);
 
         return true;

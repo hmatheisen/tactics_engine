@@ -4,19 +4,17 @@
 #include <Tactics/Core/Cursor.hpp>
 #include <Tactics/Core/InputManager.hpp>
 #include <Tactics/Core/Vector2.hpp>
-#include <functional>
+#include <cstddef>
 
 namespace Tactics
 {
-
     struct KeyState
     {
         bool pressed = false;
         bool just_pressed = false;
         bool just_released = false;
-        float repeat_timer = 0.0F;
+
         SDL_Scancode scancode;
-        std::function<void(Cursor &cursor)> on_press;
     };
 
     class CursorController
@@ -41,13 +39,11 @@ namespace Tactics
         const float m_key_repeat_initial_delay;
         const float m_key_repeat_rate;
 
-        KeyState m_key_up = {.scancode = SDL_SCANCODE_W,
-                             .on_press = [](Cursor &cursor) -> void { cursor.move_up(); }};
-        KeyState m_key_down = {.scancode = SDL_SCANCODE_S,
-                               .on_press = [](Cursor &cursor) -> void { cursor.move_down(); }};
-        KeyState m_key_left = {.scancode = SDL_SCANCODE_A,
-                               .on_press = [](Cursor &cursor) -> void { cursor.move_left(); }};
-        KeyState m_key_right = {.scancode = SDL_SCANCODE_D,
-                                .on_press = [](Cursor &cursor) -> void { cursor.move_right(); }};
+        float m_movement_repeat_timer = 0.0F;
+
+        KeyState m_key_up = {.scancode = SDL_SCANCODE_W};
+        KeyState m_key_down = {.scancode = SDL_SCANCODE_S};
+        KeyState m_key_left = {.scancode = SDL_SCANCODE_A};
+        KeyState m_key_right = {.scancode = SDL_SCANCODE_D};
     };
 } // namespace Tactics
