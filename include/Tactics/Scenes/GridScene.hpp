@@ -6,6 +6,7 @@
 #include <Tactics/Core/Cursor.hpp>
 #include <Tactics/Core/CursorController.hpp>
 #include <Tactics/Core/Grid.hpp>
+#include <Tactics/Core/IGridRepository.hpp>
 #include <Tactics/Core/Scene.hpp>
 #include <string>
 
@@ -14,8 +15,7 @@ namespace Tactics
     class GridScene : public Scene
     {
     public:
-        GridScene();
-        explicit GridScene(std::string &&map_path);
+        explicit GridScene(IGridRepository *repository, const std::string &map_name = "default");
         ~GridScene() override = default;
 
         // Delete copy constructor and assignment operator
@@ -40,7 +40,8 @@ namespace Tactics
         CameraController m_camera_controller;
         CursorController m_cursor_controller;
 
-        std::string m_map_path;
+        IGridRepository *m_repository;
+        std::string m_map_name;
         bool m_running;
 
         static constexpr float TILE_SIZE = 32.0F;

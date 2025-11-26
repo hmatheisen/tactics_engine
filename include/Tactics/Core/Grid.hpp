@@ -40,6 +40,9 @@ namespace Tactics
         // Set tile at position
         void set_tile(const Vector2i &position, const Tile &tile);
 
+        // Resize grid to specified dimensions (initializes all tiles to default)
+        void resize(int width, int height);
+
         // Save grid to file using Boost serialization
         [[nodiscard]] auto save_to_file(const std::string &file_path) const -> bool;
 

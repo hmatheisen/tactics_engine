@@ -41,29 +41,44 @@ set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 find_package(Boost REQUIRED CONFIG COMPONENTS serialization)
 
+# SQLite3 is required
+# Install with: brew install sqlite3
+find_package(SQLite3 REQUIRED)
+
+# Core library (shared between main executable and tests)
+set(CORE_SOURCES
+  src/Core/Tile.cpp
+  src/Core/Grid.cpp
+  src/Core/Logger.cpp
+  src/Core/Camera.cpp
+  src/Core/SQLiteGridRepository.cpp
+)
+
+add_library(tactics_core ${CORE_SOURCES})
+target_include_directories(tactics_core PUBLIC include)
+target_link_libraries(tactics_core PUBLIC Boost::serialization SQLite::SQLite3 SDL3::SDL3)
+
+# Main executable
 set(TACTICS_SOURCES
   src/main.cpp
   src/Core/Engine.cpp
   src/Core/Texture.cpp
   src/Core/Sprite.cpp
-  src/Core/Tile.cpp
-  src/Core/Grid.cpp
-  src/Core/Logger.cpp
   src/Core/EventBus.cpp
   src/Core/CursorEvents.cpp
   src/Core/InputManager.cpp
-  src/Core/Camera.cpp
   src/Core/Cursor.cpp
   src/Core/SceneManager.cpp
   src/Core/CameraController.cpp
   src/Core/CursorController.cpp
   src/Core/TimeManager.cpp
-  src/Scenes/GridScene.cpp)
+  src/Scenes/GridScene.cpp
+)
 
 add_executable(tactics ${TACTICS_SOURCES})
 
 target_include_directories(tactics PRIVATE include)
-target_link_libraries(tactics PRIVATE SDL3::SDL3 Boost::serialization)
+target_link_libraries(tactics PRIVATE tactics_core SDL3::SDL3)
 
 # Tests
 enable_testing()
@@ -71,12 +86,13 @@ enable_testing()
 set(TEST_SOURCES
   tests/Core/Vector2Test.cpp
   tests/Core/RectTest.cpp
+  tests/Core/GridRepositoryTest.cpp
 )
 
 add_executable(tactics_tests ${TEST_SOURCES})
 
 target_include_directories(tactics_tests PRIVATE include)
-target_link_libraries(tactics_tests PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(tactics_tests PRIVATE tactics_core Catch2::Catch2WithMain)
 
 include(CTest)
 include(Catch)

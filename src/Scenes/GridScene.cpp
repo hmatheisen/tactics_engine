@@ -5,20 +5,25 @@
 
 namespace Tactics
 {
-    GridScene::GridScene() : m_map_path("map.bin"), m_running(true) {}
-
-    GridScene::GridScene(std::string &&map_path) : m_map_path(std::move(map_path)), m_running(true)
+    GridScene::GridScene(IGridRepository *repository, const std::string &map_name)
+        : m_repository(repository), m_map_name(map_name), m_running(true)
     {}
 
     auto GridScene::on_enter() -> bool
     {
         log_info("Entering GridScene");
 
-        // Load grid from Boost serialization file
-        auto grid_opt = Grid::load_from_file(m_map_path);
+        if (m_repository == nullptr)
+        {
+            log_error("Repository is null");
+            return false;
+        }
+
+        // Load grid from repository
+        auto grid_opt = m_repository->load_map(m_map_name);
         if (!grid_opt.has_value())
         {
-            log_error("Failed to load grid from " + m_map_path);
+            log_error("Failed to load grid from repository: " + m_map_name);
             return false;
         }
         m_grid = std::move(grid_opt.value());

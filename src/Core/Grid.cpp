@@ -58,6 +58,33 @@ namespace Tactics
                   ", move_cost: " + std::to_string(tile.get_move_cost()));
     }
 
+    void Grid::resize(int width, int height)
+    {
+        if (width < 0 || height < 0)
+        {
+            log_warning("Attempted to resize grid to invalid dimensions: " + std::to_string(width) +
+                        "x" + std::to_string(height));
+            return;
+        }
+
+        m_width = width;
+        m_height = height;
+        m_tiles.clear();
+        m_tiles.resize(static_cast<size_t>(width) * static_cast<size_t>(height));
+
+        // Initialize all tiles with default values
+        for (int y = 0; y < height; ++y)
+        {
+            for (int x = 0; x < width; ++x)
+            {
+                const Vector2i position(x, y);
+                m_tiles[index_of(x, y)] = Tile(position, TileType::Grass, 1);
+            }
+        }
+
+        log_debug("Grid resized to: " + std::to_string(width) + "x" + std::to_string(height));
+    }
+
     auto Grid::save_to_file(const std::string &file_path) const -> bool
     {
         log_info("Saving grid to file: " + file_path);
