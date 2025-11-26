@@ -1,5 +1,6 @@
 #include <SDL3/SDL.h>
 #include <Tactics/Core/Engine.hpp>
+#include <Tactics/Core/InputManager.hpp>
 #include <Tactics/Core/Logger.hpp>
 #include <Tactics/Core/SceneManager.hpp>
 #include <Tactics/Core/TimeManager.hpp>
@@ -33,9 +34,28 @@ auto main() -> int
     constexpr float TARGET_FPS = 60.0F;
     time_manager.set_target_fps(TARGET_FPS);
 
+    bool running = true;
+
     // Main game loop
-    while (scene_manager.is_running())
+    while (running && scene_manager.is_running())
     {
+        // Process SDL events once per frame and feed them to the input system
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            // Global quit handling
+            if (event.type == SDL_EVENT_QUIT)
+            {
+                running = false;
+            }
+
+            // Dispatch event to input manager (mouse wheel, etc.)
+            Tactics::InputManager::instance().process_event(event);
+        }
+
+        // Update input snapshot for this frame
+        Tactics::InputManager::instance().update();
+
         // Update timing and get delta time
         time_manager.update();
 

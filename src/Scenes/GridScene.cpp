@@ -62,21 +62,6 @@ namespace Tactics
     {
         auto &input = InputManager::instance();
 
-        // Update input
-        input.update();
-
-        // Process events
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
-            input.process_event(event);
-
-            if (event.type == SDL_EVENT_QUIT)
-            {
-                m_running = false;
-            }
-        }
-
         // Update cursor controller
         const Vector2i grid_size(m_grid.get_width(), m_grid.get_height());
         m_cursor_controller.update(m_cursor, grid_size, delta_time);

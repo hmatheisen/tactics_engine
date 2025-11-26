@@ -45,32 +45,18 @@ namespace Tactics
         Engine(Engine &&) = delete;
         auto operator=(Engine &&) -> Engine & = delete;
 
-        // Initialize the engine
+        // Initialize SDL and create the main window/renderer.
+        // Returns true on success.
         auto initialize() -> bool;
 
-        // Run the main game loop
-        void run();
-
-        // Cleanup resources
+        // Cleanup SDL resources. Safe to call multiple times.
         void shutdown();
 
-        // Get the renderer (for rendering operations)
+        // Get the SDL renderer for rendering operations.
         [[nodiscard]] auto get_renderer() const -> SDL_Renderer *;
 
     private:
-        // Handle SDL events
-        void process_events();
-
-        // Update game logic
-        void update(float delta_time);
-
-        // Render the frame
-        void render();
-
         SDLWindowPtr m_window;
         SDLRendererPtr m_renderer;
-        bool m_running;
-        Uint64 m_performance_frequency;
-        Uint64 m_last_frame_time;
     };
 } // namespace Tactics
