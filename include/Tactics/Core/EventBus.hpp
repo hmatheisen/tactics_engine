@@ -22,27 +22,39 @@ namespace Tactics
 
         [[nodiscard]] static auto instance() -> EventBus &;
 
-        template <typename Event> using Handler = std::function<void(const Event &)>;
+        template <typename Event>
+        using Handler = std::function<void(const Event &)>;
 
         template <typename Event>
         [[nodiscard]] auto subscribe(Handler<Event> handler) -> std::size_t;
 
-        template <typename Event> void unsubscribe(std::size_t subscription_id);
+        template <typename Event>
+        void unsubscribe(std::size_t subscription_id);
 
-        template <typename Event> void publish(const Event &event);
+        template <typename Event>
+        void publish(const Event &event);
 
     private:
         struct IHandlerCollection
         {
+            IHandlerCollection() = default;
             virtual ~IHandlerCollection() = default;
+
+            IHandlerCollection(const IHandlerCollection &) = delete;
+            auto operator=(const IHandlerCollection &) -> IHandlerCollection & = delete;
+
+            IHandlerCollection(IHandlerCollection &&) = delete;
+            auto operator=(IHandlerCollection &&) -> IHandlerCollection & = delete;
         };
 
-        template <typename Event> struct HandlerCollection : IHandlerCollection
+        template <typename Event>
+        struct HandlerCollection : IHandlerCollection
         {
             std::unordered_map<std::size_t, Handler<Event>> handlers;
         };
 
-        template <typename Event> auto get_or_create_collection() -> HandlerCollection<Event> &;
+        template <typename Event>
+        auto get_or_create_collection() -> HandlerCollection<Event> &;
 
         std::unordered_map<std::type_index, std::unique_ptr<IHandlerCollection>> m_collections;
         std::size_t m_next_subscription_id{1U};
@@ -68,7 +80,8 @@ namespace Tactics
         return *static_cast<HandlerCollection<Event> *>(it_collection->second.get());
     }
 
-    template <typename Event> auto EventBus::subscribe(Handler<Event> handler) -> std::size_t
+    template <typename Event>
+    auto EventBus::subscribe(Handler<Event> handler) -> std::size_t
     {
         auto &collection = get_or_create_collection<Event>();
         const std::size_t subscription_id = m_next_subscription_id++;
@@ -76,7 +89,8 @@ namespace Tactics
         return subscription_id;
     }
 
-    template <typename Event> void EventBus::unsubscribe(std::size_t subscription_id)
+    template <typename Event>
+    void EventBus::unsubscribe(std::size_t subscription_id)
     {
         if (subscription_id == 0U)
         {
@@ -94,7 +108,8 @@ namespace Tactics
         collection->handlers.erase(subscription_id);
     }
 
-    template <typename Event> void EventBus::publish(const Event &event)
+    template <typename Event>
+    void EventBus::publish(const Event &event)
     {
         const std::type_index type_key(typeid(Event));
         const auto it_collection = m_collections.find(type_key);

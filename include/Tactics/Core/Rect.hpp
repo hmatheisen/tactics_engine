@@ -6,7 +6,8 @@
 
 namespace Tactics
 {
-    template <typename T> class Rect
+    template <typename T>
+    class Rect
     {
         static_assert(std::is_arithmetic_v<T>, "Rect requires an arithmetic type");
 

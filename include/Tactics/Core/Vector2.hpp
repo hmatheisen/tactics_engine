@@ -5,7 +5,8 @@
 
 namespace Tactics
 {
-    template <typename T> class Vector2
+    template <typename T>
+    class Vector2
     {
         static_assert(std::is_arithmetic_v<T>, "Vector2 requires an arithmetic type");
 
@@ -188,7 +189,8 @@ namespace Tactics
     };
 
     // Scalar multiplication from left side
-    template <typename T> auto operator*(T scalar, const Vector2<T> &vec) -> Vector2<T>
+    template <typename T>
+    auto operator*(T scalar, const Vector2<T> &vec) -> Vector2<T>
     {
         return vec * scalar;
     }

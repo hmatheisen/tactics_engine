@@ -5,6 +5,7 @@ AllowShortFunctionsOnASingleLine: Empty
 NamespaceIndentation: All
 ColumnLimit: 100
 BreakBeforeBraces: Custom
+AlwaysBreakTemplateDeclarations: true
 BraceWrapping:
   AfterCaseLabel: true
   AfterClass: true
