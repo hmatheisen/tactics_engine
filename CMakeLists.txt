@@ -49,6 +49,8 @@ set(TACTICS_SOURCES
   src/Core/Tile.cpp
   src/Core/Grid.cpp
   src/Core/Logger.cpp
+  src/Core/EventBus.cpp
+  src/Core/CursorEvents.cpp
   src/Core/InputManager.cpp
   src/Core/Camera.cpp
   src/Core/Cursor.cpp

@@ -1,4 +1,5 @@
 #include <Tactics/Core/CursorController.hpp>
+#include <Tactics/Core/CursorEvents.hpp>
 #include <Tactics/Core/InputManager.hpp>
 
 namespace Tactics
@@ -30,6 +31,8 @@ namespace Tactics
         update_key_state(m_key_left);
         update_key_state(m_key_right);
 
+        bool cursor_moved = false;
+
         const bool any_key_just_pressed = m_key_up.just_pressed || m_key_down.just_pressed ||
                                           m_key_left.just_pressed || m_key_right.just_pressed;
         // Handle first press of a key
@@ -40,24 +43,33 @@ namespace Tactics
             if (m_key_up.just_pressed)
             {
                 cursor.move_up();
+                cursor_moved = true;
             }
 
             if (m_key_down.just_pressed)
             {
                 cursor.move_down();
+                cursor_moved = true;
             }
 
             if (m_key_left.just_pressed)
             {
                 cursor.move_left();
+                cursor_moved = true;
             }
 
             if (m_key_right.just_pressed)
             {
                 cursor.move_right();
+                cursor_moved = true;
             }
 
-            cursor.clamp_to_grid(grid_size);
+            if (cursor_moved)
+            {
+                cursor.clamp_to_grid(grid_size);
+                CursorEvents::publish_moved(cursor.get_position());
+            }
+
             return;
         }
 
@@ -78,24 +90,32 @@ namespace Tactics
             if (m_key_up.pressed)
             {
                 cursor.move_up();
+                cursor_moved = true;
             }
 
             if (m_key_down.pressed)
             {
                 cursor.move_down();
+                cursor_moved = true;
             }
 
             if (m_key_left.pressed)
             {
                 cursor.move_left();
+                cursor_moved = true;
             }
 
             if (m_key_right.pressed)
             {
                 cursor.move_right();
+                cursor_moved = true;
             }
 
-            cursor.clamp_to_grid(grid_size);
+            if (cursor_moved)
+            {
+                cursor.clamp_to_grid(grid_size);
+                CursorEvents::publish_moved(cursor.get_position());
+            }
         }
     }
 } // namespace Tactics

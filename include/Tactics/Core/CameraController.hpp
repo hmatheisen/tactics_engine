@@ -1,7 +1,8 @@
 #pragma once
 
 #include <Tactics/Core/Camera.hpp>
-#include <Tactics/Core/Cursor.hpp>
+#include <Tactics/Core/Vector2.hpp>
+#include <cstddef>
 
 namespace Tactics
 {
@@ -9,7 +10,7 @@ namespace Tactics
     {
     public:
         CameraController();
-        ~CameraController() = default;
+        ~CameraController();
 
         // Delete copy constructor and assignment operator
         CameraController(const CameraController &) = delete;
@@ -20,7 +21,7 @@ namespace Tactics
         auto operator=(CameraController &&) -> CameraController & = delete;
 
         // Update camera based on cursor position (edge scrolling)
-        void update(Camera &camera, const Cursor &cursor, float tile_size) const;
+        void update(Camera &camera, float tile_size) const;
 
         // Edge scroll threshold accessors
         void set_edge_scroll_threshold(float threshold);
@@ -28,5 +29,7 @@ namespace Tactics
 
     private:
         float m_edge_scroll_threshold;
+        Vector2i m_cursor_tile_position;
+        std::size_t m_cursor_subscription_id{0U};
     };
 } // namespace Tactics

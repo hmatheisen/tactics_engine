@@ -1,4 +1,5 @@
 #include <Tactics/Core/CameraController.hpp>
+#include <Tactics/Core/CursorEvents.hpp>
 
 namespace Tactics
 {
@@ -7,14 +8,23 @@ namespace Tactics
         constexpr float DEFAULT_EDGE_SCROLL_THRESHOLD = 150.0F;
     } // namespace
 
-    CameraController::CameraController() : m_edge_scroll_threshold(DEFAULT_EDGE_SCROLL_THRESHOLD) {}
+    CameraController::CameraController() : m_edge_scroll_threshold(DEFAULT_EDGE_SCROLL_THRESHOLD)
+    {
+        m_cursor_subscription_id =
+            CursorEvents::subscribe_moved([this](const CursorMovedEvent &event) -> void
+                                          { m_cursor_tile_position = event.position; });
+    }
 
-    void CameraController::update(Camera &camera, const Cursor &cursor, float tile_size) const
+    CameraController::~CameraController()
+    {
+        CursorEvents::unsubscribe_moved(m_cursor_subscription_id);
+    }
+
+    void CameraController::update(Camera &camera, float tile_size) const
     {
         // Get cursor world position
-        const Vector2i cursor_pos = cursor.get_position();
-        const float cursor_world_x = static_cast<float>(cursor_pos.x) * tile_size;
-        const float cursor_world_y = static_cast<float>(cursor_pos.y) * tile_size;
+        const float cursor_world_x = static_cast<float>(m_cursor_tile_position.x) * tile_size;
+        const float cursor_world_y = static_cast<float>(m_cursor_tile_position.y) * tile_size;
 
         // Convert to screen coordinates
         const Vector2f cursor_screen_pos = camera.world_to_screen({cursor_world_x, cursor_world_y});

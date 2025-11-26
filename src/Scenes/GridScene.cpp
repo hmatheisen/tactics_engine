@@ -1,3 +1,4 @@
+#include <Tactics/Core/CursorEvents.hpp>
 #include <Tactics/Core/InputManager.hpp>
 #include <Tactics/Core/Logger.hpp>
 #include <Tactics/Scenes/GridScene.hpp>
@@ -27,6 +28,9 @@ namespace Tactics
 
         // Create cursor at center of grid
         m_cursor = Cursor({grid_width / 2, grid_height / 2});
+
+        // Publish initial cursor position so camera has correct state before updates
+        CursorEvents::publish_moved(m_cursor.get_position());
 
         // Create camera at center of grid (independent of cursor position)
         const float grid_center_x = (static_cast<float>(grid_width) * TILE_SIZE) * 0.5F;
@@ -94,7 +98,7 @@ namespace Tactics
         }
 
         // Update camera controller (edge scrolling)
-        m_camera_controller.update(m_camera, m_cursor, TILE_SIZE);
+        m_camera_controller.update(m_camera, TILE_SIZE);
     }
 
     namespace
