@@ -2,7 +2,6 @@
 
 #include <SDL3/SDL.h>
 #include <Tactics/Core/Cursor.hpp>
-#include <Tactics/Core/InputManager.hpp>
 #include <Tactics/Core/Vector2.hpp>
 #include <cstddef>
 
@@ -32,8 +31,7 @@ namespace Tactics
         auto operator=(CursorController &&) -> CursorController & = delete;
 
         // Update cursor based on input
-        void update(const InputManager &input, Cursor &cursor, const Vector2i &grid_size,
-                    float delta_time);
+        void update(Cursor &cursor, const Vector2i &grid_size, float delta_time);
 
     private:
         const float m_key_repeat_initial_delay;

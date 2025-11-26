@@ -10,7 +10,6 @@ namespace Tactics
     class InputManager
     {
     public:
-        InputManager();
         ~InputManager() = default;
 
         // Delete copy constructor and assignment operator
@@ -20,6 +19,9 @@ namespace Tactics
         // Delete move constructor and assignment operator
         InputManager(InputManager &&) = delete;
         auto operator=(InputManager &&) -> InputManager & = delete;
+
+        // Get singleton instance
+        static auto instance() -> InputManager &;
 
         // Update input state (call at the start of each frame)
         void update();
@@ -66,5 +68,8 @@ namespace Tactics
         std::uint32_t m_previous_mouse_buttons;
         Vector2f m_mouse_wheel_delta;
         Vector2f m_previous_mouse_wheel_delta;
+
+        // Private constructor for singleton
+        InputManager();
     };
 } // namespace Tactics

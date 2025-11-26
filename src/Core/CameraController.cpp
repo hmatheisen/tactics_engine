@@ -4,7 +4,7 @@ namespace Tactics
 {
     namespace
     {
-        constexpr float DEFAULT_EDGE_SCROLL_THRESHOLD = 100.0F;
+        constexpr float DEFAULT_EDGE_SCROLL_THRESHOLD = 150.0F;
     } // namespace
 
     CameraController::CameraController() : m_edge_scroll_threshold(DEFAULT_EDGE_SCROLL_THRESHOLD) {}

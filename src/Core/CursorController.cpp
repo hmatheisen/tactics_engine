@@ -1,14 +1,17 @@
 #include <Tactics/Core/CursorController.hpp>
+#include <Tactics/Core/InputManager.hpp>
 
 namespace Tactics
 {
     namespace
     {
-        constexpr float DEFAULT_KEY_REPEAT_INITIAL_DELAY = 0.3F; // Seconds before first repeat
-        constexpr float DEFAULT_KEY_REPEAT_RATE = 0.05F;         // Seconds between repeats
+        constexpr float DEFAULT_KEY_REPEAT_INITIAL_DELAY = 0.2F; // Seconds before first repeat
+        constexpr float DEFAULT_KEY_REPEAT_RATE = 0.04F;         // Seconds between repeats
 
-        void update_key_state(KeyState &key_state, const InputManager &input)
+        void update_key_state(KeyState &key_state)
         {
+            auto &input = InputManager::instance();
+
             key_state.just_pressed = input.is_key_just_pressed(key_state.scancode);
             key_state.pressed = input.is_key_pressed(key_state.scancode);
             key_state.just_released = input.is_key_just_released(key_state.scancode);
@@ -20,13 +23,12 @@ namespace Tactics
           m_key_repeat_rate(DEFAULT_KEY_REPEAT_RATE)
     {}
 
-    void CursorController::update(const InputManager &input, Cursor &cursor,
-                                  const Vector2i &grid_size, float delta_time)
+    void CursorController::update(Cursor &cursor, const Vector2i &grid_size, float delta_time)
     {
-        update_key_state(m_key_up, input);
-        update_key_state(m_key_down, input);
-        update_key_state(m_key_left, input);
-        update_key_state(m_key_right, input);
+        update_key_state(m_key_up);
+        update_key_state(m_key_down);
+        update_key_state(m_key_left);
+        update_key_state(m_key_right);
 
         const bool any_key_just_pressed = m_key_up.just_pressed || m_key_down.just_pressed ||
                                           m_key_left.just_pressed || m_key_right.just_pressed;

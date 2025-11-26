@@ -15,6 +15,12 @@ namespace Tactics
         m_previous_keys.fill(false);
     }
 
+    auto InputManager::instance() -> InputManager &
+    {
+        static InputManager s_instance;
+        return s_instance;
+    }
+
     void InputManager::update()
     {
         // Save previous frame state

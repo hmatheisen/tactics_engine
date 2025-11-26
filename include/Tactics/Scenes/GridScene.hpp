@@ -6,7 +6,6 @@
 #include <Tactics/Core/Cursor.hpp>
 #include <Tactics/Core/CursorController.hpp>
 #include <Tactics/Core/Grid.hpp>
-#include <Tactics/Core/InputManager.hpp>
 #include <Tactics/Core/Scene.hpp>
 #include <string>
 
@@ -38,7 +37,6 @@ namespace Tactics
         Grid m_grid;
         Camera m_camera;
         Cursor m_cursor;
-        InputManager m_input;
         CameraController m_camera_controller;
         CursorController m_cursor_controller;
 

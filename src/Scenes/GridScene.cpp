@@ -1,3 +1,4 @@
+#include <Tactics/Core/InputManager.hpp>
 #include <Tactics/Core/Logger.hpp>
 #include <Tactics/Scenes/GridScene.hpp>
 
@@ -55,14 +56,16 @@ namespace Tactics
     } // namespace
     void GridScene::update(float delta_time)
     {
+        auto &input = InputManager::instance();
+
         // Update input
-        m_input.update();
+        input.update();
 
         // Process events
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
-            m_input.process_event(event);
+            input.process_event(event);
 
             if (event.type == SDL_EVENT_QUIT)
             {
@@ -72,20 +75,20 @@ namespace Tactics
 
         // Update cursor controller
         const Vector2i grid_size(m_grid.get_width(), m_grid.get_height());
-        m_cursor_controller.update(m_input, m_cursor, grid_size, delta_time);
+        m_cursor_controller.update(m_cursor, grid_size, delta_time);
 
         // Handle zoom
-        if (m_input.is_key_just_pressed(SDL_SCANCODE_Q))
+        if (input.is_key_just_pressed(SDL_SCANCODE_Q))
         {
             m_camera.set_zoom(m_camera.get_zoom() * ZOOM_OUT_FACTOR); // Zoom out
         }
-        if (m_input.is_key_just_pressed(SDL_SCANCODE_E))
+        if (input.is_key_just_pressed(SDL_SCANCODE_E))
         {
             m_camera.set_zoom(m_camera.get_zoom() * ZOOM_IN_FACTOR); // Zoom in
         }
 
         // Handle escape to quit
-        if (m_input.is_key_just_pressed(SDL_SCANCODE_ESCAPE))
+        if (input.is_key_just_pressed(SDL_SCANCODE_ESCAPE))
         {
             m_running = false;
         }
