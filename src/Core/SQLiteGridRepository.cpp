@@ -311,13 +311,13 @@ namespace Tactics
 
         while (sqlite3_step(tiles_stmt) == SQLITE_ROW)
         {
-            const int x = sqlite3_column_int(tiles_stmt, 0);
-            const int y = sqlite3_column_int(tiles_stmt, 1);
+            const int x_pos = sqlite3_column_int(tiles_stmt, 0);
+            const int y_pos = sqlite3_column_int(tiles_stmt, 1);
             const int tile_type_int = sqlite3_column_int(tiles_stmt, 2);
             const int move_cost = sqlite3_column_int(tiles_stmt, 3);
 
             const auto tile_type = static_cast<TileType>(tile_type_int);
-            const Vector2i position(x, y);
+            const Vector2i position(x_pos, y_pos);
             const Tile tile(position, tile_type, move_cost);
 
             grid.set_tile(position, tile);
@@ -332,6 +332,12 @@ namespace Tactics
 
     auto SQLiteGridRepository::save_map(const std::string &map_name, const Grid &grid) -> bool
     {
+        constexpr int STMT_MAP_ID = 1;
+        constexpr int STMT_X_POS = 2;
+        constexpr int STMT_Y_POS = 3;
+        constexpr int STMT_TILE_TYPE = 4;
+        constexpr int STMT_TILE_MOVE_COST = 5;
+
         if (m_db == nullptr)
         {
             log_error("Database connection is null");
@@ -391,11 +397,11 @@ namespace Tactics
             return false;
         }
 
-        for (int y = 0; y < height; ++y)
+        for (int y_pos = 0; y_pos < height; ++y_pos)
         {
-            for (int x = 0; x < width; ++x)
+            for (int x_pos = 0; x_pos < width; ++x_pos)
             {
-                const Vector2i position(x, y);
+                const Vector2i position(x_pos, y_pos);
                 const Tile *tile = grid.get_tile(position);
 
                 if (tile == nullptr)
@@ -404,11 +410,11 @@ namespace Tactics
                 }
 
                 sqlite3_reset(insert_stmt);
-                sqlite3_bind_int(insert_stmt, 1, map_id.value());
-                sqlite3_bind_int(insert_stmt, 2, x);
-                sqlite3_bind_int(insert_stmt, 3, y);
-                sqlite3_bind_int(insert_stmt, 4, static_cast<int>(tile->get_type()));
-                sqlite3_bind_int(insert_stmt, 5, tile->get_move_cost());
+                sqlite3_bind_int(insert_stmt, STMT_MAP_ID, map_id.value());
+                sqlite3_bind_int(insert_stmt, STMT_X_POS, x_pos);
+                sqlite3_bind_int(insert_stmt, STMT_Y_POS, y_pos);
+                sqlite3_bind_int(insert_stmt, STMT_TILE_TYPE, static_cast<int>(tile->get_type()));
+                sqlite3_bind_int(insert_stmt, STMT_TILE_MOVE_COST, tile->get_move_cost());
 
                 if (sqlite3_step(insert_stmt) != SQLITE_DONE)
                 {
@@ -436,6 +442,13 @@ namespace Tactics
 
     auto SQLiteGridRepository::list_maps() -> std::vector<MapMetadata>
     {
+        constexpr int STMT_MAP_ID = 0;
+        constexpr int STMT_MAP_NAME = 1;
+        constexpr int STMT_MAP_WIDTH = 2;
+        constexpr int STMT_MAP_HEIGHT = 3;
+        constexpr int STMT_MAP_CREATED_AT = 4;
+        constexpr int STMT_MAP_UPDATED_AT = 5;
+
         std::vector<MapMetadata> maps;
 
         if (m_db == nullptr)
@@ -456,12 +469,18 @@ namespace Tactics
         while (sqlite3_step(stmt) == SQLITE_ROW)
         {
             MapMetadata metadata;
-            metadata.id = sqlite3_column_int(stmt, 0);
-            metadata.name = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
-            metadata.width = sqlite3_column_int(stmt, 2);
-            metadata.height = sqlite3_column_int(stmt, 3);
-            metadata.created_at = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4));
-            metadata.updated_at = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 5));
+
+            // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
+            metadata.id = sqlite3_column_int(stmt, STMT_MAP_ID);
+            metadata.name =
+                reinterpret_cast<const char *>(sqlite3_column_text(stmt, STMT_MAP_NAME));
+            metadata.width = sqlite3_column_int(stmt, STMT_MAP_WIDTH);
+            metadata.height = sqlite3_column_int(stmt, STMT_MAP_HEIGHT);
+            metadata.created_at =
+                reinterpret_cast<const char *>(sqlite3_column_text(stmt, STMT_MAP_CREATED_AT));
+            metadata.updated_at =
+                reinterpret_cast<const char *>(sqlite3_column_text(stmt, STMT_MAP_UPDATED_AT));
+            // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
 
             maps.push_back(metadata);
         }

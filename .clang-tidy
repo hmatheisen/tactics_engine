@@ -1,4 +1,4 @@
-Checks: -checks=*, readability-*, modernize-*, bugprone-*, performance-*, portability-*, clang-analyzer-*, cppcoreguidelines-*, google-*
+Checks: -checks=*, readability-*, modernize-*, bugprone-*, performance-*, portability-*, clang-analyzer-*, cppcoreguidelines-*, google-*, -portability-avoid-pragma-once
 HeaderFileExtensions:
   - hpp
 ImplementationFileExtensions:

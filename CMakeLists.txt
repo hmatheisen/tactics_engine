@@ -32,15 +32,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-# Boost serialization is required
-# Install with: brew install boost
-if(POLICY CMP0167)
-  cmake_policy(SET CMP0167 NEW)
-endif()
-set(Boost_USE_STATIC_LIBS OFF)
-set(Boost_USE_MULTITHREADED ON)
-find_package(Boost REQUIRED CONFIG COMPONENTS serialization)
-
 # SQLite3 is required
 # Install with: brew install sqlite3
 find_package(SQLite3 REQUIRED)
@@ -56,7 +47,7 @@ set(CORE_SOURCES
 
 add_library(tactics_core ${CORE_SOURCES})
 target_include_directories(tactics_core PUBLIC include)
-target_link_libraries(tactics_core PUBLIC Boost::serialization SQLite::SQLite3 SDL3::SDL3)
+target_link_libraries(tactics_core PUBLIC SQLite::SQLite3 SDL3::SDL3)
 
 # Main executable
 set(TACTICS_SOURCES
