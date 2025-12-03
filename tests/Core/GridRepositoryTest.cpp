@@ -23,8 +23,8 @@ TEST_CASE("SQLiteGridRepository - Save and Load Map", "[GridRepository]")
             for (int x = 0; x < 10; ++x)
             {
                 Tactics::Vector2i pos(x, y);
-                Tactics::TileType type =
-                    (x + y) % 2 == 0 ? Tactics::TileType::Grass : Tactics::TileType::Water;
+                Tactics::Tile::Type type =
+                    (x + y) % 2 == 0 ? Tactics::Tile::Type::Grass : Tactics::Tile::Type::Water;
                 Tactics::Tile tile(pos, type, 1);
                 grid.set_tile(pos, tile);
             }
@@ -155,7 +155,7 @@ TEST_CASE("SQLiteGridRepository - Large Map Performance", "[GridRepository][Perf
             for (int x = 0; x < 256; ++x)
             {
                 Tactics::Vector2i pos(x, y);
-                Tactics::TileType type = static_cast<Tactics::TileType>((x + y) % 7);
+                Tactics::Tile::Type type = static_cast<Tactics::Tile::Type>((x + y) % 7);
                 Tactics::Tile tile(pos, type, (x + y) % 5);
                 grid.set_tile(pos, tile);
             }

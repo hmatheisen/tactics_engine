@@ -5,30 +5,30 @@
 
 namespace Tactics
 {
-    enum class TileType : std::uint8_t
-    {
-        Grass,
-        Water,
-        Mountain,
-        Forest,
-        Desert,
-        Road,
-        Wall
-    };
-
     class Tile
     {
     public:
+        enum class Type : std::uint8_t
+        {
+            Grass,
+            Water,
+            Mountain,
+            Forest,
+            Desert,
+            Road,
+            Wall
+        };
+
         Tile();
-        Tile(Vector2i position, TileType type, int move_cost);
+        Tile(Vector2i position, Type type, int move_cost);
 
         // Position accessors
         [[nodiscard]] auto get_position() const -> Vector2i;
         void set_position(const Vector2i &position);
 
         // Type accessors
-        [[nodiscard]] auto get_type() const -> TileType;
-        void set_type(TileType type);
+        [[nodiscard]] auto get_type() const -> Type;
+        void set_type(Type type);
 
         // Move cost accessors
         [[nodiscard]] auto get_move_cost() const -> int;
@@ -39,7 +39,7 @@ namespace Tactics
 
     private:
         Vector2i m_position;
-        TileType m_type;
+        Type m_type;
         int m_move_cost;
     };
 } // namespace Tactics

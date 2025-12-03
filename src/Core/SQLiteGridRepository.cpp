@@ -316,7 +316,7 @@ namespace Tactics
             const int tile_type_int = sqlite3_column_int(tiles_stmt, 2);
             const int move_cost = sqlite3_column_int(tiles_stmt, 3);
 
-            const auto tile_type = static_cast<TileType>(tile_type_int);
+            const auto tile_type = static_cast<Tile::Type>(tile_type_int);
             const Vector2i position(x_pos, y_pos);
             const Tile tile(position, tile_type, move_cost);
 

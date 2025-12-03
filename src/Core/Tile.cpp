@@ -2,9 +2,9 @@
 
 namespace Tactics
 {
-    Tile::Tile() : m_position(0, 0), m_type(TileType::Grass), m_move_cost(1) {}
+    Tile::Tile() : m_position(0, 0), m_type(Tile::Type::Grass), m_move_cost(1) {}
 
-    Tile::Tile(Vector2i position, TileType type, int move_cost)
+    Tile::Tile(Vector2i position, Tile::Type type, int move_cost)
         : m_position(position), m_type(type), m_move_cost(move_cost)
     {}
 
@@ -18,12 +18,12 @@ namespace Tactics
         m_position = position;
     }
 
-    auto Tile::get_type() const -> TileType
+    auto Tile::get_type() const -> Tile::Type
     {
         return m_type;
     }
 
-    void Tile::set_type(TileType type)
+    void Tile::set_type(Tile::Type type)
     {
         m_type = type;
     }

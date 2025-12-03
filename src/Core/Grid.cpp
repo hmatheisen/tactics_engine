@@ -76,7 +76,7 @@ namespace Tactics
             for (int x_pos = 0; x_pos < width; ++x_pos)
             {
                 const Vector2i position(x_pos, y_pos);
-                m_tiles[index_of(x_pos, y_pos)] = Tile(position, TileType::Grass, 1);
+                m_tiles[index_of(x_pos, y_pos)] = Tile(position, Tile::Type::Grass, 1);
             }
         }
 
@@ -91,23 +91,23 @@ namespace Tactics
     namespace
     {
         // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
-        auto tile_type_to_color(TileType type) -> SDL_Color
+        auto tile_type_to_color(Tile::Type type) -> SDL_Color
         {
             switch (type)
             {
-            case TileType::Grass:
+            case Tile::Type::Grass:
                 return {34, 139, 34, 255}; // Green
-            case TileType::Water:
+            case Tile::Type::Water:
                 return {0, 119, 190, 255}; // Blue
-            case TileType::Mountain:
+            case Tile::Type::Mountain:
                 return {139, 137, 137, 255}; // Gray
-            case TileType::Forest:
+            case Tile::Type::Forest:
                 return {34, 100, 34, 255}; // Dark green
-            case TileType::Desert:
+            case Tile::Type::Desert:
                 return {238, 203, 173, 255}; // Beige
-            case TileType::Road:
+            case Tile::Type::Road:
                 return {105, 105, 105, 255}; // Dark gray
-            case TileType::Wall:
+            case Tile::Type::Wall:
                 return {64, 64, 64, 255}; // Very dark gray
             default:
                 return {128, 128, 128, 255}; // Gray

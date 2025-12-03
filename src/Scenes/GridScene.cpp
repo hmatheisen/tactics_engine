@@ -55,6 +55,11 @@ namespace Tactics
 
     void GridScene::on_exit()
     {
+        if (!m_repository->save_map(m_map_name, m_grid))
+        {
+            log_error("Failed to save map");
+        }
+
         log_info("Exiting GridScene");
     }
 
