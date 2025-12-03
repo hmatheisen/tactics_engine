@@ -1,12 +1,12 @@
-#include <Tactics/Core/CursorEvents.hpp>
-#include <Tactics/Core/InputManager.hpp>
-#include <Tactics/Core/Logger.hpp>
-#include <Tactics/Scenes/GridScene.hpp>
+#include "Tactics/Scenes/GridScene.hpp"
+#include "Tactics/Core/CursorEvents.hpp"
+#include "Tactics/Core/InputManager.hpp"
+#include "Tactics/Core/Logger.hpp"
 
 namespace Tactics
 {
-    GridScene::GridScene(IGridRepository *repository, const std::string &map_name)
-        : m_repository(repository), m_map_name(map_name), m_running(true)
+    GridScene::GridScene(IGridRepository *repository, std::string map_name)
+        : m_repository(repository), m_map_name(std::move(map_name)), m_running(true)
     {}
 
     auto GridScene::on_enter() -> bool
@@ -35,7 +35,7 @@ namespace Tactics
         m_cursor = Cursor({grid_width / 2, grid_height / 2});
 
         // Publish initial cursor position so camera has correct state before updates
-        publish(CursorEvents::Moved(m_cursor.get_position()));
+        publish(CursorEvents::Moved{m_cursor.get_position()});
 
         // Create camera at center of grid (independent of cursor position)
         const float grid_center_x = (static_cast<float>(grid_width) * TILE_SIZE) * 0.5F;

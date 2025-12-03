@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Tactics/Core/CursorEvents.hpp"
-#include <Tactics/Core/Camera.hpp>
-#include <Tactics/Core/Vector2.hpp>
+#include "Tactics/Core/Camera.hpp"
+#include "Tactics/Core/EventBus.hpp"
+#include "Tactics/Core/Vector2.hpp"
+
 #include <cstddef>
 
 namespace Tactics

@@ -1,14 +1,15 @@
 #pragma once
 
-#include "Tactics/Core/CursorEvents.hpp"
+#include "Tactics/Core/Camera.hpp"
+#include "Tactics/Core/CameraController.hpp"
+#include "Tactics/Core/Cursor.hpp"
+#include "Tactics/Core/CursorController.hpp"
+#include "Tactics/Core/EventBus.hpp"
+#include "Tactics/Core/Grid.hpp"
+#include "Tactics/Core/IGridRepository.hpp"
+#include "Tactics/Core/Scene.hpp"
+
 #include <SDL3/SDL.h>
-#include <Tactics/Core/Camera.hpp>
-#include <Tactics/Core/CameraController.hpp>
-#include <Tactics/Core/Cursor.hpp>
-#include <Tactics/Core/CursorController.hpp>
-#include <Tactics/Core/Grid.hpp>
-#include <Tactics/Core/IGridRepository.hpp>
-#include <Tactics/Core/Scene.hpp>
 #include <string>
 
 namespace Tactics
@@ -16,7 +17,7 @@ namespace Tactics
     class GridScene : public Scene, public Publisher
     {
     public:
-        explicit GridScene(IGridRepository *repository, const std::string &map_name = "default");
+        explicit GridScene(IGridRepository *repository, std::string map_name = "default");
         ~GridScene() override = default;
 
         // Delete copy constructor and assignment operator

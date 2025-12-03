@@ -1,6 +1,6 @@
-#include <Tactics/Core/Logger.hpp>
-#include <Tactics/Core/SQLiteGridRepository.hpp>
-#include <Tactics/Core/Tile.hpp>
+#include "Tactics/Core/SQLiteGridRepository.hpp"
+#include "Tactics/Core/Logger.hpp"
+#include "Tactics/Core/Tile.hpp"
 #include <cstring>
 
 namespace Tactics
@@ -220,35 +220,31 @@ namespace Tactics
             sqlite3_finalize(stmt);
             return existing_id;
         }
-        else
+
+        // Insert new map
+        const std::string insert_sql = "INSERT INTO maps (name, width, height) VALUES (?, ?, ?)";
+        sqlite3_stmt *stmt = nullptr;
+
+        if (sqlite3_prepare_v2(m_db, insert_sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK)
         {
-            // Insert new map
-            const std::string insert_sql =
-                "INSERT INTO maps (name, width, height) VALUES (?, ?, ?)";
-            sqlite3_stmt *stmt = nullptr;
-
-            if (sqlite3_prepare_v2(m_db, insert_sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK)
-            {
-                log_error("Failed to prepare insert statement: " +
-                          std::string(sqlite3_errmsg(m_db)));
-                return std::nullopt;
-            }
-
-            sqlite3_bind_text(stmt, 1, map_name.c_str(), -1, SQLITE_STATIC);
-            sqlite3_bind_int(stmt, 2, width);
-            sqlite3_bind_int(stmt, 3, height);
-
-            if (sqlite3_step(stmt) != SQLITE_DONE)
-            {
-                log_error("Failed to insert map metadata: " + std::string(sqlite3_errmsg(m_db)));
-                sqlite3_finalize(stmt);
-                return std::nullopt;
-            }
-
-            const int new_id = static_cast<int>(sqlite3_last_insert_rowid(m_db));
-            sqlite3_finalize(stmt);
-            return new_id;
+            log_error("Failed to prepare insert statement: " + std::string(sqlite3_errmsg(m_db)));
+            return std::nullopt;
         }
+
+        sqlite3_bind_text(stmt, 1, map_name.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_int(stmt, 2, width);
+        sqlite3_bind_int(stmt, 3, height);
+
+        if (sqlite3_step(stmt) != SQLITE_DONE)
+        {
+            log_error("Failed to insert map metadata: " + std::string(sqlite3_errmsg(m_db)));
+            sqlite3_finalize(stmt);
+            return std::nullopt;
+        }
+
+        const int new_id = static_cast<int>(sqlite3_last_insert_rowid(m_db));
+        sqlite3_finalize(stmt);
+        return new_id;
     }
 
     auto SQLiteGridRepository::load_map(const std::string &map_name) -> std::optional<Grid>
@@ -320,7 +316,7 @@ namespace Tactics
             const int tile_type_int = sqlite3_column_int(tiles_stmt, 2);
             const int move_cost = sqlite3_column_int(tiles_stmt, 3);
 
-            const TileType tile_type = static_cast<TileType>(tile_type_int);
+            const auto tile_type = static_cast<TileType>(tile_type_int);
             const Vector2i position(x, y);
             const Tile tile(position, tile_type, move_cost);
 

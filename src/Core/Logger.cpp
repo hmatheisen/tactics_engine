@@ -1,8 +1,9 @@
-#include <Tactics/Core/Logger.hpp>
+#include "Tactics/Core/Logger.hpp"
 #include <chrono>
 #include <ctime>
 #include <iomanip>
 #include <iostream>
+#include <mutex>
 #include <sstream>
 
 namespace Tactics
@@ -26,13 +27,13 @@ namespace Tactics
 
     void Logger::set_level(LogLevel level)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::scoped_lock<std::mutex> lock(m_mutex);
         m_level = level;
     }
 
     void Logger::set_file_logging(bool enabled, const std::string &file_path)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::scoped_lock<std::mutex> lock(m_mutex);
 
         if (m_log_file.is_open())
         {
@@ -91,7 +92,7 @@ namespace Tactics
 
     void Logger::log(LogLevel level, std::string_view message)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::scoped_lock<std::mutex> lock(m_mutex);
 
         std::string log_line = "[" + std::string(Logger::get_timestamp()) + "] [" +
                                std::string(Logger::level_to_string(level)) + "] " +

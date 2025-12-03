@@ -1,5 +1,5 @@
-#include <Tactics/Core/Logger.hpp>
-#include <Tactics/Core/Sprite.hpp>
+#include "Tactics/Core/Sprite.hpp"
+#include "Tactics/Core/Logger.hpp"
 
 namespace Tactics
 {

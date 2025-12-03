@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Tactics/Core/Camera.hpp"
+#include "Tactics/Core/Tile.hpp"
 #include <SDL3/SDL.h>
-#include <Tactics/Core/Camera.hpp>
-#include <Tactics/Core/Tile.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/vector.hpp>
 #include <optional>

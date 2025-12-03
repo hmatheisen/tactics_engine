@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Tactics/Core/Scene.hpp"
 #include <SDL3/SDL.h>
-#include <Tactics/Core/Scene.hpp>
 #include <memory>
 #include <stack>
 

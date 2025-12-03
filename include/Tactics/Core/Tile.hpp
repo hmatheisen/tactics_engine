@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Tactics/Core/Vector2.hpp>
+#include "Tactics/Core/Vector2.hpp"
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <cstdint>

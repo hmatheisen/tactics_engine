@@ -117,7 +117,7 @@ namespace Tactics
             return (x * x) + (y * y);
         }
 
-        auto length() const -> float
+        [[nodiscard]] auto length() const -> float
         {
             return std::sqrt(static_cast<float>(length_squared()));
         }

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Tactics/Core/Rect.hpp>
-#include <Tactics/Core/Vector2.hpp>
+#include "Tactics/Core/Rect.hpp"
+#include "Tactics/Core/Vector2.hpp"
 
 namespace Tactics
 {

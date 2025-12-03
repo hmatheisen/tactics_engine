@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Tactics/Core/Vector2.hpp>
+#include "Tactics/Core/Vector2.hpp"
 #include <algorithm>
 #include <type_traits>
 

@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Tactics/Core/Camera.hpp"
+#include "Tactics/Core/Vector2.hpp"
 #include <SDL3/SDL.h>
-#include <Tactics/Core/Camera.hpp>
-#include <Tactics/Core/Vector2.hpp>
 
 namespace Tactics
 {

@@ -1,5 +1,5 @@
-#include <Tactics/Core/CameraController.hpp>
-#include <Tactics/Core/CursorEvents.hpp>
+#include "Tactics/Core/CameraController.hpp"
+#include "Tactics/Core/CursorEvents.hpp"
 
 namespace Tactics
 {
@@ -10,9 +10,9 @@ namespace Tactics
 
     CameraController::CameraController()
         : m_edge_scroll_threshold(DEFAULT_EDGE_SCROLL_THRESHOLD),
-          m_cursor_subscription_id(
-              subscribe<CursorEvents::Moved>([this](const CursorEvents::Moved &event) -> void
-                                             { m_cursor_tile_position = event.position; }))
+          m_cursor_subscription_id(subscribe<CursorEvents::Moved, CursorEvents::MovedHandler>(
+              [this](const CursorEvents::Moved &event) -> void
+              { m_cursor_tile_position = event.position; }))
     {}
 
     CameraController::~CameraController()

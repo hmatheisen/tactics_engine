@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Tactics/Core/EventBus.hpp"
-#include <Tactics/Core/Vector2.hpp>
+#include "Tactics/Core/Vector2.hpp"
 #include <cstddef>
 #include <functional>
 

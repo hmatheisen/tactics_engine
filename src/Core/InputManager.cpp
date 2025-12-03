@@ -1,5 +1,5 @@
-#include <Tactics/Core/InputManager.hpp>
-#include <Tactics/Core/Logger.hpp>
+#include "Tactics/Core/InputManager.hpp"
+#include "Tactics/Core/Logger.hpp"
 #include <algorithm>
 
 namespace Tactics

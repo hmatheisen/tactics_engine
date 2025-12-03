@@ -1,6 +1,6 @@
+#include "Tactics/Core/Texture.hpp"
+#include "Tactics/Core/Logger.hpp"
 #include <SDL3/SDL_surface.h>
-#include <Tactics/Core/Logger.hpp>
-#include <Tactics/Core/Texture.hpp>
 
 namespace Tactics
 {

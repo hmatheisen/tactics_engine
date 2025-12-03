@@ -1,5 +1,5 @@
-#include <Tactics/Core/Logger.hpp>
-#include <Tactics/Core/SceneManager.hpp>
+#include "Tactics/Core/SceneManager.hpp"
+#include "Tactics/Core/Logger.hpp"
 
 namespace Tactics
 {

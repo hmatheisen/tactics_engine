@@ -1,6 +1,6 @@
+#include "Tactics/Core/Cursor.hpp"
 #include "SDL3/SDL_stdinc.h"
-#include <Tactics/Core/Cursor.hpp>
-#include <Tactics/Core/Rect.hpp>
+#include "Tactics/Core/Rect.hpp"
 #include <algorithm>
 
 namespace Tactics

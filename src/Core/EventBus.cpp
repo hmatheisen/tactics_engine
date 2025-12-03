@@ -1,4 +1,4 @@
-#include <Tactics/Core/EventBus.hpp>
+#include "Tactics/Core/EventBus.hpp"
 
 namespace Tactics
 {

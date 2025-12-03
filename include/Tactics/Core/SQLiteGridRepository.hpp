@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Tactics/Core/IGridRepository.hpp>
+#include "Tactics/Core/IGridRepository.hpp"
 #include <sqlite3.h>
 
 namespace Tactics

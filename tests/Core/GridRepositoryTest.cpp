@@ -1,6 +1,6 @@
-#include <Tactics/Core/Grid.hpp>
-#include <Tactics/Core/SQLiteGridRepository.hpp>
-#include <Tactics/Core/Tile.hpp>
+#include "Tactics/Core/Grid.hpp"
+#include "Tactics/Core/SQLiteGridRepository.hpp"
+#include "Tactics/Core/Tile.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <filesystem>
 
@@ -23,7 +23,8 @@ TEST_CASE("SQLiteGridRepository - Save and Load Map", "[GridRepository]")
             for (int x = 0; x < 10; ++x)
             {
                 Tactics::Vector2i pos(x, y);
-                Tactics::TileType type = (x + y) % 2 == 0 ? Tactics::TileType::Grass : Tactics::TileType::Water;
+                Tactics::TileType type =
+                    (x + y) % 2 == 0 ? Tactics::TileType::Grass : Tactics::TileType::Water;
                 Tactics::Tile tile(pos, type, 1);
                 grid.set_tile(pos, tile);
             }
@@ -188,4 +189,3 @@ TEST_CASE("SQLiteGridRepository - Large Map Performance", "[GridRepository][Perf
     // Cleanup
     std::filesystem::remove(test_db);
 }
-
