@@ -59,6 +59,33 @@ namespace Tactics
         std::unordered_map<std::type_index, std::unique_ptr<IHandlerCollection>> m_collections;
         std::size_t m_next_subscription_id{1U};
     };
+
+    class Subscriber
+    {
+    public:
+        template <typename Event, typename Handler>
+        [[nodiscard]] static auto subscribe(Handler handler) -> std::size_t
+        {
+            return EventBus::instance().subscribe<Event>(std::move(handler));
+        }
+
+        template <typename Event>
+        static void unsubscribe(std::size_t subscription_id)
+        {
+            EventBus::instance().unsubscribe<Event>(subscription_id);
+        }
+    };
+
+    class Publisher
+    {
+    public:
+        template <typename Event>
+        static void publish(const Event &event)
+        {
+            EventBus::instance().publish(event);
+        }
+    };
+
 } // namespace Tactics
 
 // Template implementation

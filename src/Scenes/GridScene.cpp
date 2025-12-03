@@ -35,7 +35,7 @@ namespace Tactics
         m_cursor = Cursor({grid_width / 2, grid_height / 2});
 
         // Publish initial cursor position so camera has correct state before updates
-        CursorEvents::publish_moved(m_cursor.get_position());
+        publish(CursorEvents::Moved(m_cursor.get_position()));
 
         // Create camera at center of grid (independent of cursor position)
         const float grid_center_x = (static_cast<float>(grid_width) * TILE_SIZE) * 0.5F;

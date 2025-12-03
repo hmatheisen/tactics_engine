@@ -65,7 +65,6 @@ set(TACTICS_SOURCES
   src/Core/Texture.cpp
   src/Core/Sprite.cpp
   src/Core/EventBus.cpp
-  src/Core/CursorEvents.cpp
   src/Core/InputManager.cpp
   src/Core/Cursor.cpp
   src/Core/SceneManager.cpp

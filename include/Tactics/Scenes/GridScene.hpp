@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Tactics/Core/CursorEvents.hpp"
 #include <SDL3/SDL.h>
 #include <Tactics/Core/Camera.hpp>
 #include <Tactics/Core/CameraController.hpp>
@@ -12,7 +13,7 @@
 
 namespace Tactics
 {
-    class GridScene : public Scene
+    class GridScene : public Scene, public Publisher
     {
     public:
         explicit GridScene(IGridRepository *repository, const std::string &map_name = "default");

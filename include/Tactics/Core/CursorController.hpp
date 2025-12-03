@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Tactics/Core/CursorEvents.hpp"
 #include <SDL3/SDL.h>
 #include <Tactics/Core/Cursor.hpp>
 #include <Tactics/Core/Vector2.hpp>
@@ -16,7 +17,7 @@ namespace Tactics
         SDL_Scancode scancode;
     };
 
-    class CursorController
+    class CursorController : public Publisher
     {
     public:
         CursorController();
