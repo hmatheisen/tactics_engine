@@ -60,6 +60,7 @@ namespace Tactics
         return *this;
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto SQLiteGridRepository::initialize_schema() -> bool
     {
         if (m_db == nullptr)
@@ -142,6 +143,7 @@ namespace Tactics
         return true;
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto SQLiteGridRepository::execute_statement(const std::string &sql) -> bool
     {
         if (m_db == nullptr)
@@ -163,6 +165,7 @@ namespace Tactics
         return true;
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto SQLiteGridRepository::get_map_id(const std::string &map_name) -> std::optional<int>
     {
         if (m_db == nullptr)
@@ -202,8 +205,9 @@ namespace Tactics
         return map_id;
     }
 
-    auto SQLiteGridRepository::upsert_map_metadata(const std::string &map_name, int width,
-                                                   int height) -> std::optional<int>
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
+    auto SQLiteGridRepository::upsert_map_metadata(const std::string &map_name, Vector2i size)
+        -> std::optional<int>
     {
         if (m_db == nullptr)
         {
@@ -228,8 +232,8 @@ namespace Tactics
                 return std::nullopt;
             }
 
-            sqlite3_bind_int(stmt, 1, width);
-            sqlite3_bind_int(stmt, 2, height);
+            sqlite3_bind_int(stmt, 1, size.x);
+            sqlite3_bind_int(stmt, 2, size.y);
             sqlite3_bind_int(stmt, 3, existing_id.value());
 
             if (sqlite3_step(stmt) != SQLITE_DONE)
@@ -254,8 +258,8 @@ namespace Tactics
         }
 
         sqlite3_bind_text(stmt, 1, map_name.c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_int(stmt, 2, width);
-        sqlite3_bind_int(stmt, 3, height);
+        sqlite3_bind_int(stmt, 2, size.x);
+        sqlite3_bind_int(stmt, 3, size.y);
 
         if (sqlite3_step(stmt) != SQLITE_DONE)
         {
@@ -269,6 +273,7 @@ namespace Tactics
         return new_id;
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto SQLiteGridRepository::load_map(const std::string &map_name) -> std::optional<Grid>
     {
         if (m_db == nullptr)
@@ -352,6 +357,7 @@ namespace Tactics
         return grid;
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto SQLiteGridRepository::save_map(const std::string &map_name, const Grid &grid) -> bool
     {
         constexpr int STMT_MAP_ID = 1;
@@ -368,9 +374,10 @@ namespace Tactics
 
         const int width = grid.get_width();
         const int height = grid.get_height();
+        const Vector2i map_size(width, height);
 
         // Upsert map metadata
-        const auto map_id = upsert_map_metadata(map_name, width, height);
+        const auto map_id = upsert_map_metadata(map_name, map_size);
         if (!map_id.has_value())
         {
             log_error("Failed to save map metadata");
@@ -462,6 +469,7 @@ namespace Tactics
         return true;
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto SQLiteGridRepository::list_maps() -> std::vector<MapMetadata>
     {
         constexpr int STMT_MAP_ID = 0;
@@ -516,6 +524,7 @@ namespace Tactics
         return get_map_id(map_name).has_value();
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto SQLiteGridRepository::delete_map(const std::string &map_name) -> bool
     {
         if (m_db == nullptr)
@@ -542,7 +551,8 @@ namespace Tactics
 
         sqlite3_bind_int(stmt, 1, map_id.value());
 
-        const bool success = sqlite3_step(stmt) == SQLITE_DONE;
+        bool success = false;
+        success = sqlite3_step(stmt) == SQLITE_DONE;
         if (!success)
         {
             log_error("Failed to delete map: " + std::string(sqlite3_errmsg(m_db)));
@@ -552,6 +562,7 @@ namespace Tactics
         return success;
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto SQLiteGridRepository::load_generator_config(const std::string &map_name)
         -> std::optional<GeneratorConfig>
     {
@@ -559,6 +570,17 @@ namespace Tactics
         {
             return std::nullopt;
         }
+
+        constexpr int COLUMN_WIDTH = 0;
+        constexpr int COLUMN_HEIGHT = 1;
+        constexpr int COLUMN_SEED = 2;
+        constexpr int COLUMN_NOISE_SCALE = 3;
+        constexpr int COLUMN_NOISE_OCTAVES = 4;
+        constexpr int COLUMN_CA_ITERATIONS = 5;
+        constexpr int COLUMN_WATER_THRESHOLD = 6;
+        constexpr int COLUMN_GRASS_THRESHOLD = 7;
+        constexpr int COLUMN_FOREST_THRESHOLD = 8;
+        constexpr int COLUMN_MOUNTAIN_THRESHOLD = 9;
 
         const std::string sql = R"(
             SELECT m.width, m.height,
@@ -582,25 +604,24 @@ namespace Tactics
         std::optional<GeneratorConfig> config = std::nullopt;
         if (sqlite3_step(stmt) == SQLITE_ROW)
         {
-            const int seed_column = 2;
-            if (sqlite3_column_type(stmt, seed_column) != SQLITE_NULL)
+            if (sqlite3_column_type(stmt, COLUMN_SEED) != SQLITE_NULL)
             {
                 GeneratorConfig loaded_config{};
-                loaded_config.width = sqlite3_column_int(stmt, 0);
-                loaded_config.height = sqlite3_column_int(stmt, 1);
-                loaded_config.seed = sqlite3_column_int(stmt, 2);
+                loaded_config.width = sqlite3_column_int(stmt, COLUMN_WIDTH);
+                loaded_config.height = sqlite3_column_int(stmt, COLUMN_HEIGHT);
+                loaded_config.seed = sqlite3_column_int(stmt, COLUMN_SEED);
                 loaded_config.noise_scale =
-                    static_cast<float>(sqlite3_column_double(stmt, 3));
-                loaded_config.noise_octaves = sqlite3_column_int(stmt, 4);
-                loaded_config.ca_iterations = sqlite3_column_int(stmt, 5);
+                    static_cast<float>(sqlite3_column_double(stmt, COLUMN_NOISE_SCALE));
+                loaded_config.noise_octaves = sqlite3_column_int(stmt, COLUMN_NOISE_OCTAVES);
+                loaded_config.ca_iterations = sqlite3_column_int(stmt, COLUMN_CA_ITERATIONS);
                 loaded_config.water_threshold =
-                    static_cast<float>(sqlite3_column_double(stmt, 6));
+                    static_cast<float>(sqlite3_column_double(stmt, COLUMN_WATER_THRESHOLD));
                 loaded_config.grass_threshold =
-                    static_cast<float>(sqlite3_column_double(stmt, 7));
+                    static_cast<float>(sqlite3_column_double(stmt, COLUMN_GRASS_THRESHOLD));
                 loaded_config.forest_threshold =
-                    static_cast<float>(sqlite3_column_double(stmt, 8));
+                    static_cast<float>(sqlite3_column_double(stmt, COLUMN_FOREST_THRESHOLD));
                 loaded_config.mountain_threshold =
-                    static_cast<float>(sqlite3_column_double(stmt, 9));
+                    static_cast<float>(sqlite3_column_double(stmt, COLUMN_MOUNTAIN_THRESHOLD));
 
                 config = loaded_config;
             }
@@ -610,6 +631,7 @@ namespace Tactics
         return config;
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto SQLiteGridRepository::save_generator_config(const std::string &map_name,
                                                      const GeneratorConfig &config) -> bool
     {
@@ -642,17 +664,32 @@ namespace Tactics
             return false;
         }
 
-        sqlite3_bind_text(stmt, 1, map_name.c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_int(stmt, 2, config.seed);
-        sqlite3_bind_double(stmt, 3, static_cast<double>(config.noise_scale));
-        sqlite3_bind_int(stmt, 4, config.noise_octaves);
-        sqlite3_bind_int(stmt, 5, config.ca_iterations);
-        sqlite3_bind_double(stmt, 6, static_cast<double>(config.water_threshold));
-        sqlite3_bind_double(stmt, 7, static_cast<double>(config.grass_threshold));
-        sqlite3_bind_double(stmt, 8, static_cast<double>(config.forest_threshold));
-        sqlite3_bind_double(stmt, 9, static_cast<double>(config.mountain_threshold));
+        constexpr int STMT_MAP_NAME = 1;
+        constexpr int STMT_SEED = 2;
+        constexpr int STMT_NOISE_SCALE = 3;
+        constexpr int STMT_NOISE_OCTAVES = 4;
+        constexpr int STMT_CA_ITERATIONS = 5;
+        constexpr int STMT_WATER_THRESHOLD = 6;
+        constexpr int STMT_GRASS_THRESHOLD = 7;
+        constexpr int STMT_FOREST_THRESHOLD = 8;
+        constexpr int STMT_MOUNTAIN_THRESHOLD = 9;
 
-        const bool success = sqlite3_step(stmt) == SQLITE_DONE;
+        sqlite3_bind_text(stmt, STMT_MAP_NAME, map_name.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_int(stmt, STMT_SEED, config.seed);
+        sqlite3_bind_double(stmt, STMT_NOISE_SCALE, static_cast<double>(config.noise_scale));
+        sqlite3_bind_int(stmt, STMT_NOISE_OCTAVES, config.noise_octaves);
+        sqlite3_bind_int(stmt, STMT_CA_ITERATIONS, config.ca_iterations);
+        sqlite3_bind_double(stmt, STMT_WATER_THRESHOLD,
+                            static_cast<double>(config.water_threshold));
+        sqlite3_bind_double(stmt, STMT_GRASS_THRESHOLD,
+                            static_cast<double>(config.grass_threshold));
+        sqlite3_bind_double(stmt, STMT_FOREST_THRESHOLD,
+                            static_cast<double>(config.forest_threshold));
+        sqlite3_bind_double(stmt, STMT_MOUNTAIN_THRESHOLD,
+                            static_cast<double>(config.mountain_threshold));
+
+        bool success = false;
+        success = sqlite3_step(stmt) == SQLITE_DONE;
         if (!success)
         {
             log_error("Failed to save generator config: " + std::string(sqlite3_errmsg(m_db)));

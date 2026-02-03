@@ -29,8 +29,11 @@ namespace Tactics
         }
         m_grid = std::move(grid_opt.value());
 
-        const int grid_width = m_grid.get_width();
-        const int grid_height = m_grid.get_height();
+        int grid_width = 0;
+        int grid_height = 0;
+
+        grid_width = m_grid.get_width();
+        grid_height = m_grid.get_height();
 
         // Create cursor at center of grid
         m_cursor = Cursor({grid_width / 2, grid_height / 2});
@@ -111,8 +114,11 @@ namespace Tactics
                 log_error("Failed to save generator config");
             }
 
-            const int grid_width = m_grid.get_width();
-            const int grid_height = m_grid.get_height();
+            int grid_width = 0;
+            int grid_height = 0;
+
+            grid_width = m_grid.get_width();
+            grid_height = m_grid.get_height();
             m_cursor.set_position({grid_width / 2, grid_height / 2});
             publish(CursorEvents::Moved{m_cursor.get_position()});
         }

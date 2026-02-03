@@ -90,10 +90,12 @@ namespace Tactics
         return level >= m_level;
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     void Logger::log(LogLevel level, std::string_view message)
     {
         std::scoped_lock<std::mutex> lock(m_mutex);
 
+        // NOLINTNEXTLINE(bugprone-unused-local-non-trivial-variable)
         std::string log_line = "[" + std::string(Logger::get_timestamp()) + "] [" +
                                std::string(Logger::level_to_string(level)) + "] " +
                                std::string(message) + "\n";

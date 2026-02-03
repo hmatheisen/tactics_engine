@@ -7,6 +7,7 @@
 #include <queue>
 #include <unordered_set>
 
+// NOLINTBEGIN(cppcoreguidelines-avoid-do-while,cppcoreguidelines-avoid-magic-numbers,readability-function-cognitive-complexity,readability-identifier-length,readability-magic-numbers)
 namespace
 {
     auto count_connected_tiles(const Tactics::Grid &grid, Tactics::Vector2i start) -> int
@@ -18,7 +19,7 @@ namespace
         std::queue<Tactics::Vector2i> to_visit;
 
         to_visit.push(start);
-        visited.insert(start.y * width + start.x);
+        visited.insert((start.y * width) + start.x);
 
         int count = 0;
 
@@ -41,7 +42,7 @@ namespace
                     continue;
                 }
 
-                const int hash = neighbor.y * width + neighbor.x;
+                const int hash = (neighbor.y * width) + neighbor.x;
                 if (visited.find(hash) != visited.end())
                 {
                     continue;
@@ -60,6 +61,7 @@ namespace
     }
 } // namespace
 
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
 TEST_CASE("MapGenerator - Basic Generation", "[MapGenerator]")
 {
     SECTION("Generated map has correct dimensions")
@@ -130,6 +132,7 @@ TEST_CASE("MapGenerator - Basic Generation", "[MapGenerator]")
     }
 }
 
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
 TEST_CASE("MapGenerator - Determinism", "[MapGenerator]")
 {
     SECTION("Same seed produces identical maps")
@@ -233,3 +236,5 @@ TEST_CASE("MapGenerator - Connectivity", "[MapGenerator]")
     const int connected_count = count_connected_tiles(grid, first_walkable);
     REQUIRE(connected_count == total_walkable);
 }
+
+// NOLINTEND(cppcoreguidelines-avoid-do-while,cppcoreguidelines-avoid-magic-numbers,readability-function-cognitive-complexity,readability-identifier-length,readability-magic-numbers)

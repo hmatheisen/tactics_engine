@@ -5,6 +5,7 @@ namespace Tactics
 {
     SceneManager::SceneManager() = default;
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     void SceneManager::push_scene(std::unique_ptr<Scene> scene)
     {
         if (scene == nullptr)
@@ -30,6 +31,7 @@ namespace Tactics
         log_debug("Scene pushed, total scenes: " + std::to_string(m_scene_stack.size()));
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     void SceneManager::pop_scene()
     {
         if (m_scene_stack.empty())
@@ -50,6 +52,7 @@ namespace Tactics
         log_debug("Scene popped, remaining scenes: " + std::to_string(m_scene_stack.size()));
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     void SceneManager::change_scene(std::unique_ptr<Scene> scene)
     {
         if (scene == nullptr)
@@ -83,7 +86,8 @@ namespace Tactics
             return;
         }
 
-        Scene *current_scene = m_scene_stack.top().get();
+        Scene *current_scene = nullptr;
+        current_scene = m_scene_stack.top().get();
         if (current_scene == nullptr)
         {
             return;
@@ -98,6 +102,7 @@ namespace Tactics
         }
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     void SceneManager::render(SDL_Renderer *renderer)
     {
         if (m_scene_stack.empty() || renderer == nullptr)
@@ -105,7 +110,8 @@ namespace Tactics
             return;
         }
 
-        Scene *current_scene = m_scene_stack.top().get();
+        Scene *current_scene = nullptr;
+        current_scene = m_scene_stack.top().get();
         if (current_scene == nullptr)
         {
             return;

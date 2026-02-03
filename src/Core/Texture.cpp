@@ -60,6 +60,7 @@ namespace Tactics
         return texture;
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto Texture::load_from_file(SDL_Renderer *renderer, const std::string &file_path) -> Texture
     {
         log_info("Loading texture from file: " + file_path);
@@ -299,6 +300,7 @@ namespace Tactics
         return SDL_RenderTexture(renderer, m_texture, nullptr, &sdl_rect);
     }
 
+    // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
     auto Texture::render(SDL_Renderer *renderer, const Rectf &src_rect, const Rectf &dst_rect) const
         -> bool
     {
@@ -322,6 +324,7 @@ namespace Tactics
         return SDL_RenderTexture(renderer, m_texture, nullptr, &dst_rect);
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto Texture::render(SDL_Renderer *renderer, const Vector2f &position) const -> bool
     {
         return render(renderer, position.x, position.y);

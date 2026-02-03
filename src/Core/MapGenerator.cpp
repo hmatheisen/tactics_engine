@@ -9,6 +9,39 @@
 #include <random>
 #include <unordered_set>
 
+namespace
+{
+    constexpr float k_octave_persistence = 0.5F;
+    constexpr float k_octave_lacunarity = 2.0F;
+    constexpr float k_heightmap_min = 0.0F;
+    constexpr float k_heightmap_max = 1.0F;
+    constexpr float k_min_amplitude = 0.0001F;
+    constexpr float k_selector_scale = 2.0F;
+    constexpr float k_selector_offset_x = 17.0F;
+    constexpr float k_selector_offset_y = 31.0F;
+    constexpr float k_selector_threshold = 0.5F;
+    constexpr float k_road_density = 0.03F;
+    constexpr float k_hash_normalizer = 16777215.0F;
+    constexpr float k_smoothstep_a = 3.0F;
+    constexpr float k_smoothstep_b = 2.0F;
+
+    constexpr int k_move_cost_walkable = 1;
+    constexpr int k_move_cost_slow = 2;
+    constexpr int k_move_cost_blocked = -1;
+    constexpr int k_min_road_count = 1;
+    constexpr int k_walkable_neighbor_threshold = 3;
+
+    constexpr uint32_t k_hash_prime_x = 374761393U;
+    constexpr uint32_t k_hash_prime_y = 668265263U;
+    constexpr uint32_t k_hash_seed_mix = 0x9E3779B9U;
+    constexpr uint32_t k_hash_shift_left = 6U;
+    constexpr uint32_t k_hash_shift_right = 2U;
+    constexpr uint32_t k_hash_xor_shift = 13U;
+    constexpr uint32_t k_hash_multiplier = 1274126177U;
+    constexpr uint32_t k_hash_final_shift = 16U;
+    constexpr uint32_t k_hash_mask = 0x00FFFFFFU;
+} // namespace
+
 namespace Tactics
 {
     MapGenerator::MapGenerator(const GeneratorConfig &config) : m_config(config) {}
@@ -38,25 +71,21 @@ namespace Tactics
                 const size_t idx = index_of(x_pos, y_pos);
                 const Tile::Type tile_type = tile_types[idx];
 
-                int move_cost = 1;
+                int move_cost = k_move_cost_walkable;
                 switch (tile_type)
                 {
                 case Tile::Type::Grass:
-                    move_cost = 1;
-                    break;
-                case Tile::Type::Forest:
-                    move_cost = 2;
+                case Tile::Type::Road:
+                    move_cost = k_move_cost_walkable;
                     break;
                 case Tile::Type::Desert:
-                    move_cost = 2;
-                    break;
-                case Tile::Type::Road:
-                    move_cost = 1;
+                case Tile::Type::Forest:
+                    move_cost = k_move_cost_slow;
                     break;
                 case Tile::Type::Water:
                 case Tile::Type::Mountain:
                 case Tile::Type::Wall:
-                    move_cost = -1;
+                    move_cost = k_move_cost_blocked;
                     break;
                 }
 
@@ -94,12 +123,13 @@ namespace Tactics
                     value += simple_noise(sample_x, sample_y) * amplitude;
                     max_amplitude += amplitude;
 
-                    amplitude *= 0.5F;
-                    frequency *= 2.0F;
+                    amplitude *= k_octave_persistence;
+                    frequency *= k_octave_lacunarity;
                 }
 
-                value = value / std::max(max_amplitude, 0.0001F);
-                heightmap[index_of(x_pos, y_pos)] = std::clamp(value, 0.0F, 1.0F);
+                value = value / std::max(max_amplitude, k_min_amplitude);
+                heightmap[index_of(x_pos, y_pos)] =
+                    std::clamp(value, k_heightmap_min, k_heightmap_max);
             }
         }
 
@@ -108,35 +138,39 @@ namespace Tactics
 
     auto MapGenerator::simple_noise(float x_pos, float y_pos) const -> float
     {
-        const int x0 = static_cast<int>(std::floor(x_pos));
-        const int y0 = static_cast<int>(std::floor(y_pos));
-        const int x1 = x0 + 1;
-        const int y1 = y0 + 1;
+        const int x_floor = static_cast<int>(std::floor(x_pos));
+        const int y_floor = static_cast<int>(std::floor(y_pos));
+        const int x_next = x_floor + 1;
+        const int y_next = y_floor + 1;
 
-        const float sx = x_pos - static_cast<float>(x0);
-        const float sy = y_pos - static_cast<float>(y0);
+        const float x_weight = x_pos - static_cast<float>(x_floor);
+        const float y_weight = y_pos - static_cast<float>(y_floor);
 
-        const float n00 = hash_noise(x0, y0);
-        const float n10 = hash_noise(x1, y0);
-        const float n01 = hash_noise(x0, y1);
-        const float n11 = hash_noise(x1, y1);
+        const float value_00 = hash_noise(x_floor, y_floor);
+        const float value_10 = hash_noise(x_next, y_floor);
+        const float value_01 = hash_noise(x_floor, y_next);
+        const float value_11 = hash_noise(x_next, y_next);
 
-        const auto smoothstep = [](float t) -> float { return t * t * (3.0F - 2.0F * t); };
-        const auto lerp = [](float a, float b, float t) -> float { return a + (b - a) * t; };
+        const auto smoothstep = [](float factor) -> float
+        { return factor * factor * (k_smoothstep_a - (k_smoothstep_b * factor)); };
+        const auto lerp = [](float value_start, float value_end, float factor) -> float
+        { return value_start + ((value_end - value_start) * factor); };
 
-        const float ix0 = lerp(n00, n10, smoothstep(sx));
-        const float ix1 = lerp(n01, n11, smoothstep(sx));
-        return lerp(ix0, ix1, smoothstep(sy));
+        const float interp_x0 = lerp(value_00, value_10, smoothstep(x_weight));
+        const float interp_x1 = lerp(value_01, value_11, smoothstep(x_weight));
+        return lerp(interp_x0, interp_x1, smoothstep(y_weight));
     }
 
     auto MapGenerator::hash_noise(int x_pos, int y_pos) const -> float
     {
-        uint32_t n = static_cast<uint32_t>(x_pos) * 374761393U +
-                     static_cast<uint32_t>(y_pos) * 668265263U;
-        n ^= static_cast<uint32_t>(m_config.seed) + 0x9E3779B9U + (n << 6U) + (n >> 2U);
-        n = (n ^ (n >> 13U)) * 1274126177U;
-        n ^= n >> 16U;
-        return static_cast<float>(n & 0x00FFFFFFU) / 16777215.0F;
+        uint32_t hash_value = (static_cast<uint32_t>(x_pos) * k_hash_prime_x) +
+                              (static_cast<uint32_t>(y_pos) * k_hash_prime_y);
+        hash_value ^= static_cast<uint32_t>(m_config.seed) + k_hash_seed_mix +
+                      (hash_value << k_hash_shift_left) + (hash_value >> k_hash_shift_right);
+        hash_value =
+            (hash_value ^ (hash_value >> k_hash_xor_shift)) * k_hash_multiplier;
+        hash_value ^= hash_value >> k_hash_final_shift;
+        return static_cast<float>(hash_value & k_hash_mask) / k_hash_normalizer;
     }
 
     auto MapGenerator::heightmap_to_tiles(const std::vector<float> &heightmap)
@@ -165,9 +199,11 @@ namespace Tactics
                 }
                 else if (height < m_config.mountain_threshold)
                 {
-                    const float selector = simple_noise(static_cast<float>(x_pos) * 2.0F + 17.0F,
-                                                       static_cast<float>(y_pos) * 2.0F + 31.0F);
-                    tiles[idx] = selector > 0.5F ? Tile::Type::Mountain : Tile::Type::Desert;
+                    const float selector = simple_noise(
+                        (static_cast<float>(x_pos) * k_selector_scale) + k_selector_offset_x,
+                        (static_cast<float>(y_pos) * k_selector_scale) + k_selector_offset_y);
+                    tiles[idx] = selector > k_selector_threshold ? Tile::Type::Mountain
+                                                                 : Tile::Type::Desert;
                 }
                 else
                 {
@@ -193,16 +229,19 @@ namespace Tactics
                 {
                     const size_t idx = index_of(x_pos, y_pos);
 
-                    const int water_neighbors =
-                        count_neighbors(tiles, x_pos, y_pos, Tile::Type::Water);
-                    const int grass_neighbors =
-                        count_neighbors(tiles, x_pos, y_pos, Tile::Type::Grass);
-                    const int forest_neighbors =
-                        count_neighbors(tiles, x_pos, y_pos, Tile::Type::Forest);
-                    const int mountain_neighbors =
-                        count_neighbors(tiles, x_pos, y_pos, Tile::Type::Mountain);
-                    const int desert_neighbors =
-                        count_neighbors(tiles, x_pos, y_pos, Tile::Type::Desert);
+                    const Vector2i position(x_pos, y_pos);
+                    int water_neighbors = 0;
+                    int grass_neighbors = 0;
+                    int forest_neighbors = 0;
+                    int mountain_neighbors = 0;
+                    int desert_neighbors = 0;
+
+                    water_neighbors = count_neighbors(tiles, position, Tile::Type::Water);
+                    grass_neighbors = count_neighbors(tiles, position, Tile::Type::Grass);
+                    forest_neighbors = count_neighbors(tiles, position, Tile::Type::Forest);
+                    mountain_neighbors =
+                        count_neighbors(tiles, position, Tile::Type::Mountain);
+                    desert_neighbors = count_neighbors(tiles, position, Tile::Type::Desert);
 
                     if (water_neighbors >= MAJORITY_THRESHOLD)
                     {
@@ -251,16 +290,19 @@ namespace Tactics
 
         if (!grass_positions.empty())
         {
-            std::mt19937 rng(static_cast<unsigned int>(m_config.seed));
+            const auto seed =
+                static_cast<std::mt19937::result_type>(m_config.seed);
+            std::mt19937 rng(seed);
             std::uniform_int_distribution<size_t> dist(0, grass_positions.size() - 1);
 
-            const size_t road_count = std::max(static_cast<size_t>(1),
-                                               static_cast<size_t>(grass_positions.size() * 0.03F));
+            const size_t road_count = std::max(
+                static_cast<size_t>(k_min_road_count),
+                static_cast<size_t>(static_cast<float>(grass_positions.size()) * k_road_density));
 
             for (size_t i = 0; i < road_count && i < grass_positions.size(); ++i)
             {
                 const Vector2i pos = grass_positions[dist(rng)];
-                grid.set_tile(pos, Tile(pos, Tile::Type::Road, 1));
+                grid.set_tile(pos, Tile(pos, Tile::Type::Road, k_move_cost_walkable));
             }
         }
     }
@@ -300,26 +342,15 @@ namespace Tactics
                 const Vector2i pos(x_pos, y_pos);
                 const Tile *tile = grid.get_tile(pos);
 
-                if (tile != nullptr && !tile->is_walkable())
+                if (tile == nullptr || tile->is_walkable())
                 {
-                    int walkable_neighbors = 0;
-                    const std::array<Vector2i, 4> offsets = {
-                        Vector2i(-1, 0), Vector2i(1, 0), Vector2i(0, -1), Vector2i(0, 1)};
+                    continue;
+                }
 
-                    for (const auto &offset : offsets)
-                    {
-                        const Vector2i neighbor_pos = pos + offset;
-                        const Tile *neighbor = grid.get_tile(neighbor_pos);
-                        if (neighbor != nullptr && neighbor->is_walkable())
-                        {
-                            ++walkable_neighbors;
-                        }
-                    }
-
-                    if (walkable_neighbors >= 3)
-                    {
-                        grid.set_tile(pos, Tile(pos, Tile::Type::Grass, 1));
-                    }
+                const int walkable_neighbors = count_walkable_neighbors(grid, pos);
+                if (walkable_neighbors >= k_walkable_neighbor_threshold)
+                {
+                    grid.set_tile(pos, Tile(pos, Tile::Type::Grass, k_move_cost_walkable));
                 }
             }
         }
@@ -327,11 +358,12 @@ namespace Tactics
 
     auto MapGenerator::index_of(int x_pos, int y_pos) const -> size_t
     {
-        return static_cast<size_t>(y_pos * m_config.width + x_pos);
+        return (static_cast<size_t>(y_pos) * static_cast<size_t>(m_config.width)) +
+               static_cast<size_t>(x_pos);
     }
 
-    auto MapGenerator::count_neighbors(const std::vector<Tile::Type> &tiles, int x_pos, int y_pos,
-                                       Tile::Type type) const -> int
+    auto MapGenerator::count_neighbors(const std::vector<Tile::Type> &tiles,
+                                       Vector2i position, Tile::Type type) const -> int
     {
         int count = 0;
 
@@ -344,8 +376,8 @@ namespace Tactics
                     continue;
                 }
 
-                const int nx_val = x_pos + dx_val;
-                const int ny_val = y_pos + dy_val;
+                const int nx_val = position.x + dx_val;
+                const int ny_val = position.y + dy_val;
 
                 if (nx_val >= 0 && nx_val < m_config.width && ny_val >= 0 &&
                     ny_val < m_config.height)
@@ -362,13 +394,32 @@ namespace Tactics
         return count;
     }
 
+    auto MapGenerator::count_walkable_neighbors(const Grid &grid, Vector2i position) -> int
+    {
+        int walkable_neighbors = 0;
+        const std::array<Vector2i, 4> offsets = {
+            Vector2i(-1, 0), Vector2i(1, 0), Vector2i(0, -1), Vector2i(0, 1)};
+
+        for (const auto &offset : offsets)
+        {
+            const Vector2i neighbor_pos = position + offset;
+            const Tile *neighbor = grid.get_tile(neighbor_pos);
+            if (neighbor != nullptr && neighbor->is_walkable())
+            {
+                ++walkable_neighbors;
+            }
+        }
+
+        return walkable_neighbors;
+    }
+
     auto MapGenerator::flood_fill_count(const Grid &grid, Vector2i start) const -> int
     {
-        std::unordered_set<int> visited;
+        std::unordered_set<size_t> visited;
         std::queue<Vector2i> to_visit;
 
         to_visit.push(start);
-        visited.insert(start.y * m_config.width + start.x);
+        visited.insert(index_of(start.x, start.y));
 
         int count = 0;
 
@@ -391,8 +442,8 @@ namespace Tactics
                     continue;
                 }
 
-                const int hash = neighbor.y * m_config.width + neighbor.x;
-                if (visited.find(hash) != visited.end())
+                const size_t hash = index_of(neighbor.x, neighbor.y);
+                if (visited.contains(hash))
                 {
                     continue;
                 }

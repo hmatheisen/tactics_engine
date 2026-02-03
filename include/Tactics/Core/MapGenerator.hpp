@@ -9,6 +9,17 @@ namespace Tactics
     // Configuration for procedural map generation
     struct GeneratorConfig
     {
+        static constexpr int DEFAULT_WIDTH = 50;
+        static constexpr int DEFAULT_HEIGHT = 50;
+        static constexpr int DEFAULT_SEED = 42;
+        static constexpr float DEFAULT_NOISE_SCALE = 0.05F;
+        static constexpr int DEFAULT_NOISE_OCTAVES = 4;
+        static constexpr int DEFAULT_CA_ITERATIONS = 3;
+        static constexpr float DEFAULT_WATER_THRESHOLD = 0.3F;
+        static constexpr float DEFAULT_GRASS_THRESHOLD = 0.5F;
+        static constexpr float DEFAULT_FOREST_THRESHOLD = 0.7F;
+        static constexpr float DEFAULT_MOUNTAIN_THRESHOLD = 0.85F;
+
         int width;
         int height;
         int seed;
@@ -28,16 +39,16 @@ namespace Tactics
 
         static auto default_config() -> GeneratorConfig
         {
-            return GeneratorConfig{.width = 50,
-                                   .height = 50,
-                                   .seed = 42,
-                                   .noise_scale = 0.05F,
-                                   .noise_octaves = 4,
-                                   .ca_iterations = 3,
-                                   .water_threshold = 0.3F,
-                                   .grass_threshold = 0.5F,
-                                   .forest_threshold = 0.7F,
-                                   .mountain_threshold = 0.85F};
+            return GeneratorConfig{.width = DEFAULT_WIDTH,
+                                   .height = DEFAULT_HEIGHT,
+                                   .seed = DEFAULT_SEED,
+                                   .noise_scale = DEFAULT_NOISE_SCALE,
+                                   .noise_octaves = DEFAULT_NOISE_OCTAVES,
+                                   .ca_iterations = DEFAULT_CA_ITERATIONS,
+                                   .water_threshold = DEFAULT_WATER_THRESHOLD,
+                                   .grass_threshold = DEFAULT_GRASS_THRESHOLD,
+                                   .forest_threshold = DEFAULT_FOREST_THRESHOLD,
+                                   .mountain_threshold = DEFAULT_MOUNTAIN_THRESHOLD};
         }
     };
 
@@ -74,11 +85,15 @@ namespace Tactics
         [[nodiscard]] auto index_of(int x_pos, int y_pos) const -> size_t;
 
         // Helper: Count neighbors of a specific type
-        [[nodiscard]] auto count_neighbors(const std::vector<Tile::Type> &tiles, int x_pos,
-                                           int y_pos, Tile::Type type) const -> int;
+        [[nodiscard]] auto count_neighbors(const std::vector<Tile::Type> &tiles,
+                                           Vector2i position, Tile::Type type) const -> int;
 
         // Helper: Flood fill to check connectivity
         [[nodiscard]] auto flood_fill_count(const Grid &grid, Vector2i start) const -> int;
+
+        // Helper: Count walkable neighbors on a grid
+        [[nodiscard]] static auto count_walkable_neighbors(const Grid &grid,
+                                                           Vector2i position) -> int;
 
         // Helper: Generate a deterministic hash value for noise
         [[nodiscard]] auto hash_noise(int x_pos, int y_pos) const -> float;

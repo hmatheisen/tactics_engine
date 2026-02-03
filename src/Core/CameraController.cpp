@@ -23,8 +23,11 @@ namespace Tactics
     void CameraController::update(Camera &camera, float tile_size) const
     {
         // Get cursor world position
-        const float cursor_world_x = static_cast<float>(m_cursor_tile_position.x) * tile_size;
-        const float cursor_world_y = static_cast<float>(m_cursor_tile_position.y) * tile_size;
+        float cursor_world_x = 0.0F;
+        float cursor_world_y = 0.0F;
+
+        cursor_world_x = static_cast<float>(m_cursor_tile_position.x) * tile_size;
+        cursor_world_y = static_cast<float>(m_cursor_tile_position.y) * tile_size;
 
         // Convert to screen coordinates
         const Vector2f cursor_screen_pos = camera.world_to_screen({cursor_world_x, cursor_world_y});

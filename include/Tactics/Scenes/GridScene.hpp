@@ -42,9 +42,9 @@ namespace Tactics
         CameraController m_camera_controller;
         CursorController m_cursor_controller;
 
-        IGridRepository *m_repository;
-        std::string m_map_name;
-        bool m_running;
+        IGridRepository *m_repository = nullptr;
+        std::string m_map_name{};
+        bool m_running = false;
 
         static constexpr float TILE_SIZE = 32.0F;
         static constexpr float VIEWPORT_WIDTH = 1280.0F;

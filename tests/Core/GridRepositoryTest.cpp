@@ -4,6 +4,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <filesystem>
 
+// NOLINTBEGIN(cppcoreguidelines-avoid-do-while,cppcoreguidelines-avoid-magic-numbers,readability-function-cognitive-complexity,readability-identifier-length,readability-magic-numbers)
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
 TEST_CASE("SQLiteGridRepository - Save and Load Map", "[GridRepository]")
 {
     // Use a temporary database for testing
@@ -136,6 +138,8 @@ TEST_CASE("SQLiteGridRepository - Save and Load Map", "[GridRepository]")
     // Cleanup
     std::filesystem::remove(test_db);
 }
+
+// NOLINTEND(cppcoreguidelines-avoid-do-while,cppcoreguidelines-avoid-magic-numbers,readability-function-cognitive-complexity,readability-identifier-length,readability-magic-numbers)
 
 TEST_CASE("SQLiteGridRepository - Large Map Performance", "[GridRepository][Performance]")
 {

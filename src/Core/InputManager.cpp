@@ -49,6 +49,7 @@ namespace Tactics
         m_mouse_wheel_delta = Vector2f(0.0F, 0.0F);
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     void InputManager::process_event(const SDL_Event &event)
     {
         switch (event.type)
@@ -66,6 +67,7 @@ namespace Tactics
         }
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto InputManager::is_key_pressed(SDL_Scancode scancode) const -> bool
     {
         const int index = static_cast<int>(scancode);
@@ -77,6 +79,7 @@ namespace Tactics
         return m_current_keys.at(static_cast<size_t>(index));
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto InputManager::is_key_just_pressed(SDL_Scancode scancode) const -> bool
     {
         const int index = static_cast<int>(scancode);
@@ -89,6 +92,7 @@ namespace Tactics
         return m_current_keys.at(idx) && !m_previous_keys.at(idx);
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto InputManager::is_key_just_released(SDL_Scancode scancode) const -> bool
     {
         const int index = static_cast<int>(scancode);

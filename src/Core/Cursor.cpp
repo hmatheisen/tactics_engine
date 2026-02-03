@@ -5,7 +5,7 @@
 
 namespace Tactics
 {
-    Cursor::Cursor() : m_position(0, 0) {}
+    Cursor::Cursor() = default;
 
     Cursor::Cursor(const Vector2i &position) : m_position(position) {}
 
@@ -51,6 +51,7 @@ namespace Tactics
         m_position.y = std::clamp(m_position.y, 0, grid_size.y - 1);
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto Cursor::render(SDL_Renderer *renderer, const Camera &camera, float tile_size) const -> bool
     {
         if (renderer == nullptr)
@@ -59,8 +60,11 @@ namespace Tactics
         }
 
         // Calculate world position of cursor tile
-        const float world_x = static_cast<float>(m_position.x) * tile_size;
-        const float world_y = static_cast<float>(m_position.y) * tile_size;
+        float world_x = 0.0F;
+        float world_y = 0.0F;
+
+        world_x = static_cast<float>(m_position.x) * tile_size;
+        world_y = static_cast<float>(m_position.y) * tile_size;
 
         // Convert to screen coordinates
         const Vector2f screen_pos = camera.world_to_screen({world_x, world_y});

@@ -16,6 +16,7 @@ namespace Tactics
         shutdown();
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto Engine::initialize() -> bool
     {
         log_info("Initializing Engine...");
@@ -61,6 +62,7 @@ namespace Tactics
         return m_renderer.get();
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     void Engine::shutdown()
     {
         log_info("Shutting down Engine...");

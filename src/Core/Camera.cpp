@@ -103,26 +103,35 @@ namespace Tactics
         return {m_position.x - half_width, m_position.y - half_height, world_width, world_height};
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto Camera::world_to_screen(const Vector2f &world_pos) const -> Vector2f
     {
         // Convert world coordinates to screen coordinates
         // Screen position = (world_pos - camera_pos) * zoom + viewport_center
-        const float screen_x = ((world_pos.x - m_position.x) * m_zoom) + (m_viewport_width * 0.5F);
-        const float screen_y = ((world_pos.y - m_position.y) * m_zoom) + (m_viewport_height * 0.5F);
+        float screen_x = 0.0F;
+        float screen_y = 0.0F;
+
+        screen_x = ((world_pos.x - m_position.x) * m_zoom) + (m_viewport_width * 0.5F);
+        screen_y = ((world_pos.y - m_position.y) * m_zoom) + (m_viewport_height * 0.5F);
 
         return {screen_x, screen_y};
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto Camera::screen_to_world(const Vector2f &screen_pos) const -> Vector2f
     {
         // Convert screen coordinates to world coordinates
         // World position = (screen_pos - viewport_center) / zoom + camera_pos
-        const float world_x = ((screen_pos.x - (m_viewport_width * 0.5F)) / m_zoom) + m_position.x;
-        const float world_y = ((screen_pos.y - (m_viewport_height * 0.5F)) / m_zoom) + m_position.y;
+        float world_x = 0.0F;
+        float world_y = 0.0F;
+
+        world_x = ((screen_pos.x - (m_viewport_width * 0.5F)) / m_zoom) + m_position.x;
+        world_y = ((screen_pos.y - (m_viewport_height * 0.5F)) / m_zoom) + m_position.y;
 
         return {world_x, world_y};
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto Camera::world_to_screen_rect(const Rectf &world_rect) const -> Rectf
     {
         // Convert world rectangle to screen rectangle
@@ -135,6 +144,7 @@ namespace Tactics
         return {top_left.x, top_left.y, screen_width, screen_height};
     }
 
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     auto Camera::screen_to_world_rect(const Rectf &screen_rect) const -> Rectf
     {
         // Convert screen rectangle to world rectangle

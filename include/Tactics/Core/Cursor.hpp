@@ -43,6 +43,6 @@ namespace Tactics
         auto render(SDL_Renderer *renderer, const Camera &camera, float tile_size) const -> bool;
 
     private:
-        Vector2i m_position;
+        Vector2i m_position{0, 0};
     };
 } // namespace Tactics

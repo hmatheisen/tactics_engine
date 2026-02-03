@@ -6,7 +6,7 @@
 
 namespace Tactics
 {
-    Grid::Grid() : m_width(0), m_height(0) {}
+    Grid::Grid() = default;
 
     auto Grid::get_width() const -> int
     {
@@ -18,6 +18,7 @@ namespace Tactics
         return m_height;
     }
 
+    // NOLINTNEXTLINE(readability-make-member-function-const)
     auto Grid::get_tile(const Vector2i &position) -> Tile *
     {
         if (!is_valid_position(position))
@@ -40,6 +41,7 @@ namespace Tactics
         return &m_tiles[index_of(position.x, position.y)];
     }
 
+    // NOLINTNEXTLINE(readability-make-member-function-const)
     void Grid::set_tile(const Vector2i &position, const Tile &tile)
     {
         if (!is_valid_position(position))
