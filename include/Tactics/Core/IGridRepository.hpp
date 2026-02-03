@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Tactics/Core/Grid.hpp"
+#include "Tactics/Core/MapGenerator.hpp"
 #include <optional>
 #include <string>
 #include <vector>
@@ -45,5 +46,13 @@ namespace Tactics
 
         // Delete a map
         virtual auto delete_map(const std::string &map_name) -> bool = 0;
+
+        // Load generator config by map name
+        [[nodiscard]] virtual auto load_generator_config(const std::string &map_name)
+            -> std::optional<GeneratorConfig> = 0;
+
+        // Save generator config by map name
+        virtual auto save_generator_config(const std::string &map_name,
+                                           const GeneratorConfig &config) -> bool = 0;
     };
 } // namespace Tactics

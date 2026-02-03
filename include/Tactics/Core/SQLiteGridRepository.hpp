@@ -31,6 +31,10 @@ namespace Tactics
         [[nodiscard]] auto list_maps() -> std::vector<MapMetadata> override;
         [[nodiscard]] auto map_exists(const std::string &map_name) -> bool override;
         auto delete_map(const std::string &map_name) -> bool override;
+        [[nodiscard]] auto load_generator_config(const std::string &map_name)
+            -> std::optional<GeneratorConfig> override;
+        auto save_generator_config(const std::string &map_name,
+                                   const GeneratorConfig &config) -> bool override;
 
     private:
         sqlite3 *m_db;

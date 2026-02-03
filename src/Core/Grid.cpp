@@ -2,6 +2,7 @@
 #include "SDL3/SDL_stdinc.h"
 #include "Tactics/Core/Logger.hpp"
 #include "Tactics/Core/Tile.hpp"
+#include <cmath>
 
 namespace Tactics
 {
@@ -180,8 +181,12 @@ namespace Tactics
 
                 // Draw filled rectangle
                 SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-                SDL_FRect sdl_rect = {screen_rect.x, screen_rect.y, screen_rect.width,
-                                      screen_rect.height};
+                const float aligned_left = std::floor(screen_rect.left());
+                const float aligned_top = std::floor(screen_rect.top());
+                const float aligned_right = std::ceil(screen_rect.right());
+                const float aligned_bottom = std::ceil(screen_rect.bottom());
+                SDL_FRect sdl_rect = {aligned_left, aligned_top, aligned_right - aligned_left,
+                                      aligned_bottom - aligned_top};
                 SDL_RenderFillRect(renderer, &sdl_rect);
 
                 // Draw border

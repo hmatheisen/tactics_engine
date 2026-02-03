@@ -43,6 +43,7 @@ set(CORE_SOURCES
   src/Core/Logger.cpp
   src/Core/Camera.cpp
   src/Core/SQLiteGridRepository.cpp
+  src/Core/MapGenerator.cpp
 )
 
 add_library(tactics_core ${CORE_SOURCES})
@@ -77,6 +78,7 @@ set(TEST_SOURCES
   tests/Core/Vector2Test.cpp
   tests/Core/RectTest.cpp
   tests/Core/GridRepositoryTest.cpp
+  tests/Core/MapGeneratorTest.cpp
 )
 
 add_executable(tactics_tests ${TEST_SOURCES})

@@ -106,6 +106,28 @@ namespace Tactics
             return false;
         }
 
+        // Create generator configs table
+        const std::string create_configs_sql = R"(
+            CREATE TABLE IF NOT EXISTS generator_configs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                map_name TEXT NOT NULL UNIQUE,
+                seed INTEGER NOT NULL,
+                noise_scale REAL NOT NULL DEFAULT 0.05,
+                noise_octaves INTEGER NOT NULL DEFAULT 4,
+                ca_iterations INTEGER NOT NULL DEFAULT 3,
+                water_threshold REAL NOT NULL DEFAULT 0.3,
+                grass_threshold REAL NOT NULL DEFAULT 0.5,
+                forest_threshold REAL NOT NULL DEFAULT 0.7,
+                mountain_threshold REAL NOT NULL DEFAULT 0.85,
+                FOREIGN KEY (map_name) REFERENCES maps(name) ON DELETE CASCADE
+            )
+        )";
+
+        if (!execute_statement(create_configs_sql))
+        {
+            return false;
+        }
+
         // Create index for efficient tile lookups
         const std::string create_index_sql = R"(
             CREATE INDEX IF NOT EXISTS idx_tiles_map_position ON tiles(map_id, x, y)
@@ -524,6 +546,116 @@ namespace Tactics
         if (!success)
         {
             log_error("Failed to delete map: " + std::string(sqlite3_errmsg(m_db)));
+        }
+
+        sqlite3_finalize(stmt);
+        return success;
+    }
+
+    auto SQLiteGridRepository::load_generator_config(const std::string &map_name)
+        -> std::optional<GeneratorConfig>
+    {
+        if (m_db == nullptr)
+        {
+            return std::nullopt;
+        }
+
+        const std::string sql = R"(
+            SELECT m.width, m.height,
+                   g.seed, g.noise_scale, g.noise_octaves, g.ca_iterations,
+                   g.water_threshold, g.grass_threshold, g.forest_threshold, g.mountain_threshold
+            FROM maps m
+            LEFT JOIN generator_configs g ON g.map_name = m.name
+            WHERE m.name = ?
+        )";
+
+        sqlite3_stmt *stmt = nullptr;
+        if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK)
+        {
+            log_error("Failed to prepare generator config query: " +
+                      std::string(sqlite3_errmsg(m_db)));
+            return std::nullopt;
+        }
+
+        sqlite3_bind_text(stmt, 1, map_name.c_str(), -1, SQLITE_STATIC);
+
+        std::optional<GeneratorConfig> config = std::nullopt;
+        if (sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            const int seed_column = 2;
+            if (sqlite3_column_type(stmt, seed_column) != SQLITE_NULL)
+            {
+                GeneratorConfig loaded_config{};
+                loaded_config.width = sqlite3_column_int(stmt, 0);
+                loaded_config.height = sqlite3_column_int(stmt, 1);
+                loaded_config.seed = sqlite3_column_int(stmt, 2);
+                loaded_config.noise_scale =
+                    static_cast<float>(sqlite3_column_double(stmt, 3));
+                loaded_config.noise_octaves = sqlite3_column_int(stmt, 4);
+                loaded_config.ca_iterations = sqlite3_column_int(stmt, 5);
+                loaded_config.water_threshold =
+                    static_cast<float>(sqlite3_column_double(stmt, 6));
+                loaded_config.grass_threshold =
+                    static_cast<float>(sqlite3_column_double(stmt, 7));
+                loaded_config.forest_threshold =
+                    static_cast<float>(sqlite3_column_double(stmt, 8));
+                loaded_config.mountain_threshold =
+                    static_cast<float>(sqlite3_column_double(stmt, 9));
+
+                config = loaded_config;
+            }
+        }
+
+        sqlite3_finalize(stmt);
+        return config;
+    }
+
+    auto SQLiteGridRepository::save_generator_config(const std::string &map_name,
+                                                     const GeneratorConfig &config) -> bool
+    {
+        if (m_db == nullptr)
+        {
+            return false;
+        }
+
+        const std::string sql = R"(
+            INSERT INTO generator_configs (
+                map_name, seed, noise_scale, noise_octaves, ca_iterations,
+                water_threshold, grass_threshold, forest_threshold, mountain_threshold
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(map_name) DO UPDATE SET
+                seed = excluded.seed,
+                noise_scale = excluded.noise_scale,
+                noise_octaves = excluded.noise_octaves,
+                ca_iterations = excluded.ca_iterations,
+                water_threshold = excluded.water_threshold,
+                grass_threshold = excluded.grass_threshold,
+                forest_threshold = excluded.forest_threshold,
+                mountain_threshold = excluded.mountain_threshold
+        )";
+
+        sqlite3_stmt *stmt = nullptr;
+        if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK)
+        {
+            log_error("Failed to prepare generator config upsert: " +
+                      std::string(sqlite3_errmsg(m_db)));
+            return false;
+        }
+
+        sqlite3_bind_text(stmt, 1, map_name.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_int(stmt, 2, config.seed);
+        sqlite3_bind_double(stmt, 3, static_cast<double>(config.noise_scale));
+        sqlite3_bind_int(stmt, 4, config.noise_octaves);
+        sqlite3_bind_int(stmt, 5, config.ca_iterations);
+        sqlite3_bind_double(stmt, 6, static_cast<double>(config.water_threshold));
+        sqlite3_bind_double(stmt, 7, static_cast<double>(config.grass_threshold));
+        sqlite3_bind_double(stmt, 8, static_cast<double>(config.forest_threshold));
+        sqlite3_bind_double(stmt, 9, static_cast<double>(config.mountain_threshold));
+
+        const bool success = sqlite3_step(stmt) == SQLITE_DONE;
+        if (!success)
+        {
+            log_error("Failed to save generator config: " + std::string(sqlite3_errmsg(m_db)));
         }
 
         sqlite3_finalize(stmt);

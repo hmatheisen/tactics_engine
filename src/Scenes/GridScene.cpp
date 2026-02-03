@@ -2,6 +2,7 @@
 #include "Tactics/Core/CursorEvents.hpp"
 #include "Tactics/Core/InputManager.hpp"
 #include "Tactics/Core/Logger.hpp"
+#include "Tactics/Core/MapGenerator.hpp"
 
 namespace Tactics
 {
@@ -84,6 +85,36 @@ namespace Tactics
         if (input.is_key_just_pressed(SDL_SCANCODE_E))
         {
             m_camera.set_zoom(m_camera.get_zoom() * ZOOM_IN_FACTOR); // Zoom in
+        }
+
+        // Handle map regeneration
+        if (input.is_key_just_pressed(SDL_SCANCODE_G))
+        {
+            log_info("Regenerating map with new seed");
+
+            auto config_opt = m_repository->load_generator_config(m_map_name);
+            GeneratorConfig config =
+                config_opt.value_or(GeneratorConfig::default_config());
+            config.width = m_grid.get_width();
+            config.height = m_grid.get_height();
+            config.seed += 1;
+
+            MapGenerator generator(config);
+            m_grid = generator.generate();
+
+            if (!m_repository->save_map(m_map_name, m_grid))
+            {
+                log_error("Failed to save regenerated map");
+            }
+            if (!m_repository->save_generator_config(m_map_name, config))
+            {
+                log_error("Failed to save generator config");
+            }
+
+            const int grid_width = m_grid.get_width();
+            const int grid_height = m_grid.get_height();
+            m_cursor.set_position({grid_width / 2, grid_height / 2});
+            publish(CursorEvents::Moved{m_cursor.get_position()});
         }
 
         // Handle escape to quit
