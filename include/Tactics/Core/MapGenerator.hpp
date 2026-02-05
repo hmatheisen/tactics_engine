@@ -85,15 +85,15 @@ namespace Tactics
         [[nodiscard]] auto index_of(int x_pos, int y_pos) const -> size_t;
 
         // Helper: Count neighbors of a specific type
-        [[nodiscard]] auto count_neighbors(const std::vector<Tile::Type> &tiles,
-                                           Vector2i position, Tile::Type type) const -> int;
+        [[nodiscard]] auto count_neighbors(const std::vector<Tile::Type> &tiles, Vector2i position,
+                                           Tile::Type type) const -> int;
 
         // Helper: Flood fill to check connectivity
         [[nodiscard]] auto flood_fill_count(const Grid &grid, Vector2i start) const -> int;
 
         // Helper: Count walkable neighbors on a grid
-        [[nodiscard]] static auto count_walkable_neighbors(const Grid &grid,
-                                                           Vector2i position) -> int;
+        [[nodiscard]] static auto count_walkable_neighbors(const Grid &grid, Vector2i position)
+            -> int;
 
         // Helper: Generate a deterministic hash value for noise
         [[nodiscard]] auto hash_noise(int x_pos, int y_pos) const -> float;

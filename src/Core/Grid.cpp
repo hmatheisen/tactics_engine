@@ -53,10 +53,6 @@ namespace Tactics
 
         m_tiles[index_of(position.x, position.y)] = tile;
         m_tiles[index_of(position.x, position.y)].set_position(position);
-        log_debug("Tile set at position (" + std::to_string(position.x) + ", " +
-                  std::to_string(position.y) +
-                  "), type: " + std::to_string(static_cast<int>(tile.get_type())) +
-                  ", move_cost: " + std::to_string(tile.get_move_cost()));
     }
 
     void Grid::resize(int width, int height)

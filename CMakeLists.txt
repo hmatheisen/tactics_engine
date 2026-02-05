@@ -52,18 +52,19 @@ target_link_libraries(tactics_core PUBLIC SQLite::SQLite3 SDL3::SDL3)
 
 # Main executable
 set(TACTICS_SOURCES
-  src/main.cpp
+  src/Core/CameraController.cpp
+  src/Core/Cursor.cpp
+  src/Core/CursorController.cpp
   src/Core/Engine.cpp
-  src/Core/Texture.cpp
-  src/Core/Sprite.cpp
   src/Core/EventBus.cpp
   src/Core/InputManager.cpp
-  src/Core/Cursor.cpp
   src/Core/SceneManager.cpp
-  src/Core/CameraController.cpp
-  src/Core/CursorController.cpp
+  src/Core/Sprite.cpp
+  src/Core/Texture.cpp
   src/Core/TimeManager.cpp
+  src/Core/ZoomController.cpp
   src/Scenes/GridScene.cpp
+  src/main.cpp
 )
 
 add_executable(tactics ${TACTICS_SOURCES})

@@ -8,6 +8,7 @@
 #include "Tactics/Core/Grid.hpp"
 #include "Tactics/Core/IGridRepository.hpp"
 #include "Tactics/Core/Scene.hpp"
+#include "Tactics/Core/ZoomController.hpp"
 
 #include <SDL3/SDL.h>
 #include <string>
@@ -41,6 +42,7 @@ namespace Tactics
         Cursor m_cursor;
         CameraController m_camera_controller;
         CursorController m_cursor_controller;
+        ZoomController m_zoom_controller;
 
         IGridRepository *m_repository = nullptr;
         std::string m_map_name{};

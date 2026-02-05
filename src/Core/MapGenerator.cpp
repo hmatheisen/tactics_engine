@@ -167,8 +167,7 @@ namespace Tactics
                               (static_cast<uint32_t>(y_pos) * k_hash_prime_y);
         hash_value ^= static_cast<uint32_t>(m_config.seed) + k_hash_seed_mix +
                       (hash_value << k_hash_shift_left) + (hash_value >> k_hash_shift_right);
-        hash_value =
-            (hash_value ^ (hash_value >> k_hash_xor_shift)) * k_hash_multiplier;
+        hash_value = (hash_value ^ (hash_value >> k_hash_xor_shift)) * k_hash_multiplier;
         hash_value ^= hash_value >> k_hash_final_shift;
         return static_cast<float>(hash_value & k_hash_mask) / k_hash_normalizer;
     }
@@ -202,8 +201,8 @@ namespace Tactics
                     const float selector = simple_noise(
                         (static_cast<float>(x_pos) * k_selector_scale) + k_selector_offset_x,
                         (static_cast<float>(y_pos) * k_selector_scale) + k_selector_offset_y);
-                    tiles[idx] = selector > k_selector_threshold ? Tile::Type::Mountain
-                                                                 : Tile::Type::Desert;
+                    tiles[idx] =
+                        selector > k_selector_threshold ? Tile::Type::Mountain : Tile::Type::Desert;
                 }
                 else
                 {
@@ -239,8 +238,7 @@ namespace Tactics
                     water_neighbors = count_neighbors(tiles, position, Tile::Type::Water);
                     grass_neighbors = count_neighbors(tiles, position, Tile::Type::Grass);
                     forest_neighbors = count_neighbors(tiles, position, Tile::Type::Forest);
-                    mountain_neighbors =
-                        count_neighbors(tiles, position, Tile::Type::Mountain);
+                    mountain_neighbors = count_neighbors(tiles, position, Tile::Type::Mountain);
                     desert_neighbors = count_neighbors(tiles, position, Tile::Type::Desert);
 
                     if (water_neighbors >= MAJORITY_THRESHOLD)
@@ -290,8 +288,7 @@ namespace Tactics
 
         if (!grass_positions.empty())
         {
-            const auto seed =
-                static_cast<std::mt19937::result_type>(m_config.seed);
+            const auto seed = static_cast<std::mt19937::result_type>(m_config.seed);
             std::mt19937 rng(seed);
             std::uniform_int_distribution<size_t> dist(0, grass_positions.size() - 1);
 
@@ -362,8 +359,8 @@ namespace Tactics
                static_cast<size_t>(x_pos);
     }
 
-    auto MapGenerator::count_neighbors(const std::vector<Tile::Type> &tiles,
-                                       Vector2i position, Tile::Type type) const -> int
+    auto MapGenerator::count_neighbors(const std::vector<Tile::Type> &tiles, Vector2i position,
+                                       Tile::Type type) const -> int
     {
         int count = 0;
 
@@ -397,8 +394,8 @@ namespace Tactics
     auto MapGenerator::count_walkable_neighbors(const Grid &grid, Vector2i position) -> int
     {
         int walkable_neighbors = 0;
-        const std::array<Vector2i, 4> offsets = {
-            Vector2i(-1, 0), Vector2i(1, 0), Vector2i(0, -1), Vector2i(0, 1)};
+        const std::array<Vector2i, 4> offsets = {Vector2i(-1, 0), Vector2i(1, 0), Vector2i(0, -1),
+                                                 Vector2i(0, 1)};
 
         for (const auto &offset : offsets)
         {

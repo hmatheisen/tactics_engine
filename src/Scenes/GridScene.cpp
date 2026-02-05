@@ -67,11 +67,6 @@ namespace Tactics
         log_info("Exiting GridScene");
     }
 
-    namespace
-    {
-        constexpr float ZOOM_OUT_FACTOR = 0.9F;
-        constexpr float ZOOM_IN_FACTOR = 1.1F;
-    } // namespace
     void GridScene::update(float delta_time)
     {
         auto &input = InputManager::instance();
@@ -80,24 +75,17 @@ namespace Tactics
         const Vector2i grid_size(m_grid.get_width(), m_grid.get_height());
         m_cursor_controller.update(m_cursor, grid_size, delta_time);
 
-        // Handle zoom
-        if (input.is_key_just_pressed(SDL_SCANCODE_Q))
-        {
-            m_camera.set_zoom(m_camera.get_zoom() * ZOOM_OUT_FACTOR); // Zoom out
-        }
-        if (input.is_key_just_pressed(SDL_SCANCODE_E))
-        {
-            m_camera.set_zoom(m_camera.get_zoom() * ZOOM_IN_FACTOR); // Zoom in
-        }
+        // Handle Zoom
+        m_zoom_controller.update(m_camera, delta_time);
 
         // Handle map regeneration
+        // NOTE: temporary to test map generation
         if (input.is_key_just_pressed(SDL_SCANCODE_G))
         {
             log_info("Regenerating map with new seed");
 
             auto config_opt = m_repository->load_generator_config(m_map_name);
-            GeneratorConfig config =
-                config_opt.value_or(GeneratorConfig::default_config());
+            GeneratorConfig config = config_opt.value_or(GeneratorConfig::default_config());
             config.width = m_grid.get_width();
             config.height = m_grid.get_height();
             config.seed += 1;

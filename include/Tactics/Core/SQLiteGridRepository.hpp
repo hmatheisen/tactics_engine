@@ -33,8 +33,8 @@ namespace Tactics
         auto delete_map(const std::string &map_name) -> bool override;
         [[nodiscard]] auto load_generator_config(const std::string &map_name)
             -> std::optional<GeneratorConfig> override;
-        auto save_generator_config(const std::string &map_name,
-                                   const GeneratorConfig &config) -> bool override;
+        auto save_generator_config(const std::string &map_name, const GeneratorConfig &config)
+            -> bool override;
 
     private:
         sqlite3 *m_db = nullptr;
@@ -49,7 +49,6 @@ namespace Tactics
         [[nodiscard]] auto get_map_id(const std::string &map_name) -> std::optional<int>;
 
         // Helper: create or update map metadata
-        auto upsert_map_metadata(const std::string &map_name, Vector2i size)
-            -> std::optional<int>;
+        auto upsert_map_metadata(const std::string &map_name, Vector2i size) -> std::optional<int>;
     };
 } // namespace Tactics
