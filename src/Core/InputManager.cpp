@@ -1,20 +1,8 @@
 #include "Tactics/Core/InputManager.hpp"
-#include "Tactics/Core/Logger.hpp"
 #include <algorithm>
 
 namespace Tactics
 {
-    InputManager::InputManager()
-        : m_current_keys{}, m_previous_keys{}, m_mouse_position(0.0F, 0.0F),
-          m_previous_mouse_position(0.0F, 0.0F), m_current_mouse_buttons(0),
-          m_previous_mouse_buttons(0), m_mouse_wheel_delta(0.0F, 0.0F),
-          m_previous_mouse_wheel_delta(0.0F, 0.0F)
-    {
-        // Initialize all keys to false
-        m_current_keys.fill(false);
-        m_previous_keys.fill(false);
-    }
-
     auto InputManager::instance() -> InputManager &
     {
         static InputManager s_instance;

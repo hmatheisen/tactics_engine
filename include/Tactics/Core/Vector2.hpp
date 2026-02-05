@@ -102,17 +102,17 @@ namespace Tactics
         }
 
         // Vector operations
-        auto dot(const Vector2 &other) const -> T
+        [[nodiscard]] auto dot(const Vector2 &other) const -> T
         {
             return (x * other.x) + (y * other.y);
         }
 
-        auto cross(const Vector2 &other) const -> T
+        [[nodiscard]] auto cross(const Vector2 &other) const -> T
         {
             return (x * other.y) - (y * other.x);
         }
 
-        auto length_squared() const -> T
+        [[nodiscard]] auto length_squared() const -> T
         {
             return (x * x) + (y * y);
         }
@@ -122,7 +122,7 @@ namespace Tactics
             return std::sqrt(static_cast<float>(length_squared()));
         }
 
-        auto normalize() -> Vector2 &
+        [[nodiscard]] auto normalize() -> Vector2 &
         {
             float len = length();
 
@@ -136,53 +136,53 @@ namespace Tactics
             return *this;
         }
 
-        auto normalized() const -> Vector2
+        [[nodiscard]] auto normalized() const -> Vector2
         {
             Vector2 result = *this;
-            result.normalize();
-            return result;
+            return result.normalize();
         }
 
-        auto distance_to(const Vector2 &other) const -> float
+        [[nodiscard]] auto distance_to(const Vector2 &other) const -> float
         {
             return (*this - other).length();
         }
 
-        auto distance_squared_to(const Vector2 &other) const -> T
+        [[nodiscard]] auto distance_squared_to(const Vector2 &other) const -> T
         {
             return (*this - other).length_squared();
         }
 
         // Linear interpolation
-        static auto lerp(const Vector2 &start, const Vector2 &end, float alpha) -> Vector2
+        [[nodiscard]] static auto lerp(const Vector2 &start, const Vector2 &end, float alpha)
+            -> Vector2
         {
             return Vector2(static_cast<T>(start.x + ((end.x - start.x) * alpha)),
                            static_cast<T>(start.y + ((end.y - start.y) * alpha)));
         }
 
         // Zero vector
-        static auto zero() -> Vector2
+        [[nodiscard]] static auto zero() -> Vector2
         {
             return Vector2(0, 0);
         }
 
         // Unit vectors
-        static auto up() -> Vector2
+        [[nodiscard]] static auto up() -> Vector2
         {
             return Vector2(0, 1);
         }
 
-        static auto down() -> Vector2
+        [[nodiscard]] static auto down() -> Vector2
         {
             return Vector2(0, -1);
         }
 
-        static auto left() -> Vector2
+        [[nodiscard]] static auto left() -> Vector2
         {
             return Vector2(-1, 0);
         }
 
-        static auto right() -> Vector2
+        [[nodiscard]] static auto right() -> Vector2
         {
             return Vector2(1, 0);
         }
@@ -190,7 +190,7 @@ namespace Tactics
 
     // Scalar multiplication from left side
     template <typename T>
-    auto operator*(T scalar, const Vector2<T> &vec) -> Vector2<T>
+    [[nodiscard]] auto operator*(T scalar, const Vector2<T> &vec) -> Vector2<T>
     {
         return vec * scalar;
     }

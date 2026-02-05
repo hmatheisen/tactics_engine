@@ -45,7 +45,7 @@ namespace Tactics
         ZoomController m_zoom_controller;
 
         IGridRepository *m_repository = nullptr;
-        std::string m_map_name{};
+        std::string m_map_name;
         bool m_running = false;
 
         static constexpr float TILE_SIZE = 32.0F;

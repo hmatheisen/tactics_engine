@@ -8,9 +8,6 @@
 
 namespace Tactics
 {
-
-    Logger::Logger() : m_level(LogLevel::Info), m_file_logging_enabled(false) {}
-
     Logger::~Logger()
     {
         if (m_log_file.is_open())

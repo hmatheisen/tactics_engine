@@ -16,7 +16,7 @@ namespace Tactics
     class Camera
     {
     public:
-        Camera();
+        Camera() = default;
         explicit Camera(const CameraSettings &settings);
         ~Camera() = default;
 
@@ -66,9 +66,13 @@ namespace Tactics
         void center_on(const Vector2f &world_pos);
 
     private:
-        Vector2f m_position;
-        float m_zoom;
-        float m_viewport_width;
-        float m_viewport_height;
+        static constexpr float DEFAULT_ZOOM = 1.0F;
+        static constexpr float DEFAULT_VIEWPORT_WIDTH = 1280.0F;
+        static constexpr float DEFAULT_VIEWPORT_HEIGHT = 720.0F;
+
+        Vector2f m_position{0.0F, 0.0F};
+        float m_zoom{DEFAULT_ZOOM};
+        float m_viewport_width{DEFAULT_VIEWPORT_WIDTH};
+        float m_viewport_height{DEFAULT_VIEWPORT_HEIGHT};
     };
 } // namespace Tactics

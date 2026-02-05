@@ -4,18 +4,6 @@
 
 namespace Tactics
 {
-    namespace
-    {
-        constexpr float DEFAULT_ZOOM = 1.0F;
-        constexpr float DEFAULT_VIEWPORT_WIDTH = 1280.0F;
-        constexpr float DEFAULT_VIEWPORT_HEIGHT = 720.0F;
-    } // namespace
-
-    Camera::Camera()
-        : m_position(0.0F, 0.0F), m_zoom(DEFAULT_ZOOM), m_viewport_width(DEFAULT_VIEWPORT_WIDTH),
-          m_viewport_height(DEFAULT_VIEWPORT_HEIGHT)
-    {}
-
     Camera::Camera(const CameraSettings &settings)
         : m_position(settings.position), m_zoom(settings.zoom),
           m_viewport_width(settings.viewport_width), m_viewport_height(settings.viewport_height)

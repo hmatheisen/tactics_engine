@@ -20,7 +20,7 @@ namespace Tactics
     class Logger
     {
     public:
-        Logger();
+        Logger() = default;
         ~Logger();
 
         // Delete copy constructor and assignment operator
@@ -47,8 +47,8 @@ namespace Tactics
         void error(std::string_view message);
 
     private:
-        LogLevel m_level;
-        bool m_file_logging_enabled;
+        LogLevel m_level{LogLevel::Info};
+        bool m_file_logging_enabled{false};
         std::ofstream m_log_file;
         mutable std::mutex m_mutex;
 

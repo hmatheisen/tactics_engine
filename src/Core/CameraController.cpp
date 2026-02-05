@@ -4,13 +4,10 @@
 namespace Tactics
 {
     namespace
-    {
-        constexpr float DEFAULT_EDGE_SCROLL_THRESHOLD = 150.0F;
-    } // namespace
+    {} // namespace
 
     CameraController::CameraController()
-        : m_edge_scroll_threshold(DEFAULT_EDGE_SCROLL_THRESHOLD),
-          m_cursor_subscription_id(subscribe<CursorEvents::Moved, CursorEvents::MovedHandler>(
+        : m_cursor_subscription_id(subscribe<CursorEvents::Moved, CursorEvents::MovedHandler>(
               [this](const CursorEvents::Moved &event) -> void
               { m_cursor_tile_position = event.position; }))
     {}

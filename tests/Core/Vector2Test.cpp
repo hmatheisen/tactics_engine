@@ -243,8 +243,8 @@ TEST_CASE("Vector2 Normalization", "[Vector2]")
     SECTION("Normalize")
     {
         Vector2f vec(3.0f, 4.0f);
-        vec.normalize();
-        REQUIRE_THAT(vec.length(), WithinRel(1.0f, 0.001f));
+        Vector2f normalized = vec.normalize();
+        REQUIRE_THAT(normalized.length(), WithinRel(1.0f, 0.001f));
     }
 
     SECTION("Normalized returns new vector")
@@ -267,10 +267,10 @@ TEST_CASE("Vector2 Normalization", "[Vector2]")
     SECTION("Zero vector normalization")
     {
         Vector2f vec(0.0f, 0.0f);
-        vec.normalize();
+        Vector2f normalized = vec.normalize();
         // Should remain zero (no division by zero)
-        REQUIRE(vec.x == 0.0f);
-        REQUIRE(vec.y == 0.0f);
+        REQUIRE(normalized.x == 0.0f);
+        REQUIRE(normalized.y == 0.0f);
     }
 }
 

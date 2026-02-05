@@ -11,10 +11,10 @@ namespace Tactics
     // Metadata about a saved map
     struct MapMetadata
     {
-        int id;
+        int id{};
         std::string name;
-        int width;
-        int height;
+        int width{};
+        int height{};
         std::string created_at;
         std::string updated_at;
     };

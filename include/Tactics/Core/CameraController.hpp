@@ -30,7 +30,9 @@ namespace Tactics
         [[nodiscard]] auto get_edge_scroll_threshold() const -> float;
 
     private:
-        float m_edge_scroll_threshold;
+        static constexpr float DEFAULT_EDGE_SCROLL_THRESHOLD = 150.0F;
+
+        float m_edge_scroll_threshold{DEFAULT_EDGE_SCROLL_THRESHOLD};
         Vector2i m_cursor_tile_position;
         std::size_t m_cursor_subscription_id{0U};
     };

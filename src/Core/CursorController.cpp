@@ -7,9 +7,6 @@ namespace Tactics
 {
     namespace
     {
-        constexpr float DEFAULT_KEY_REPEAT_INITIAL_DELAY = 0.2F; // Seconds before first repeat
-        constexpr float DEFAULT_KEY_REPEAT_RATE = 0.04F;         // Seconds between repeats
-
         void update_key_state(KeyState &key_state)
         {
             auto &input = InputManager::instance();
@@ -19,11 +16,6 @@ namespace Tactics
             key_state.just_released = input.is_key_just_released(key_state.scancode);
         }
     } // namespace
-
-    CursorController::CursorController()
-        : m_key_repeat_initial_delay(DEFAULT_KEY_REPEAT_INITIAL_DELAY),
-          m_key_repeat_rate(DEFAULT_KEY_REPEAT_RATE)
-    {}
 
     void CursorController::update(Cursor &cursor, const Vector2i &grid_size, float delta_time)
     {

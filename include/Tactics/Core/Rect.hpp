@@ -60,7 +60,7 @@ namespace Tactics
         }
 
         // Position and size accessors
-        auto position() const -> Vector2<T>
+        [[nodiscard]] auto position() const -> Vector2<T>
         {
             return Vector2<T>(x, y);
         }
@@ -77,7 +77,7 @@ namespace Tactics
             y = y_pos;
         }
 
-        auto size() const -> Vector2<T>
+        [[nodiscard]] auto size() const -> Vector2<T>
         {
             return Vector2<T>(width, height);
         }
@@ -96,43 +96,43 @@ namespace Tactics
         }
 
         // Edge accessors
-        auto left() const -> T
+        [[nodiscard]] auto left() const -> T
         {
             return x;
         }
 
-        auto top() const -> T
+        [[nodiscard]] auto top() const -> T
         {
             return y;
         }
 
-        auto right() const -> T
+        [[nodiscard]] auto right() const -> T
         {
             return x + width;
         }
 
-        auto bottom() const -> T
+        [[nodiscard]] auto bottom() const -> T
         {
             return y + height;
         }
 
         // Corner accessors
-        auto top_left() const -> Vector2<T>
+        [[nodiscard]] auto top_left() const -> Vector2<T>
         {
             return Vector2<T>(x, y);
         }
 
-        auto top_right() const -> Vector2<T>
+        [[nodiscard]] auto top_right() const -> Vector2<T>
         {
             return Vector2<T>(x + width, y);
         }
 
-        auto bottom_left() const -> Vector2<T>
+        [[nodiscard]] auto bottom_left() const -> Vector2<T>
         {
             return Vector2<T>(x, y + height);
         }
 
-        auto bottom_right() const -> Vector2<T>
+        [[nodiscard]] auto bottom_right() const -> Vector2<T>
         {
             return Vector2<T>(x + width, y + height);
         }
@@ -147,7 +147,7 @@ namespace Tactics
         }
 
         // Area
-        auto area() const -> T
+        [[nodiscard]] auto area() const -> T
         {
             return width * height;
         }
@@ -159,32 +159,32 @@ namespace Tactics
         }
 
         // Check if a point is inside the rectangle
-        auto contains(T point_x, T point_y) const -> bool
+        [[nodiscard]] auto contains(T point_x, T point_y) const -> bool
         {
             return point_x >= x && point_x < x + width && point_y >= y && point_y < y + height;
         }
 
-        auto contains(const Vector2<T> &point) const -> bool
+        [[nodiscard]] auto contains(const Vector2<T> &point) const -> bool
         {
             return contains(point.x, point.y);
         }
 
         // Check if another rectangle is completely inside this rectangle
-        auto contains(const Rect &other) const -> bool
+        [[nodiscard]] auto contains(const Rect &other) const -> bool
         {
             return other.x >= x && other.y >= y && other.right() <= right() &&
                    other.bottom() <= bottom();
         }
 
         // Check if this rectangle intersects with another rectangle
-        auto intersects(const Rect &other) const -> bool
+        [[nodiscard]] auto intersects(const Rect &other) const -> bool
         {
             return !(other.x >= x + width || other.x + other.width <= x || other.y >= y + height ||
                      other.y + other.height <= y);
         }
 
         // Get the intersection rectangle (overlapping area)
-        auto intersection(const Rect &other) const -> Rect
+        [[nodiscard]] auto intersection(const Rect &other) const -> Rect
         {
             T left_edge = std::max(x, other.x);
             T top_edge = std::max(y, other.y);
@@ -200,7 +200,7 @@ namespace Tactics
         }
 
         // Get the union rectangle (bounding box of both rectangles)
-        auto union_rect(const Rect &other) const -> Rect
+        [[nodiscard]] auto union_rect(const Rect &other) const -> Rect
         {
             if (is_empty())
             {
@@ -270,14 +270,14 @@ namespace Tactics
         }
 
         // Get translated rectangle (returns new rectangle)
-        auto translated(T offset_x, T offset_y) const -> Rect
+        [[nodiscard]] auto translated(T offset_x, T offset_y) const -> Rect
         {
             Rect result = *this;
             result.translate(offset_x, offset_y);
             return result;
         }
 
-        auto translated(const Vector2<T> &offset) const -> Rect
+        [[nodiscard]] auto translated(const Vector2<T> &offset) const -> Rect
         {
             return translated(offset.x, offset.y);
         }
@@ -311,7 +311,7 @@ namespace Tactics
         }
 
         // Clamp a point to be within the rectangle bounds
-        auto clamp_point(const Vector2<T> &point) const -> Vector2<T>
+        [[nodiscard]] auto clamp_point(const Vector2<T> &point) const -> Vector2<T>
         {
             T clamped_x = std::clamp(point.x, x, x + width);
             T clamped_y = std::clamp(point.y, y, y + height);
@@ -320,7 +320,7 @@ namespace Tactics
         }
 
         // Get the distance from a point to the rectangle
-        auto distance_to_point(const Vector2<T> &point) const -> float
+        [[nodiscard]] auto distance_to_point(const Vector2<T> &point) const -> float
         {
             Vector2<T> clamped = clamp_point(point);
 

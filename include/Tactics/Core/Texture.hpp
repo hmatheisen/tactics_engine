@@ -10,7 +10,7 @@ namespace Tactics
     class Texture
     {
     public:
-        Texture();
+        Texture() = default;
         ~Texture();
 
         // Delete copy constructor and assignment operator
@@ -85,6 +85,6 @@ namespace Tactics
         auto render(SDL_Renderer *renderer, const Vector2f &position) const -> bool;
 
     private:
-        SDL_Texture *m_texture;
+        SDL_Texture *m_texture{nullptr};
     };
 } // namespace Tactics

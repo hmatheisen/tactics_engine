@@ -4,9 +4,6 @@
 
 namespace Tactics
 {
-
-    Texture::Texture() : m_texture(nullptr) {}
-
     Texture::~Texture()
     {
         release();

@@ -7,7 +7,7 @@ namespace Tactics
     class TimeManager
     {
     public:
-        TimeManager();
+        TimeManager() = default;
         ~TimeManager() = default;
 
         // Delete copy constructor and assignment operator
@@ -38,12 +38,15 @@ namespace Tactics
         void cap_frame_rate();
 
     private:
-        Uint64 m_performance_frequency;
-        Uint64 m_last_frame_time;
-        Uint64 m_current_frame_start_time;
-        float m_delta_time;
-        float m_frame_time;
-        float m_target_fps;
-        float m_target_frame_time;
+        static constexpr float DEFAULT_TARGET_FPS = 60.0F;
+        static constexpr float MILLISECONDS_PER_SECOND = 1000.0F;
+
+        Uint64 m_performance_frequency{0};
+        Uint64 m_last_frame_time{0};
+        Uint64 m_current_frame_start_time{0};
+        float m_delta_time{0.0F};
+        float m_frame_time{0.0F};
+        float m_target_fps{DEFAULT_TARGET_FPS};
+        float m_target_frame_time{1.0F / DEFAULT_TARGET_FPS};
     };
 } // namespace Tactics

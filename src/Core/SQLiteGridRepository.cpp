@@ -5,7 +5,7 @@
 
 namespace Tactics
 {
-    SQLiteGridRepository::SQLiteGridRepository(const std::string &db_path) : m_db(nullptr)
+    SQLiteGridRepository::SQLiteGridRepository(const std::string &db_path)
     {
         const int result = sqlite3_open(db_path.c_str(), &m_db);
         if (result != SQLITE_OK)

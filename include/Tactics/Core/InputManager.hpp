@@ -58,18 +58,18 @@ namespace Tactics
         static constexpr int MAX_SCANCODES = SDL_SCANCODE_COUNT;
 
         // Keyboard state
-        std::array<bool, MAX_SCANCODES> m_current_keys;
-        std::array<bool, MAX_SCANCODES> m_previous_keys;
+        std::array<bool, MAX_SCANCODES> m_current_keys{false};
+        std::array<bool, MAX_SCANCODES> m_previous_keys{false};
 
         // Mouse state
-        Vector2f m_mouse_position;
-        Vector2f m_previous_mouse_position;
-        std::uint32_t m_current_mouse_buttons;
-        std::uint32_t m_previous_mouse_buttons;
-        Vector2f m_mouse_wheel_delta;
-        Vector2f m_previous_mouse_wheel_delta;
+        Vector2f m_mouse_position{0.0F, 0.0F};
+        Vector2f m_previous_mouse_position{0.0F, 0.0F};
+        std::uint32_t m_current_mouse_buttons{0};
+        std::uint32_t m_previous_mouse_buttons{0};
+        Vector2f m_mouse_wheel_delta{0.0F, 0.0F};
+        Vector2f m_previous_mouse_wheel_delta{0.0F, 0.0F};
 
         // Private constructor for singleton
-        InputManager();
+        InputManager() = default;
     };
 } // namespace Tactics

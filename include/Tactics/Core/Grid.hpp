@@ -48,7 +48,7 @@ namespace Tactics
     private:
         int m_width = 0;
         int m_height = 0;
-        std::vector<Tile> m_tiles{};
+        std::vector<Tile> m_tiles;
 
         // Convert 2D coordinates to 1D index
         [[nodiscard]] auto index_of(int x_pos, int y_pos) const -> size_t;

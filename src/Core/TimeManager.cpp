@@ -2,18 +2,6 @@
 
 namespace Tactics
 {
-    namespace
-    {
-        constexpr float DEFAULT_TARGET_FPS = 60.0F;
-        constexpr float MILLISECONDS_PER_SECOND = 1000.0F;
-    } // namespace
-
-    TimeManager::TimeManager()
-        : m_performance_frequency(0), m_last_frame_time(0), m_current_frame_start_time(0),
-          m_delta_time(0.0F), m_frame_time(0.0F), m_target_fps(DEFAULT_TARGET_FPS),
-          m_target_frame_time(1.0F / DEFAULT_TARGET_FPS)
-    {}
-
     void TimeManager::initialize()
     {
         m_performance_frequency = SDL_GetPerformanceFrequency();

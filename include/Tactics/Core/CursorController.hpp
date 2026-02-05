@@ -20,7 +20,7 @@ namespace Tactics
     class CursorController : public Publisher
     {
     public:
-        CursorController();
+        CursorController() = default;
         ~CursorController() = default;
 
         // Delete copy constructor and assignment operator
@@ -35,8 +35,12 @@ namespace Tactics
         void update(Cursor &cursor, const Vector2i &grid_size, float delta_time);
 
     private:
-        const float m_key_repeat_initial_delay;
-        const float m_key_repeat_rate;
+        static constexpr float DEFAULT_KEY_REPEAT_INITIAL_DELAY =
+            0.2F; // Seconds before first repeat
+        static constexpr float DEFAULT_KEY_REPEAT_RATE = 0.04F;
+
+        const float m_key_repeat_initial_delay{DEFAULT_KEY_REPEAT_INITIAL_DELAY};
+        const float m_key_repeat_rate{DEFAULT_KEY_REPEAT_RATE};
 
         float m_movement_repeat_timer = 0.0F;
 

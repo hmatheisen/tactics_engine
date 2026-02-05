@@ -4,3 +4,4 @@ HeaderFileExtensions:
 ImplementationFileExtensions:
   - cpp
 FormatStyle: none
+HeaderFilterRegex: "Tactics/.*"
