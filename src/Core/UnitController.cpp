@@ -92,14 +92,31 @@ namespace Tactics
         }
     }
 
+    void UnitController::set_units(const Grid &grid, std::vector<Unit> units)
+    {
+        m_units = std::move(units);
+        clamp_units_to_grid(grid);
+        clear_selection();
+    }
+
+    auto UnitController::get_units() const -> const std::vector<Unit> &
+    {
+        return m_units;
+    }
+
+    void UnitController::on_grid_changed(const Grid &grid)
+    {
+        clamp_units_to_grid(grid);
+        clear_selection();
+    }
+
     void UnitController::clear_selection()
     {
         clear_reachable_tiles();
         m_selected_unit.reset();
     }
 
-    auto UnitController::find_unit_index_at(const Vector2i &position) const
-        -> std::optional<size_t>
+    auto UnitController::find_unit_index_at(const Vector2i &position) const -> std::optional<size_t>
     {
         for (size_t index = 0; index < m_units.size(); ++index)
         {
@@ -112,8 +129,7 @@ namespace Tactics
         return std::nullopt;
     }
 
-    auto UnitController::is_tile_reachable(const Grid &grid, const Vector2i &position) const
-        -> bool
+    auto UnitController::is_tile_reachable(const Grid &grid, const Vector2i &position) const -> bool
     {
         if (!grid.is_valid_position(position))
         {
@@ -277,8 +293,8 @@ namespace Tactics
                 const float top = screen_pos.y - (screen_tile_size * 0.5F);
                 const float right = left + screen_tile_size;
                 const float bottom = top + screen_tile_size;
-                if (right < 0.0F || left > camera.get_viewport_width() ||
-                    bottom < 0.0F || top > camera.get_viewport_height())
+                if (right < 0.0F || left > camera.get_viewport_width() || bottom < 0.0F ||
+                    top > camera.get_viewport_height())
                 {
                     continue;
                 }

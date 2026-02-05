@@ -35,8 +35,7 @@ namespace Tactics
         void update(Cursor &cursor, const Vector2i &grid_size, float delta_time);
 
     private:
-        static constexpr float DEFAULT_KEY_REPEAT_INITIAL_DELAY =
-            0.2F;
+        static constexpr float DEFAULT_KEY_REPEAT_INITIAL_DELAY = 0.2F;
         static constexpr float DEFAULT_KEY_REPEAT_RATE = 0.04F;
 
         const float m_key_repeat_initial_delay{DEFAULT_KEY_REPEAT_INITIAL_DELAY};

@@ -2,6 +2,7 @@
 #include "Tactics/Core/InputManager.hpp"
 #include "Tactics/Core/Logger.hpp"
 #include "Tactics/Core/SQLiteGridRepository.hpp"
+#include "Tactics/Core/SQLiteUnitRepository.hpp"
 #include "Tactics/Core/SceneManager.hpp"
 #include "Tactics/Core/TimeManager.hpp"
 #include "Tactics/Scenes/GridScene.hpp"
@@ -28,12 +29,14 @@ auto main() -> int
 
     // Create grid repository
     Tactics::SQLiteGridRepository repository("maps.db");
+    Tactics::SQLiteUnitRepository unit_repository("maps.db");
     const std::string_view default_map_name = "default";
 
     // Create scene manager and initial scene
     Tactics::SceneManager scene_manager;
-    scene_manager.change_scene(
-        std::make_unique<Tactics::GridScene>(&repository, default_map_name.data()));
+    auto grid_scene = std::make_unique<Tactics::GridScene>(&repository, &unit_repository,
+                                                           default_map_name.data());
+    scene_manager.change_scene(std::move(grid_scene));
 
     // Create time manager
     Tactics::TimeManager time_manager;

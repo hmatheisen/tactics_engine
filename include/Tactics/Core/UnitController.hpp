@@ -29,6 +29,9 @@ namespace Tactics
         void update(const Grid &grid, const Cursor &cursor);
         void render(SDL_Renderer *renderer, const Camera &camera, float tile_size,
                     const Grid &grid) const;
+        void set_units(const Grid &grid, std::vector<Unit> units);
+        [[nodiscard]] auto get_units() const -> const std::vector<Unit> &;
+        void on_grid_changed(const Grid &grid);
         void clear_selection();
 
     private:
@@ -47,8 +50,8 @@ namespace Tactics
             -> std::vector<bool>;
         void expand_reachable_tiles(const Grid &grid, const Unit &unit,
                                     const std::vector<bool> &occupied);
-        void render_reachable_tiles(SDL_Renderer *renderer, const Camera &camera,
-                                    float tile_size, const Grid &grid) const;
+        void render_reachable_tiles(SDL_Renderer *renderer, const Camera &camera, float tile_size,
+                                    const Grid &grid) const;
         void clear_reachable_tiles();
         void clamp_units_to_grid(const Grid &grid);
     };

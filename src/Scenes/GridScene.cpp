@@ -6,8 +6,10 @@
 
 namespace Tactics
 {
-    GridScene::GridScene(IGridRepository *repository, std::string map_name)
-        : m_repository(repository), m_map_name(std::move(map_name)), m_running(true)
+    GridScene::GridScene(IGridRepository *repository, IUnitRepository *unit_repository,
+                         std::string map_name)
+        : m_repository(repository), m_unit_repository(unit_repository),
+          m_map_name(std::move(map_name)), m_running(true)
     {}
 
     auto GridScene::on_enter() -> bool
@@ -38,7 +40,22 @@ namespace Tactics
         // Create cursor at center of grid
         m_cursor = Cursor({grid_width / 2, grid_height / 2});
 
-        m_unit_controller.reset_for_grid(m_grid, Vector2i{grid_width / 2, grid_height / 2});
+        if (m_unit_repository != nullptr)
+        {
+            std::vector<Unit> units = m_unit_repository->load_units(m_map_name);
+            if (units.empty())
+            {
+                m_unit_controller.reset_for_grid(m_grid, Vector2i{grid_width / 2, grid_height / 2});
+            }
+            else
+            {
+                m_unit_controller.set_units(m_grid, std::move(units));
+            }
+        }
+        else
+        {
+            m_unit_controller.reset_for_grid(m_grid, Vector2i{grid_width / 2, grid_height / 2});
+        }
 
         // Publish initial cursor position so camera has correct state before updates
         publish(CursorEvents::Moved{m_cursor.get_position()});
@@ -53,6 +70,7 @@ namespace Tactics
 
         log_info("Grid created: " + std::to_string(grid_width) + "x" + std::to_string(grid_height));
         log_info("Use WASD or Arrow Keys to move the cursor");
+        log_info("Hold Enter and use WASD to move the camera");
         log_info("Press Q to zoom out, E to zoom in");
         log_info("Press ESC to quit");
 
@@ -66,6 +84,14 @@ namespace Tactics
             log_error("Failed to save map");
         }
 
+        if (m_unit_repository != nullptr)
+        {
+            if (!m_unit_repository->save_units(m_map_name, m_unit_controller.get_units()))
+            {
+                log_error("Failed to save units");
+            }
+        }
+
         log_info("Exiting GridScene");
     }
 
@@ -73,9 +99,14 @@ namespace Tactics
     {
         auto &input = InputManager::instance();
 
-        // Update cursor controller
         const Vector2i grid_size(m_grid.get_width(), m_grid.get_height());
-        m_cursor_controller.update(m_cursor, grid_size, delta_time);
+        const bool camera_pan_active =
+            m_camera_pan_controller.update(m_camera, m_cursor, delta_time, grid_size, TILE_SIZE);
+        if (!camera_pan_active)
+        {
+            // Update cursor controller
+            m_cursor_controller.update(m_cursor, grid_size, delta_time);
+        }
 
         // Handle Zoom
         m_zoom_controller.update(m_camera, delta_time);
@@ -112,7 +143,7 @@ namespace Tactics
             m_cursor.set_position({grid_width / 2, grid_height / 2});
             publish(CursorEvents::Moved{m_cursor.get_position()});
 
-            m_unit_controller.reset_for_grid(m_grid, m_cursor.get_position());
+            m_unit_controller.on_grid_changed(m_grid);
         }
 
         m_unit_controller.update(m_grid, m_cursor);
@@ -124,7 +155,10 @@ namespace Tactics
         }
 
         // Update camera controller (edge scrolling)
-        m_camera_controller.update(m_camera, TILE_SIZE);
+        if (!camera_pan_active)
+        {
+            m_camera_controller.update(m_camera, TILE_SIZE);
+        }
     }
 
     namespace

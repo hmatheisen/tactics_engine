@@ -2,13 +2,15 @@
 
 #include "Tactics/Core/Camera.hpp"
 #include "Tactics/Core/CameraController.hpp"
+#include "Tactics/Core/CameraPanController.hpp"
 #include "Tactics/Core/Cursor.hpp"
 #include "Tactics/Core/CursorController.hpp"
 #include "Tactics/Core/EventBus.hpp"
 #include "Tactics/Core/Grid.hpp"
-#include "Tactics/Core/UnitController.hpp"
 #include "Tactics/Core/IGridRepository.hpp"
+#include "Tactics/Core/IUnitRepository.hpp"
 #include "Tactics/Core/Scene.hpp"
+#include "Tactics/Core/UnitController.hpp"
 #include "Tactics/Core/ZoomController.hpp"
 
 #include <SDL3/SDL.h>
@@ -19,7 +21,8 @@ namespace Tactics
     class GridScene : public Scene, public Publisher
     {
     public:
-        explicit GridScene(IGridRepository *repository, std::string map_name = "default");
+        explicit GridScene(IGridRepository *repository, IUnitRepository *unit_repository,
+                           std::string map_name = "default");
         ~GridScene() override = default;
 
         // Delete copy constructor and assignment operator
@@ -42,11 +45,13 @@ namespace Tactics
         Camera m_camera;
         Cursor m_cursor;
         CameraController m_camera_controller;
+        CameraPanController m_camera_pan_controller;
         CursorController m_cursor_controller;
         UnitController m_unit_controller;
         ZoomController m_zoom_controller;
 
         IGridRepository *m_repository = nullptr;
+        IUnitRepository *m_unit_repository = nullptr;
         std::string m_map_name;
         bool m_running = false;
 

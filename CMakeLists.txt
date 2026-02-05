@@ -44,6 +44,7 @@ set(CORE_SOURCES
   src/Core/Logger.cpp
   src/Core/Camera.cpp
   src/Core/SQLiteGridRepository.cpp
+  src/Core/SQLiteUnitRepository.cpp
   src/Core/MapGenerator.cpp
 )
 
@@ -54,6 +55,7 @@ target_link_libraries(tactics_core PUBLIC SQLite::SQLite3 SDL3::SDL3)
 # Main executable
 set(TACTICS_SOURCES
   src/Core/CameraController.cpp
+  src/Core/CameraPanController.cpp
   src/Core/Cursor.cpp
   src/Core/CursorController.cpp
   src/Core/Engine.cpp

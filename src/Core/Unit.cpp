@@ -58,8 +58,8 @@ namespace Tactics
 
         const float inset = screen_tile_size * 0.15F;
         const float size = std::max(0.0F, screen_tile_size - (inset * 2.0F));
-        const Rectf screen_rect(screen_pos.x - (size * 0.5F), screen_pos.y - (size * 0.5F),
-                                size, size);
+        const Rectf screen_rect(screen_pos.x - (size * 0.5F), screen_pos.y - (size * 0.5F), size,
+                                size);
 
         if (screen_rect.right() < 0.0F || screen_rect.left() > camera.get_viewport_width() ||
             screen_rect.bottom() < 0.0F || screen_rect.top() > camera.get_viewport_height())
@@ -68,8 +68,7 @@ namespace Tactics
         }
 
         SDL_SetRenderDrawColor(renderer, UNIT_COLOR_R, UNIT_COLOR_G, UNIT_COLOR_B, SDL_MAX_UINT8);
-        SDL_FRect sdl_rect = {screen_rect.x, screen_rect.y, screen_rect.width,
-                              screen_rect.height};
+        SDL_FRect sdl_rect = {screen_rect.x, screen_rect.y, screen_rect.width, screen_rect.height};
         SDL_RenderFillRect(renderer, &sdl_rect);
 
         SDL_SetRenderDrawColor(renderer, UNIT_BORDER_R, UNIT_BORDER_G, UNIT_BORDER_B,
