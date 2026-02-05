@@ -23,8 +23,13 @@ namespace Tactics
         update_key_state(m_key_down);
         update_key_state(m_key_left);
         update_key_state(m_key_right);
+        update_key_state(m_key_select);
 
-        bool cursor_moved = false;
+        if (m_key_select.pressed)
+        {
+            handle_pressed(cursor, grid_size);
+            return;
+        }
 
         const bool any_key_just_pressed = m_key_up.just_pressed || m_key_down.just_pressed ||
                                           m_key_left.just_pressed || m_key_right.just_pressed;
@@ -33,82 +38,94 @@ namespace Tactics
         {
             m_movement_repeat_timer = m_key_repeat_initial_delay;
 
-            if (m_key_up.just_pressed)
-            {
-                cursor.move_up();
-                cursor_moved = true;
-            }
-
-            if (m_key_down.just_pressed)
-            {
-                cursor.move_down();
-                cursor_moved = true;
-            }
-
-            if (m_key_left.just_pressed)
-            {
-                cursor.move_left();
-                cursor_moved = true;
-            }
-
-            if (m_key_right.just_pressed)
-            {
-                cursor.move_right();
-                cursor_moved = true;
-            }
-
-            if (cursor_moved)
-            {
-                cursor.clamp_to_grid(grid_size);
-                publish(CursorEvents::Moved{cursor.get_position()});
-            }
-
+            handle_just_pressed(cursor, grid_size);
             return;
         }
 
         const bool any_key_pressed =
             m_key_up.pressed || m_key_down.pressed || m_key_left.pressed || m_key_right.pressed;
-
         if (!any_key_pressed)
         {
             return;
         }
 
         m_movement_repeat_timer -= delta_time;
-
         if (m_movement_repeat_timer <= 0.0F)
         {
             m_movement_repeat_timer = m_key_repeat_rate;
 
-            if (m_key_up.pressed)
-            {
-                cursor.move_up();
-                cursor_moved = true;
-            }
-
-            if (m_key_down.pressed)
-            {
-                cursor.move_down();
-                cursor_moved = true;
-            }
-
-            if (m_key_left.pressed)
-            {
-                cursor.move_left();
-                cursor_moved = true;
-            }
-
-            if (m_key_right.pressed)
-            {
-                cursor.move_right();
-                cursor_moved = true;
-            }
-
-            if (cursor_moved)
-            {
-                cursor.clamp_to_grid(grid_size);
-                publish(CursorEvents::Moved{cursor.get_position()});
-            }
+            handle_pressed(cursor, grid_size);
         }
     }
+
+    void CursorController::handle_just_pressed(Cursor &cursor, const Vector2i &grid_size) const
+    {
+        bool cursor_moved = false;
+
+        if (m_key_up.just_pressed)
+        {
+            cursor.move_up();
+            cursor_moved = true;
+        }
+
+        if (m_key_down.just_pressed)
+        {
+            cursor.move_down();
+            cursor_moved = true;
+        }
+
+        if (m_key_left.just_pressed)
+        {
+            cursor.move_left();
+            cursor_moved = true;
+        }
+
+        if (m_key_right.just_pressed)
+        {
+            cursor.move_right();
+            cursor_moved = true;
+        }
+
+        if (cursor_moved)
+        {
+            cursor.clamp_to_grid(grid_size);
+            publish(CursorEvents::Moved{cursor.get_position()});
+        }
+    }
+
+    void CursorController::handle_pressed(Cursor &cursor, const Vector2i &grid_size) const
+    {
+        bool cursor_moved = false;
+
+        if (m_key_up.pressed)
+        {
+            cursor.move_up();
+            cursor_moved = true;
+        }
+
+        if (m_key_down.pressed)
+        {
+            cursor.move_down();
+            cursor_moved = true;
+        }
+
+        if (m_key_left.pressed)
+        {
+            cursor.move_left();
+            cursor_moved = true;
+        }
+
+        if (m_key_right.pressed)
+        {
+            cursor.move_right();
+            cursor_moved = true;
+        }
+
+        if (cursor_moved)
+        {
+            cursor.clamp_to_grid(grid_size);
+            publish(CursorEvents::Moved{cursor.get_position()});
+        }
+    }
+
 } // namespace Tactics

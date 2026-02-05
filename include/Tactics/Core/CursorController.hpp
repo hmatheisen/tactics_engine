@@ -36,7 +36,7 @@ namespace Tactics
 
     private:
         static constexpr float DEFAULT_KEY_REPEAT_INITIAL_DELAY =
-            0.2F; // Seconds before first repeat
+            0.2F;
         static constexpr float DEFAULT_KEY_REPEAT_RATE = 0.04F;
 
         const float m_key_repeat_initial_delay{DEFAULT_KEY_REPEAT_INITIAL_DELAY};
@@ -48,5 +48,10 @@ namespace Tactics
         KeyState m_key_down = {.scancode = SDL_SCANCODE_S};
         KeyState m_key_left = {.scancode = SDL_SCANCODE_A};
         KeyState m_key_right = {.scancode = SDL_SCANCODE_D};
+
+        KeyState m_key_select = {.scancode = SDL_SCANCODE_SPACE};
+
+        void handle_pressed(Cursor &cursor, const Vector2i &grid_size) const;
+        void handle_just_pressed(Cursor &cursor, const Vector2i &grid_size) const;
     };
 } // namespace Tactics
