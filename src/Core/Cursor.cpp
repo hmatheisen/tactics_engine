@@ -1,10 +1,17 @@
 #include "Tactics/Core/Cursor.hpp"
-#include "SDL3/SDL_stdinc.h"
 #include "Tactics/Core/Rect.hpp"
 #include <algorithm>
 
 namespace Tactics
 {
+    namespace
+    {
+        constexpr uint8_t CURSOR_COLOR_R = 255;
+        constexpr uint8_t CURSOR_COLOR_G = 255;
+        constexpr uint8_t CURSOR_COLOR_B = 255;
+        constexpr uint8_t CURSOR_COLOR_A = 128;
+    } // namespace
+
     Cursor::Cursor() = default;
 
     Cursor::Cursor(const Vector2i &position) : m_position(position) {}
@@ -84,15 +91,13 @@ namespace Tactics
             return true; // Not visible, but not an error
         }
 
-        // Draw cursor highlight (semi-transparent overlay)
-        SDL_SetRenderDrawColor(renderer, SDL_MAX_UINT8, SDL_MAX_UINT8, SDL_MAX_UINT8,
-                               SDL_MAX_UINT8 / 2); // White with 50% opacity
+        // Draw cursor highlight
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawColor(renderer, CURSOR_COLOR_R, CURSOR_COLOR_G, CURSOR_COLOR_B,
+                               CURSOR_COLOR_A);
         SDL_FRect sdl_rect = {screen_rect.x, screen_rect.y, screen_rect.width, screen_rect.height};
         SDL_RenderFillRect(renderer, &sdl_rect);
-
-        // Draw yellow border
-        SDL_SetRenderDrawColor(renderer, SDL_MAX_UINT8, SDL_MAX_UINT8, 0, SDL_MAX_UINT8); // Yellow
-        SDL_RenderRect(renderer, &sdl_rect);
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 
         return true;
     }

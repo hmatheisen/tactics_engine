@@ -64,6 +64,8 @@ set(TACTICS_SOURCES
   src/Core/Texture.cpp
   src/Core/TimeManager.cpp
   src/Core/ZoomController.cpp
+  src/Core/Unit.cpp
+  src/Core/UnitController.cpp
   src/Scenes/GridScene.cpp
   src/main.cpp
 )

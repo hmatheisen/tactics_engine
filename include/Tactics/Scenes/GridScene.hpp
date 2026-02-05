@@ -6,6 +6,7 @@
 #include "Tactics/Core/CursorController.hpp"
 #include "Tactics/Core/EventBus.hpp"
 #include "Tactics/Core/Grid.hpp"
+#include "Tactics/Core/UnitController.hpp"
 #include "Tactics/Core/IGridRepository.hpp"
 #include "Tactics/Core/Scene.hpp"
 #include "Tactics/Core/ZoomController.hpp"
@@ -42,6 +43,7 @@ namespace Tactics
         Cursor m_cursor;
         CameraController m_camera_controller;
         CursorController m_cursor_controller;
+        UnitController m_unit_controller;
         ZoomController m_zoom_controller;
 
         IGridRepository *m_repository = nullptr;

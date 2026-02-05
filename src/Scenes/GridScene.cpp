@@ -38,6 +38,8 @@ namespace Tactics
         // Create cursor at center of grid
         m_cursor = Cursor({grid_width / 2, grid_height / 2});
 
+        m_unit_controller.reset_for_grid(m_grid, Vector2i{grid_width / 2, grid_height / 2});
+
         // Publish initial cursor position so camera has correct state before updates
         publish(CursorEvents::Moved{m_cursor.get_position()});
 
@@ -109,7 +111,11 @@ namespace Tactics
             grid_height = m_grid.get_height();
             m_cursor.set_position({grid_width / 2, grid_height / 2});
             publish(CursorEvents::Moved{m_cursor.get_position()});
+
+            m_unit_controller.reset_for_grid(m_grid, m_cursor.get_position());
         }
+
+        m_unit_controller.update(m_grid, m_cursor);
 
         // Handle escape to quit
         if (input.is_key_just_pressed(SDL_SCANCODE_ESCAPE))
@@ -142,6 +148,8 @@ namespace Tactics
 
         // Render grid
         m_grid.render(renderer, m_camera);
+
+        m_unit_controller.render(renderer, m_camera, TILE_SIZE, m_grid);
 
         // Render cursor
         m_cursor.render(renderer, m_camera, TILE_SIZE);
