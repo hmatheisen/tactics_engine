@@ -1,6 +1,6 @@
-#include "Tactics/Core/CursorController.hpp"
-#include "Tactics/Core/Cursor.hpp"
-#include "Tactics/Core/CursorEvents.hpp"
+#include "Tactics/Components/CursorController.hpp"
+#include "Tactics/Components/Cursor.hpp"
+#include "Tactics/Components/CursorEvents.hpp"
 #include "Tactics/Core/InputManager.hpp"
 
 namespace Tactics

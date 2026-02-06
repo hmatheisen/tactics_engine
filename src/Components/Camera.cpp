@@ -1,4 +1,4 @@
-#include "Tactics/Core/Camera.hpp"
+#include "Tactics/Components/Camera.hpp"
 #include "Tactics/Core/Logger.hpp"
 #include <algorithm>
 
@@ -99,8 +99,11 @@ namespace Tactics
         float screen_x = 0.0F;
         float screen_y = 0.0F;
 
-        screen_x = ((world_pos.x - m_position.x) * m_zoom) + (m_viewport_width * 0.5F);
-        screen_y = ((world_pos.y - m_position.y) * m_zoom) + (m_viewport_height * 0.5F);
+        const float half_width = m_viewport_width * 0.5F;
+        const float half_height = m_viewport_height * 0.5F;
+
+        screen_x = ((world_pos.x - m_position.x) * m_zoom) + half_width;
+        screen_y = ((world_pos.y - m_position.y) * m_zoom) + half_height;
 
         return {screen_x, screen_y};
     }
@@ -113,8 +116,11 @@ namespace Tactics
         float world_x = 0.0F;
         float world_y = 0.0F;
 
-        world_x = ((screen_pos.x - (m_viewport_width * 0.5F)) / m_zoom) + m_position.x;
-        world_y = ((screen_pos.y - (m_viewport_height * 0.5F)) / m_zoom) + m_position.y;
+        const float half_width = m_viewport_width * 0.5F;
+        const float half_height = m_viewport_height * 0.5F;
+
+        world_x = ((screen_pos.x - half_width) / m_zoom) + m_position.x;
+        world_y = ((screen_pos.y - half_height) / m_zoom) + m_position.y;
 
         return {world_x, world_y};
     }

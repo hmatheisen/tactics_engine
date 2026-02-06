@@ -39,10 +39,10 @@ find_package(SQLite3 REQUIRED)
 
 # Core library (shared between main executable and tests)
 set(CORE_SOURCES
-  src/Core/Tile.cpp
-  src/Core/Grid.cpp
+  src/Components/Tile.cpp
+  src/Components/Grid.cpp
   src/Core/Logger.cpp
-  src/Core/Camera.cpp
+  src/Components/Camera.cpp
   src/Core/SQLiteGridRepository.cpp
   src/Core/SQLiteUnitRepository.cpp
   src/Core/MapGenerator.cpp
@@ -54,10 +54,10 @@ target_link_libraries(tactics_core PUBLIC SQLite::SQLite3 SDL3::SDL3)
 
 # Main executable
 set(TACTICS_SOURCES
-  src/Core/CameraController.cpp
-  src/Core/CameraPanController.cpp
-  src/Core/Cursor.cpp
-  src/Core/CursorController.cpp
+  src/Components/CameraController.cpp
+  src/Components/CameraPanController.cpp
+  src/Components/Cursor.cpp
+  src/Components/CursorController.cpp
   src/Core/Engine.cpp
   src/Core/EventBus.cpp
   src/Core/InputManager.cpp
@@ -65,9 +65,9 @@ set(TACTICS_SOURCES
   src/Core/Sprite.cpp
   src/Core/Texture.cpp
   src/Core/TimeManager.cpp
-  src/Core/ZoomController.cpp
-  src/Core/Unit.cpp
-  src/Core/UnitController.cpp
+  src/Components/ZoomController.cpp
+  src/Components/Unit.cpp
+  src/Components/UnitController.cpp
   src/Scenes/GridScene.cpp
   src/main.cpp
 )

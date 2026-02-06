@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Tactics/Core/Cursor.hpp"
+#include "SDL3/SDL_scancode.h"
+#include "Tactics/Components/Cursor.hpp"
 #include "Tactics/Core/EventBus.hpp"
 #include "Tactics/Core/Vector2.hpp"
 #include <SDL3/SDL.h>
@@ -48,7 +49,7 @@ namespace Tactics
         KeyState m_key_left = {.scancode = SDL_SCANCODE_A};
         KeyState m_key_right = {.scancode = SDL_SCANCODE_D};
 
-        KeyState m_key_select = {.scancode = SDL_SCANCODE_SPACE};
+        KeyState m_key_select = {.scancode = SDL_SCANCODE_LSHIFT};
 
         void handle_pressed(Cursor &cursor, const Vector2i &grid_size) const;
         void handle_just_pressed(Cursor &cursor, const Vector2i &grid_size) const;

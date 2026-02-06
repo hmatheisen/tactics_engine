@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Tactics/Core/Grid.hpp"
+#include "Tactics/Components/Grid.hpp"
 #include "Tactics/Core/MapGenerator.hpp"
 #include <optional>
 #include <string>

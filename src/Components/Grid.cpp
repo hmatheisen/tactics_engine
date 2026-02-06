@@ -1,7 +1,7 @@
-#include "Tactics/Core/Grid.hpp"
+#include "Tactics/Components/Grid.hpp"
 #include "SDL3/SDL_stdinc.h"
 #include "Tactics/Core/Logger.hpp"
-#include "Tactics/Core/Tile.hpp"
+#include "Tactics/Components/Tile.hpp"
 #include <cmath>
 
 namespace Tactics

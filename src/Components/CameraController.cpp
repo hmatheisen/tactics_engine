@@ -1,5 +1,5 @@
-#include "Tactics/Core/CameraController.hpp"
-#include "Tactics/Core/CursorEvents.hpp"
+#include "Tactics/Components/CameraController.hpp"
+#include "Tactics/Components/CursorEvents.hpp"
 
 namespace Tactics
 {

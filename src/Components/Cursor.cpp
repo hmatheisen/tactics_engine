@@ -1,4 +1,4 @@
-#include "Tactics/Core/Cursor.hpp"
+#include "Tactics/Components/Cursor.hpp"
 #include "Tactics/Core/Rect.hpp"
 #include <algorithm>
 

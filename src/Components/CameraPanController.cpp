@@ -1,5 +1,5 @@
-#include "Tactics/Core/CameraPanController.hpp"
-#include "Tactics/Core/CursorEvents.hpp"
+#include "Tactics/Components/CameraPanController.hpp"
+#include "Tactics/Components/CursorEvents.hpp"
 #include "Tactics/Core/InputManager.hpp"
 #include <algorithm>
 #include <cmath>

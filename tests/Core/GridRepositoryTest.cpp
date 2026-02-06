@@ -1,6 +1,6 @@
-#include "Tactics/Core/Grid.hpp"
+#include "Tactics/Components/Grid.hpp"
 #include "Tactics/Core/SQLiteGridRepository.hpp"
-#include "Tactics/Core/Tile.hpp"
+#include "Tactics/Components/Tile.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <filesystem>
 

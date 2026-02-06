@@ -1,4 +1,4 @@
-#include "Tactics/Core/Tile.hpp"
+#include "Tactics/Components/Tile.hpp"
 
 namespace Tactics
 {

@@ -1,5 +1,5 @@
 #include "Tactics/Scenes/GridScene.hpp"
-#include "Tactics/Core/CursorEvents.hpp"
+#include "Tactics/Components/CursorEvents.hpp"
 #include "Tactics/Core/InputManager.hpp"
 #include "Tactics/Core/Logger.hpp"
 #include "Tactics/Core/MapGenerator.hpp"

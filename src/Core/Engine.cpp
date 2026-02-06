@@ -1,4 +1,5 @@
 #include "Tactics/Core/Engine.hpp"
+#include "SDL3/SDL_render.h"
 #include "Tactics/Core/Logger.hpp"
 
 namespace Tactics
@@ -25,6 +26,7 @@ namespace Tactics
         if (!SDL_Init(SDL_INIT_VIDEO))
         {
             log_error("Failed to initialize SDL video subsystem");
+
             return false;
         }
         log_debug("SDL video subsystem initialized");
@@ -35,6 +37,7 @@ namespace Tactics
         {
             log_error("Failed to create window: " + std::string(SDL_GetError()));
             SDL_Quit();
+
             return false;
         }
         m_window = SDLWindowPtr(window);
@@ -48,8 +51,22 @@ namespace Tactics
             log_error("Failed to create renderer: " + std::string(SDL_GetError()));
             m_window.reset(); // Destroy window before quitting
             SDL_Quit();
+
             return false;
         }
+
+        const bool vsync_enabled = SDL_SetRenderVSync(renderer, 1);
+        if (!vsync_enabled)
+        {
+            log_error("Failed to enable vsync: " + std::string(SDL_GetError()));
+            m_renderer.reset();
+            m_window.reset();
+            SDL_Quit();
+
+            return false;
+        }
+        log_info("Vsync enabled");
+
         m_renderer = SDLRendererPtr(renderer);
         log_info("Renderer created");
 

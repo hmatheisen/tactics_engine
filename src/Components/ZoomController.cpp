@@ -1,5 +1,4 @@
-#include "Tactics/Core/ZoomController.hpp"
-#include "Tactics/Core/Camera.hpp"
+#include "Tactics/Components/ZoomController.hpp"
 #include "Tactics/Core/InputManager.hpp"
 
 namespace Tactics

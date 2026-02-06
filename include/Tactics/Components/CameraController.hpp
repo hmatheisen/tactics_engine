@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Tactics/Core/Camera.hpp"
+#include "Tactics/Components/Camera.hpp"
 #include "Tactics/Core/EventBus.hpp"
 #include "Tactics/Core/Vector2.hpp"
 

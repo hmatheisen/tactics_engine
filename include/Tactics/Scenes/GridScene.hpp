@@ -1,17 +1,17 @@
 #pragma once
 
-#include "Tactics/Core/Camera.hpp"
-#include "Tactics/Core/CameraController.hpp"
-#include "Tactics/Core/CameraPanController.hpp"
-#include "Tactics/Core/Cursor.hpp"
-#include "Tactics/Core/CursorController.hpp"
+#include "Tactics/Components/Camera.hpp"
+#include "Tactics/Components/CameraController.hpp"
+#include "Tactics/Components/CameraPanController.hpp"
+#include "Tactics/Components/Cursor.hpp"
+#include "Tactics/Components/CursorController.hpp"
 #include "Tactics/Core/EventBus.hpp"
-#include "Tactics/Core/Grid.hpp"
+#include "Tactics/Components/Grid.hpp"
 #include "Tactics/Core/IGridRepository.hpp"
 #include "Tactics/Core/IUnitRepository.hpp"
 #include "Tactics/Core/Scene.hpp"
-#include "Tactics/Core/UnitController.hpp"
-#include "Tactics/Core/ZoomController.hpp"
+#include "Tactics/Components/UnitController.hpp"
+#include "Tactics/Components/ZoomController.hpp"
 
 #include <SDL3/SDL.h>
 #include <string>

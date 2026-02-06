@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Tactics/Core/Camera.hpp"
-#include "Tactics/Core/Cursor.hpp"
-#include "Tactics/Core/Grid.hpp"
-#include "Tactics/Core/Unit.hpp"
+#include "Tactics/Components/Camera.hpp"
+#include "Tactics/Components/Cursor.hpp"
+#include "Tactics/Components/Grid.hpp"
+#include "Tactics/Components/Unit.hpp"
 
 #include <SDL3/SDL.h>
 #include <optional>

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Tactics/Core/Camera.hpp"
-#include "Tactics/Core/Cursor.hpp"
+#include "Tactics/Components/Camera.hpp"
+#include "Tactics/Components/Cursor.hpp"
 #include "Tactics/Core/EventBus.hpp"
 #include "Tactics/Core/Vector2.hpp"
 #include <SDL3/SDL.h>
@@ -30,8 +30,6 @@ namespace Tactics
 
         static void apply_camera_movement(Camera &camera, float movement_distance, bool move_up,
                                           bool move_down, bool move_left, bool move_right);
-        static void ensure_cursor_visible(Cursor &cursor, const Camera &camera,
-                                          const Vector2i &grid_size, float tile_size);
         static void center_cursor_in_view(Cursor &cursor, const Camera &camera,
                                           const Vector2i &grid_size, float tile_size);
     };

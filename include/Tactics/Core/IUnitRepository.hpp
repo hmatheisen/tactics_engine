@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Tactics/Core/Unit.hpp"
+#include "Tactics/Components/Unit.hpp"
 #include <string>
 #include <vector>
 

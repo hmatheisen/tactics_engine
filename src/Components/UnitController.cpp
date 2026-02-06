@@ -1,6 +1,6 @@
-#include "Tactics/Core/UnitController.hpp"
+#include "Tactics/Components/UnitController.hpp"
 #include "Tactics/Core/InputManager.hpp"
-#include "Tactics/Core/Tile.hpp"
+#include "Tactics/Components/Tile.hpp"
 #include <algorithm>
 #include <array>
 #include <queue>

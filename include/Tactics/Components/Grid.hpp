@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Tactics/Core/Camera.hpp"
-#include "Tactics/Core/Tile.hpp"
+#include "Tactics/Components/Camera.hpp"
+#include "Tactics/Components/Tile.hpp"
 #include <SDL3/SDL.h>
 #include <vector>
 
