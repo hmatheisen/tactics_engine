@@ -5,13 +5,13 @@
 #include "Tactics/Components/CameraPanController.hpp"
 #include "Tactics/Components/Cursor.hpp"
 #include "Tactics/Components/CursorController.hpp"
-#include "Tactics/Core/EventBus.hpp"
 #include "Tactics/Components/Grid.hpp"
+#include "Tactics/Components/UnitController.hpp"
+#include "Tactics/Components/ZoomController.hpp"
+#include "Tactics/Core/EventBus.hpp"
 #include "Tactics/Core/IGridRepository.hpp"
 #include "Tactics/Core/IUnitRepository.hpp"
 #include "Tactics/Core/Scene.hpp"
-#include "Tactics/Components/UnitController.hpp"
-#include "Tactics/Components/ZoomController.hpp"
 
 #include <SDL3/SDL.h>
 #include <string>

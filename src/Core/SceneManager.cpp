@@ -5,6 +5,12 @@ namespace Tactics
 {
     SceneManager::SceneManager() = default;
 
+    auto SceneManager::instance() -> SceneManager &
+    {
+        static SceneManager instance;
+        return instance;
+    }
+
     // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     void SceneManager::push_scene(std::unique_ptr<Scene> scene)
     {

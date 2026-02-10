@@ -1,7 +1,7 @@
 #include "Tactics/Components/Grid.hpp"
 #include "SDL3/SDL_stdinc.h"
-#include "Tactics/Core/Logger.hpp"
 #include "Tactics/Components/Tile.hpp"
+#include "Tactics/Core/Logger.hpp"
 #include <cmath>
 
 namespace Tactics
@@ -89,31 +89,37 @@ namespace Tactics
 
     namespace
     {
-        // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
+        constexpr SDL_Color GRASS_COLOR = {34, 139, 34, 255};
+        constexpr SDL_Color WATER_COLOR = {0, 119, 190, 255};
+        constexpr SDL_Color MOUNTAIN_COLOR = {139, 137, 137, 255};
+        constexpr SDL_Color FOREST_COLOR = {34, 100, 34, 255};
+        constexpr SDL_Color DESERT_COLOR = {238, 203, 173, 255};
+        constexpr SDL_Color ROAD_COLOR = {105, 105, 105, 255};
+        constexpr SDL_Color WALL_COLOR = {64, 64, 64, 255};
+        constexpr SDL_Color DEFAULT_COLOR = {128, 128, 128, 255};
+
         auto tile_type_to_color(Tile::Type type) -> SDL_Color
         {
             switch (type)
             {
             case Tile::Type::Grass:
-                return {34, 139, 34, 255}; // Green
+                return GRASS_COLOR; // Green
             case Tile::Type::Water:
-                return {0, 119, 190, 255}; // Blue
+                return WATER_COLOR; // Blue
             case Tile::Type::Mountain:
-                return {139, 137, 137, 255}; // Gray
+                return MOUNTAIN_COLOR; // Gray
             case Tile::Type::Forest:
-                return {34, 100, 34, 255}; // Dark green
+                return FOREST_COLOR; // Dark green
             case Tile::Type::Desert:
-                return {238, 203, 173, 255}; // Beige
+                return DESERT_COLOR; // Beige
             case Tile::Type::Road:
-                return {105, 105, 105, 255}; // Dark gray
+                return ROAD_COLOR; // Dark gray
             case Tile::Type::Wall:
-                return {64, 64, 64, 255}; // Very dark gray
+                return WALL_COLOR; // Very dark gray
             default:
-                return {128, 128, 128, 255}; // Gray
+                return DEFAULT_COLOR; // Gray
             }
         }
-        // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
-
     } // namespace
 
     auto Grid::render(SDL_Renderer *renderer, const Camera &camera) const -> bool

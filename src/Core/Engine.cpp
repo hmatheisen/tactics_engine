@@ -1,6 +1,9 @@
 #include "Tactics/Core/Engine.hpp"
 #include "SDL3/SDL_render.h"
+#include "Tactics/Core/InputManager.hpp"
 #include "Tactics/Core/Logger.hpp"
+#include "Tactics/Core/SceneManager.hpp"
+#include "Tactics/Core/TimeManager.hpp"
 
 namespace Tactics
 {
@@ -77,6 +80,51 @@ namespace Tactics
     auto Engine::get_renderer() const -> SDL_Renderer *
     {
         return m_renderer.get();
+    }
+
+    void Engine::run()
+    {
+        constexpr float TARGET_FPS = 60.0F;
+
+        auto &scene_manager = Tactics::SceneManager::instance();
+
+        Tactics::TimeManager time_manager;
+        time_manager.initialize();
+        time_manager.set_target_fps(TARGET_FPS);
+
+        m_is_running = true;
+
+        // Main game loop
+        while (m_is_running && scene_manager.is_running())
+        {
+            // Process SDL events once per frame and feed them to the input system
+            SDL_Event event;
+            while (SDL_PollEvent(&event))
+            {
+                // Global quit handling
+                if (event.type == SDL_EVENT_QUIT)
+                {
+                    m_is_running = false;
+                }
+
+                // Dispatch event to input manager (mouse wheel, etc.)
+                Tactics::InputManager::instance().process_event(event);
+            }
+
+            // Update input snapshot for this frame
+            Tactics::InputManager::instance().update();
+
+            // Update timing and get delta time
+            time_manager.update();
+
+            // Update and render current scene
+            scene_manager.update(time_manager.get_delta_time());
+            scene_manager.render(m_renderer.get());
+            SDL_RenderPresent(m_renderer.get());
+
+            // Cap frame rate
+            time_manager.cap_frame_rate();
+        }
     }
 
     // NOLINTNEXTLINE(readability-convert-member-functions-to-static)

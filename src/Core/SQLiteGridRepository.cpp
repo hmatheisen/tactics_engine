@@ -1,6 +1,6 @@
 #include "Tactics/Core/SQLiteGridRepository.hpp"
-#include "Tactics/Core/Logger.hpp"
 #include "Tactics/Components/Tile.hpp"
+#include "Tactics/Core/Logger.hpp"
 #include <cstring>
 
 namespace Tactics

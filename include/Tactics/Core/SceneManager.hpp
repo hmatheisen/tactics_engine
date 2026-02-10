@@ -21,6 +21,8 @@ namespace Tactics
         SceneManager(SceneManager &&) = delete;
         auto operator=(SceneManager &&) -> SceneManager & = delete;
 
+        static auto instance() -> SceneManager &;
+
         // Push a new scene (current scene stays in stack)
         void push_scene(std::unique_ptr<Scene> scene);
 

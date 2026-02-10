@@ -49,6 +49,8 @@ namespace Tactics
         // Returns true on success.
         auto initialize() -> bool;
 
+        void run();
+
         // Cleanup SDL resources. Safe to call multiple times.
         void shutdown();
 
@@ -58,5 +60,7 @@ namespace Tactics
     private:
         SDLWindowPtr m_window;
         SDLRendererPtr m_renderer;
+
+        bool m_is_running = false;
     };
 } // namespace Tactics

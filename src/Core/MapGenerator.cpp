@@ -1,6 +1,6 @@
 #include "Tactics/Core/MapGenerator.hpp"
-#include "Tactics/Core/Logger.hpp"
 #include "Tactics/Components/Tile.hpp"
+#include "Tactics/Core/Logger.hpp"
 #include "Tactics/Core/Vector2.hpp"
 #include <algorithm>
 #include <array>
