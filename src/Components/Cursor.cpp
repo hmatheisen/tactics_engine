@@ -12,9 +12,7 @@ namespace Tactics
         constexpr uint8_t CURSOR_COLOR_A = 128;
     } // namespace
 
-    Cursor::Cursor() = default;
-
-    Cursor::Cursor(const Vector2i &position) : m_position(position) {}
+    Cursor::Cursor(float tile_size) : m_tile_size(tile_size) {}
 
     auto Cursor::get_position() const -> Vector2i
     {
@@ -24,6 +22,20 @@ namespace Tactics
     void Cursor::set_position(const Vector2i &position)
     {
         m_position = position;
+    }
+
+    auto Cursor::get_world_position() const -> Vector2f
+    {
+        const float world_x = static_cast<float>(m_position.x) * m_tile_size;
+        const float world_y = static_cast<float>(m_position.y) * m_tile_size;
+
+        return {world_x, world_y};
+    }
+
+    void Cursor::set_world_position(const Vector2f &world_position)
+    {
+        m_position.x = static_cast<int>(std::round(world_position.x / m_tile_size));
+        m_position.y = static_cast<int>(std::round(world_position.y / m_tile_size));
     }
 
     void Cursor::move(const Vector2i &offset)

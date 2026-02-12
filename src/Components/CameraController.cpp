@@ -9,7 +9,7 @@ namespace Tactics
     CameraController::CameraController()
         : m_cursor_subscription_id(subscribe<CursorEvents::Moved, CursorEvents::MovedHandler>(
               [this](const CursorEvents::Moved &event) -> void
-              { m_cursor_tile_position = event.position; }))
+              { m_cursor_world_position = event.world_position; }))
     {}
 
     CameraController::~CameraController()
@@ -17,17 +17,10 @@ namespace Tactics
         unsubscribe<CursorEvents::Moved>(m_cursor_subscription_id);
     }
 
-    void CameraController::update(Camera &camera, float tile_size) const
+    void CameraController::update(Camera &camera) const
     {
-        // Get cursor world position
-        float cursor_world_x = 0.0F;
-        float cursor_world_y = 0.0F;
-
-        cursor_world_x = static_cast<float>(m_cursor_tile_position.x) * tile_size;
-        cursor_world_y = static_cast<float>(m_cursor_tile_position.y) * tile_size;
-
-        // Convert to screen coordinates
-        const Vector2f cursor_screen_pos = camera.world_to_screen({cursor_world_x, cursor_world_y});
+        // Convert cursor world position to screen position
+        const Vector2f cursor_screen_pos = camera.world_to_screen(m_cursor_world_position);
 
         // Calculate camera movement based on cursor proximity to edges
         Vector2f camera_movement(0.0F, 0.0F);

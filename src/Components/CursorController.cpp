@@ -89,7 +89,7 @@ namespace Tactics
         if (cursor_moved)
         {
             cursor.clamp_to_grid(grid_size);
-            publish(CursorEvents::Moved{cursor.get_position()});
+            publish(CursorEvents::Moved{cursor.get_world_position()});
         }
     }
 
@@ -124,7 +124,7 @@ namespace Tactics
         if (cursor_moved)
         {
             cursor.clamp_to_grid(grid_size);
-            publish(CursorEvents::Moved{cursor.get_position()});
+            publish(CursorEvents::Moved{cursor.get_world_position()});
         }
     }
 

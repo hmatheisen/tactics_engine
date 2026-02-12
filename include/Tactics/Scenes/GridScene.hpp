@@ -43,7 +43,7 @@ namespace Tactics
     private:
         Grid m_grid;
         Camera m_camera;
-        Cursor m_cursor;
+        Cursor m_cursor{TILE_SIZE};
         CameraController m_camera_controller;
         CameraPanController m_camera_pan_controller;
         CursorController m_cursor_controller;

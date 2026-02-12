@@ -2,12 +2,10 @@
 #include "Tactics/Components/CursorEvents.hpp"
 #include "Tactics/Core/InputManager.hpp"
 #include <algorithm>
-#include <cmath>
 
 namespace Tactics
 {
-    auto CameraPanController::update(Camera &camera, Cursor &cursor, float delta_time,
-                                     const Vector2i &grid_size, float tile_size) -> bool
+    auto CameraPanController::update(Camera &camera, Cursor &cursor, float delta_time) -> bool
     {
         auto &input = InputManager::instance();
         const bool pan_modifier = input.is_key_pressed(SDL_SCANCODE_RETURN) ||
@@ -15,9 +13,9 @@ namespace Tactics
 
         if (!pan_modifier)
         {
-            if (m_was_panning)
+            if (m_was_panning && !is_cursor_in_view(cursor, camera))
             {
-                center_cursor_in_view(cursor, camera, grid_size, tile_size);
+                center_cursor_in_view(cursor, camera);
             }
             m_was_panning = false;
             return false;
@@ -34,8 +32,8 @@ namespace Tactics
         if (any_pressed)
         {
             const float zoom = std::max(camera.get_zoom(), 0.01F);
-            const float movement_distance =
-                (tile_size * PAN_SPEED_TILES_PER_SECOND * delta_time) / zoom;
+            const float movement_distance = (PAN_SPEED_WORLD_PER_SECOND * delta_time) / zoom;
+
             apply_camera_movement(camera, movement_distance, up_pressed, down_pressed, left_pressed,
                                   right_pressed);
         }
@@ -74,19 +72,24 @@ namespace Tactics
         }
     }
 
-    void CameraPanController::center_cursor_in_view(Cursor &cursor, const Camera &camera,
-                                                    const Vector2i &grid_size, float tile_size)
+    auto CameraPanController::is_cursor_in_view(Cursor &cursor, const Camera &camera) -> bool
     {
-        const Vector2f camera_pos = camera.get_position();
-        const int center_x = static_cast<int>(std::round(camera_pos.x / tile_size));
-        const int center_y = static_cast<int>(std::round(camera_pos.y / tile_size));
-        const Vector2i clamped_pos{std::clamp(center_x, 0, grid_size.x - 1),
-                                   std::clamp(center_y, 0, grid_size.y - 1)};
+        const Vector2f cursor_world_position = cursor.get_world_position();
+        const Vector2f camera_viewport_size = camera.get_viewport_size();
+        const Vector2f cursor_screen_position = camera.world_to_screen(cursor_world_position);
 
-        if (clamped_pos != cursor.get_position())
-        {
-            cursor.set_position(clamped_pos);
-            publish(CursorEvents::Moved{cursor.get_position()});
-        }
+        return cursor_screen_position.x >= 0.0F &&
+               cursor_screen_position.x <= camera_viewport_size.x &&
+               cursor_screen_position.y >= 0.0F &&
+               cursor_screen_position.y <= camera_viewport_size.y;
+    }
+
+    void CameraPanController::center_cursor_in_view(Cursor &cursor, const Camera &camera)
+    {
+        const Rectf view_rect = camera.get_view_rect();
+        const Vector2f center_world = view_rect.center();
+
+        cursor.set_world_position(center_world);
+        publish(CursorEvents::Moved{center_world});
     }
 } // namespace Tactics

@@ -10,7 +10,7 @@ namespace Tactics
     {
         struct Moved
         {
-            Vector2i position;
+            Vector2f world_position;
         };
         using MovedHandler = std::function<void(const Moved &)>;
     }; // namespace CursorEvents

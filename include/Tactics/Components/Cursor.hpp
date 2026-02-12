@@ -9,8 +9,7 @@ namespace Tactics
     class Cursor
     {
     public:
-        Cursor();
-        explicit Cursor(const Vector2i &position);
+        explicit Cursor(float tile_size);
         ~Cursor() = default;
 
         // Delete copy constructor and assignment operator
@@ -26,6 +25,10 @@ namespace Tactics
         // Position accessors (in tile coordinates)
         [[nodiscard]] auto get_position() const -> Vector2i;
         void set_position(const Vector2i &position);
+
+        // World-space helpers (derived from tile coordinates)
+        [[nodiscard]] auto get_world_position() const -> Vector2f;
+        void set_world_position(const Vector2f &world_position);
 
         // Move cursor by offset (in tiles)
         void move(const Vector2i &offset);
@@ -44,5 +47,6 @@ namespace Tactics
 
     private:
         Vector2i m_position{0, 0};
+        float m_tile_size;
     };
 } // namespace Tactics

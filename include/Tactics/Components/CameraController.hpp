@@ -23,7 +23,7 @@ namespace Tactics
         auto operator=(CameraController &&) -> CameraController & = delete;
 
         // Update camera based on cursor position (edge scrolling)
-        void update(Camera &camera, float tile_size) const;
+        void update(Camera &camera) const;
 
         // Edge scroll threshold accessors
         void set_edge_scroll_threshold(float threshold);
@@ -33,7 +33,7 @@ namespace Tactics
         static constexpr float DEFAULT_EDGE_SCROLL_THRESHOLD = 150.0F;
 
         float m_edge_scroll_threshold{DEFAULT_EDGE_SCROLL_THRESHOLD};
-        Vector2i m_cursor_tile_position;
+        Vector2f m_cursor_world_position;
         std::size_t m_cursor_subscription_id{0U};
     };
 } // namespace Tactics

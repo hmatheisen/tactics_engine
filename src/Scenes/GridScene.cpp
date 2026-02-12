@@ -38,7 +38,7 @@ namespace Tactics
         grid_height = m_grid.get_height();
 
         // Create cursor at center of grid
-        m_cursor = Cursor({grid_width / 2, grid_height / 2});
+        m_cursor.set_position({grid_width / 2, grid_height / 2});
 
         if (m_unit_repository != nullptr)
         {
@@ -58,7 +58,7 @@ namespace Tactics
         }
 
         // Publish initial cursor position so camera has correct state before updates
-        publish(CursorEvents::Moved{m_cursor.get_position()});
+        publish(CursorEvents::Moved{m_cursor.get_world_position()});
 
         // Create camera at center of grid (independent of cursor position)
         const float grid_center_x = (static_cast<float>(grid_width) * TILE_SIZE) * 0.5F;
@@ -101,7 +101,7 @@ namespace Tactics
 
         const Vector2i grid_size(m_grid.get_width(), m_grid.get_height());
         const bool camera_pan_active =
-            m_camera_pan_controller.update(m_camera, m_cursor, delta_time, grid_size, TILE_SIZE);
+            m_camera_pan_controller.update(m_camera, m_cursor, delta_time);
         if (!camera_pan_active)
         {
             // Update cursor controller
@@ -141,7 +141,7 @@ namespace Tactics
             grid_width = m_grid.get_width();
             grid_height = m_grid.get_height();
             m_cursor.set_position({grid_width / 2, grid_height / 2});
-            publish(CursorEvents::Moved{m_cursor.get_position()});
+            publish(CursorEvents::Moved{m_cursor.get_world_position()});
 
             m_unit_controller.on_grid_changed(m_grid);
         }
@@ -157,7 +157,7 @@ namespace Tactics
         // Update camera controller (edge scrolling)
         if (!camera_pan_active)
         {
-            m_camera_controller.update(m_camera, TILE_SIZE);
+            m_camera_controller.update(m_camera);
         }
     }
 
