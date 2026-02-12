@@ -1,20 +1,17 @@
 #include "Tactics/Components/CameraController.hpp"
-#include "Tactics/Components/CursorEvents.hpp"
+#include "Tactics/Core/Events.hpp"
 
 namespace Tactics
 {
-    namespace
-    {} // namespace
-
     CameraController::CameraController()
-        : m_cursor_subscription_id(subscribe<CursorEvents::Moved, CursorEvents::MovedHandler>(
-              [this](const CursorEvents::Moved &event) -> void
-              { m_cursor_world_position = event.world_position; }))
+        : m_cursor_subscription_id(subscribe<Events::CursorMoved>(
+              [this](const Events::CursorMoved &event) -> void
+              { m_cursor_world_position = event.world_position.value; }))
     {}
 
     CameraController::~CameraController()
     {
-        unsubscribe<CursorEvents::Moved>(m_cursor_subscription_id);
+        unsubscribe<Events::CursorMoved>(m_cursor_subscription_id);
     }
 
     void CameraController::update(Camera &camera) const

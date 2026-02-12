@@ -4,6 +4,7 @@
 #include "Tactics/Components/Cursor.hpp"
 #include "Tactics/Components/Grid.hpp"
 #include "Tactics/Components/Unit.hpp"
+#include "Tactics/Core/EventBus.hpp"
 
 #include <SDL3/SDL.h>
 #include <optional>
@@ -11,7 +12,7 @@
 
 namespace Tactics
 {
-    class UnitController
+    class UnitController : public Publisher
     {
     public:
         UnitController() = default;
@@ -25,7 +26,6 @@ namespace Tactics
         UnitController(UnitController &&) = delete;
         auto operator=(UnitController &&) -> UnitController & = delete;
 
-        void reset_for_grid(const Grid &grid, const Vector2i &spawn_position);
         void update(const Grid &grid, const Cursor &cursor);
         void render(SDL_Renderer *renderer, const Camera &camera, float tile_size,
                     const Grid &grid) const;

@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Tactics/Components/Camera.hpp"
 #include "Tactics/Core/Vector2.hpp"
-#include <SDL3/SDL.h>
 
 namespace Tactics
 {
@@ -41,9 +39,6 @@ namespace Tactics
 
         // Clamp cursor position to grid bounds
         void clamp_to_grid(const Vector2i &grid_size);
-
-        // Render the cursor
-        auto render(SDL_Renderer *renderer, const Camera &camera, float tile_size) const -> bool;
 
     private:
         Vector2i m_position{0, 0};

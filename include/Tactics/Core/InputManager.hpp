@@ -21,7 +21,7 @@ namespace Tactics
         auto operator=(InputManager &&) -> InputManager & = delete;
 
         // Get singleton instance
-        static auto instance() -> InputManager &;
+        [[nodiscard]] static auto instance() -> InputManager &;
 
         // Update input state (call at the start of each frame)
         void update();
@@ -58,8 +58,8 @@ namespace Tactics
         static constexpr int MAX_SCANCODES = SDL_SCANCODE_COUNT;
 
         // Keyboard state
-        std::array<bool, MAX_SCANCODES> m_current_keys{false};
-        std::array<bool, MAX_SCANCODES> m_previous_keys{false};
+        std::array<bool, MAX_SCANCODES> m_current_keys{};
+        std::array<bool, MAX_SCANCODES> m_previous_keys{};
 
         // Mouse state
         Vector2f m_mouse_position{0.0F, 0.0F};

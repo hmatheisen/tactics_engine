@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Tactics/Components/Camera.hpp"
 #include "Tactics/Components/Tile.hpp"
-#include <SDL3/SDL.h>
 #include <vector>
 
 namespace Tactics
@@ -41,9 +39,6 @@ namespace Tactics
 
         // Check if coordinates are valid
         [[nodiscard]] auto is_valid_position(const Vector2i &position) const -> bool;
-
-        // Render the grid
-        auto render(SDL_Renderer *renderer, const Camera &camera) const -> bool;
 
     private:
         int m_width = 0;

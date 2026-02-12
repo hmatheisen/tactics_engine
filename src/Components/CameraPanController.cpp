@@ -1,6 +1,7 @@
 #include "Tactics/Components/CameraPanController.hpp"
-#include "Tactics/Components/CursorEvents.hpp"
+#include "Tactics/Core/Events.hpp"
 #include "Tactics/Core/InputManager.hpp"
+
 #include <algorithm>
 
 namespace Tactics
@@ -72,7 +73,7 @@ namespace Tactics
         }
     }
 
-    auto CameraPanController::is_cursor_in_view(Cursor &cursor, const Camera &camera) -> bool
+    auto CameraPanController::is_cursor_in_view(const Cursor &cursor, const Camera &camera) -> bool
     {
         const Vector2f cursor_world_position = cursor.get_world_position();
         const Vector2f camera_viewport_size = camera.get_viewport_size();
@@ -90,6 +91,9 @@ namespace Tactics
         const Vector2f center_world = view_rect.center();
 
         cursor.set_world_position(center_world);
-        publish(CursorEvents::Moved{center_world});
+        const Vector2i grid_position = cursor.get_position();
+
+        publish(Events::CursorMoved{.grid_position = GridPos{grid_position},
+                                    .world_position = WorldPos{center_world}});
     }
 } // namespace Tactics

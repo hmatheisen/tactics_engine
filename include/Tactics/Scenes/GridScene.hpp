@@ -9,6 +9,7 @@
 #include "Tactics/Components/UnitController.hpp"
 #include "Tactics/Components/ZoomController.hpp"
 #include "Tactics/Core/EventBus.hpp"
+#include "Tactics/Core/GameConfig.hpp"
 #include "Tactics/Core/IGridRepository.hpp"
 #include "Tactics/Core/IUnitRepository.hpp"
 #include "Tactics/Core/Scene.hpp"
@@ -18,7 +19,7 @@
 
 namespace Tactics
 {
-    class GridScene : public Scene, public Publisher
+    class GridScene : public Scene, public Publisher, public Subscriber
     {
     public:
         explicit GridScene(IGridRepository *repository, IUnitRepository *unit_repository,
@@ -41,22 +42,21 @@ namespace Tactics
         [[nodiscard]] auto should_exit() const -> bool override;
 
     private:
+        GameConfig m_config{};
         Grid m_grid;
         Camera m_camera;
-        Cursor m_cursor{TILE_SIZE};
+        Cursor m_cursor{m_config.tile_size};
         CameraController m_camera_controller;
         CameraPanController m_camera_pan_controller;
         CursorController m_cursor_controller;
         UnitController m_unit_controller;
         ZoomController m_zoom_controller;
 
-        IGridRepository *m_repository = nullptr;
+        IGridRepository *m_grid_repository = nullptr;
         IUnitRepository *m_unit_repository = nullptr;
         std::string m_map_name;
         bool m_running = false;
 
-        static constexpr float TILE_SIZE = 32.0F;
-        static constexpr float VIEWPORT_WIDTH = 1280.0F;
-        static constexpr float VIEWPORT_HEIGHT = 720.0F;
+        SubscriptionId m_map_regenerated_subscription_id{0U};
     };
 } // namespace Tactics

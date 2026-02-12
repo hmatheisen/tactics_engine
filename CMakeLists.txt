@@ -68,6 +68,9 @@ set(TACTICS_SOURCES
   src/Components/ZoomController.cpp
   src/Components/Unit.cpp
   src/Components/UnitController.cpp
+  src/Renderers/GridRenderer.cpp
+  src/Renderers/CursorRenderer.cpp
+  src/Renderers/UnitRenderer.cpp
   src/Scenes/GridScene.cpp
   src/main.cpp
 )

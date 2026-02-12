@@ -28,7 +28,7 @@ namespace Tactics
 
         static void apply_camera_movement(Camera &camera, float movement_distance, bool move_up,
                                           bool move_down, bool move_left, bool move_right);
-        static auto is_cursor_in_view(Cursor &cursor, const Camera &camera) -> bool;
+        static auto is_cursor_in_view(const Cursor &cursor, const Camera &camera) -> bool;
         static void center_cursor_in_view(Cursor &cursor, const Camera &camera);
     };
 } // namespace Tactics

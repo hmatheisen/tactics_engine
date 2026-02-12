@@ -7,10 +7,10 @@ namespace Tactics
     {
         auto &input = InputManager::instance();
 
-        bool zoom_out_just_pressed = input.is_key_just_pressed(SDL_SCANCODE_Q);
-        bool zoom_in_just_pressed = input.is_key_just_pressed(SDL_SCANCODE_E);
-        bool zoom_out_pressed = input.is_key_pressed(SDL_SCANCODE_Q);
-        bool zoom_in_pressed = input.is_key_pressed(SDL_SCANCODE_E);
+        const bool zoom_out_just_pressed = input.is_key_just_pressed(SDL_SCANCODE_Q);
+        const bool zoom_in_just_pressed = input.is_key_just_pressed(SDL_SCANCODE_E);
+        const bool zoom_out_pressed = input.is_key_pressed(SDL_SCANCODE_Q);
+        const bool zoom_in_pressed = input.is_key_pressed(SDL_SCANCODE_E);
 
         if (zoom_in_just_pressed)
         {

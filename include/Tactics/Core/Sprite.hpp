@@ -45,13 +45,13 @@ namespace Tactics
         void set_source_rect(const Rectf &rect);
 
         // Render the sprite
-        auto render(SDL_Renderer *renderer) const -> bool;
+        [[nodiscard]] auto render(SDL_Renderer *renderer) const -> bool;
 
     private:
         Texture m_texture;
-        Vector2f m_position;
-        Vector2f m_size;
-        Rectf m_source_rect;
-        bool m_use_source_rect;
+        Vector2f m_position{};
+        Vector2f m_size{};
+        Rectf m_source_rect{};
+        bool m_use_source_rect{false};
     };
 } // namespace Tactics

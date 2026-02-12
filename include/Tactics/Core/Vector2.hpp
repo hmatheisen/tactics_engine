@@ -15,42 +15,42 @@ namespace Tactics
         T y;
 
         // Constructors
-        Vector2() : x(0), y(0) {}
-        Vector2(T x_value, T y_value) : x(x_value), y(y_value) {}
-        explicit Vector2(T scalar) : x(scalar), y(scalar) {}
+        constexpr Vector2() : x(0), y(0) {}
+        constexpr Vector2(T x_value, T y_value) : x(x_value), y(y_value) {}
+        explicit constexpr Vector2(T scalar) : x(scalar), y(scalar) {}
 
         // Copy constructor
-        Vector2(const Vector2 &other) = default;
+        constexpr Vector2(const Vector2 &other) = default;
 
         // Assignment operator
-        auto operator=(const Vector2 &other) -> Vector2 & = default;
+        constexpr auto operator=(const Vector2 &other) -> Vector2 & = default;
 
         // Move constructor
-        Vector2(Vector2 &&other) noexcept = default;
+        constexpr Vector2(Vector2 &&other) noexcept = default;
 
         // Move assignment operator
-        auto operator=(Vector2 &&other) noexcept -> Vector2 & = default;
+        constexpr auto operator=(Vector2 &&other) noexcept -> Vector2 & = default;
 
         // Destructor
         ~Vector2() = default;
 
         // Arithmetic operators
-        auto operator+(const Vector2 &other) const -> Vector2
+        [[nodiscard]] constexpr auto operator+(const Vector2 &other) const -> Vector2
         {
             return Vector2(x + other.x, y + other.y);
         }
 
-        auto operator-(const Vector2 &other) const -> Vector2
+        [[nodiscard]] constexpr auto operator-(const Vector2 &other) const -> Vector2
         {
             return Vector2(x - other.x, y - other.y);
         }
 
-        auto operator*(T scalar) const -> Vector2
+        [[nodiscard]] constexpr auto operator*(T scalar) const -> Vector2
         {
             return Vector2(x * scalar, y * scalar);
         }
 
-        auto operator/(T scalar) const -> Vector2
+        [[nodiscard]] constexpr auto operator/(T scalar) const -> Vector2
         {
             return Vector2(x / scalar, y / scalar);
         }
@@ -85,18 +85,18 @@ namespace Tactics
         }
 
         // Unary operators
-        auto operator-() const -> Vector2
+        [[nodiscard]] constexpr auto operator-() const -> Vector2
         {
             return Vector2(-x, -y);
         }
 
         // Comparison operators
-        auto operator==(const Vector2 &other) const -> bool
+        [[nodiscard]] constexpr auto operator==(const Vector2 &other) const -> bool
         {
             return x == other.x && y == other.y;
         }
 
-        auto operator!=(const Vector2 &other) const -> bool
+        [[nodiscard]] constexpr auto operator!=(const Vector2 &other) const -> bool
         {
             return !(*this == other);
         }
@@ -161,28 +161,28 @@ namespace Tactics
         }
 
         // Zero vector
-        [[nodiscard]] static auto zero() -> Vector2
+        [[nodiscard]] static constexpr auto zero() -> Vector2
         {
             return Vector2(0, 0);
         }
 
         // Unit vectors
-        [[nodiscard]] static auto up() -> Vector2
+        [[nodiscard]] static constexpr auto up() -> Vector2
         {
             return Vector2(0, 1);
         }
 
-        [[nodiscard]] static auto down() -> Vector2
+        [[nodiscard]] static constexpr auto down() -> Vector2
         {
             return Vector2(0, -1);
         }
 
-        [[nodiscard]] static auto left() -> Vector2
+        [[nodiscard]] static constexpr auto left() -> Vector2
         {
             return Vector2(-1, 0);
         }
 
-        [[nodiscard]] static auto right() -> Vector2
+        [[nodiscard]] static constexpr auto right() -> Vector2
         {
             return Vector2(1, 0);
         }

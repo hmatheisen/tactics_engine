@@ -1,6 +1,8 @@
 #include "Tactics/Components/UnitController.hpp"
 #include "Tactics/Components/Tile.hpp"
+#include "Tactics/Core/Events.hpp"
 #include "Tactics/Core/InputManager.hpp"
+#include "Tactics/Renderers/UnitRenderer.hpp"
 #include <algorithm>
 #include <array>
 #include <queue>
@@ -21,15 +23,6 @@ namespace Tactics
         constexpr uint8_t REACHABLE_COLOR_A = 120;
     } // namespace
 
-    void UnitController::reset_for_grid(const Grid &grid, const Vector2i &spawn_position)
-    {
-        m_units.clear();
-        m_units.emplace_back(spawn_position, DEFAULT_UNIT_MOVE_POINTS);
-        clamp_units_to_grid(grid);
-        clear_reachable_tiles();
-        m_selected_unit.reset();
-    }
-
     void UnitController::update(const Grid &grid, const Cursor &cursor)
     {
         auto &input = InputManager::instance();
@@ -46,6 +39,7 @@ namespace Tactics
             {
                 m_selected_unit = unit_index;
                 compute_reachable_tiles(grid, m_units[unit_index.value()]);
+                publish(Events::UnitSelected{std::optional<std::size_t>(unit_index)});
             }
 
             return;
@@ -57,6 +51,7 @@ namespace Tactics
         {
             clear_reachable_tiles();
             m_selected_unit.reset();
+            publish(Events::UnitSelected{std::nullopt});
             return;
         }
 
@@ -72,6 +67,8 @@ namespace Tactics
         }
 
         m_units[selected_index].set_position(cursor_pos);
+        publish(Events::UnitMoved{
+            .unit_index = selected_index, .from = GridPos{unit_pos}, .to = GridPos{cursor_pos}});
         clear_reachable_tiles();
         m_selected_unit.reset();
     }
@@ -86,10 +83,7 @@ namespace Tactics
 
         render_reachable_tiles(renderer, camera, tile_size, grid);
 
-        for (const auto &unit : m_units)
-        {
-            unit.render(renderer, camera, tile_size);
-        }
+        UnitRenderer::render_units(renderer, camera, tile_size, m_units);
     }
 
     void UnitController::set_units(const Grid &grid, std::vector<Unit> units)
@@ -118,15 +112,15 @@ namespace Tactics
 
     auto UnitController::find_unit_index_at(const Vector2i &position) const -> std::optional<size_t>
     {
-        for (size_t index = 0; index < m_units.size(); ++index)
+        const auto unit = std::ranges::find_if(m_units, [&position](const Unit &unit) -> bool
+                                               { return unit.get_position() == position; });
+
+        if (unit == m_units.end())
         {
-            if (m_units[index].get_position() == position)
-            {
-                return index;
-            }
+            return std::nullopt;
         }
 
-        return std::nullopt;
+        return static_cast<size_t>(std::distance(m_units.begin(), unit));
     }
 
     auto UnitController::is_tile_reachable(const Grid &grid, const Vector2i &position) const -> bool
@@ -210,7 +204,7 @@ namespace Tactics
         };
 
         std::queue<Node> frontier;
-        frontier.push(Node{unit.get_position(), unit.get_move_points()});
+        frontier.push(Node{.position = unit.get_position(), .remaining = unit.get_move_points()});
 
         const std::array<Vector2i, 4> directions = {Vector2i{0, -1}, Vector2i{0, 1},
                                                     Vector2i{-1, 0}, Vector2i{1, 0}};
@@ -250,7 +244,7 @@ namespace Tactics
                 if (remaining > m_reachable_move_points[neighbor_index])
                 {
                     m_reachable_move_points[neighbor_index] = remaining;
-                    frontier.push(Node{neighbor, remaining});
+                    frontier.push(Node{.position = neighbor, .remaining = remaining});
                 }
             }
         }

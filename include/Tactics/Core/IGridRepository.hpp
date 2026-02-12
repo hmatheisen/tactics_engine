@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Tactics/Components/Grid.hpp"
-#include "Tactics/Core/MapGenerator.hpp"
+#include "Tactics/Core/GeneratorConfig.hpp"
 #include <optional>
 #include <string>
 #include <vector>

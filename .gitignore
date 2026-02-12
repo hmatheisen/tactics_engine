@@ -1,4 +1,5 @@
 .cache
 .cursor
 build
+maps.db
 tactics.log

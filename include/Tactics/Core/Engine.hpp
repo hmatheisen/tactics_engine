@@ -8,7 +8,7 @@ namespace Tactics
     // Custom deleters for SDL resources
     struct SDLWindowDeleter
     {
-        void operator()(SDL_Window *window) const
+        void operator()(SDL_Window *window) const noexcept
         {
             if (window != nullptr)
             {
@@ -19,7 +19,7 @@ namespace Tactics
 
     struct SDLRendererDeleter
     {
-        void operator()(SDL_Renderer *renderer) const
+        void operator()(SDL_Renderer *renderer) const noexcept
         {
             if (renderer != nullptr)
             {
@@ -47,7 +47,7 @@ namespace Tactics
 
         // Initialize SDL and create the main window/renderer.
         // Returns true on success.
-        auto initialize() -> bool;
+        [[nodiscard]] auto initialize() -> bool;
 
         void run();
 

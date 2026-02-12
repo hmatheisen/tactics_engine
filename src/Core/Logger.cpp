@@ -10,6 +10,7 @@ namespace Tactics
 {
     Logger::~Logger()
     {
+        std::scoped_lock<std::mutex> lock(m_mutex);
         if (m_log_file.is_open())
         {
             m_log_file.close();

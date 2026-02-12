@@ -38,8 +38,8 @@ namespace Tactics
         [[nodiscard]] auto is_walkable() const -> bool;
 
     private:
-        Vector2i m_position;
-        Type m_type;
-        int m_move_cost;
+        Vector2i m_position{0, 0};
+        Type m_type{Type::Grass};
+        int m_move_cost{1};
     };
 } // namespace Tactics

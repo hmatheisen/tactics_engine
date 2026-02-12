@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Tactics/Components/Camera.hpp"
 #include "Tactics/Core/Vector2.hpp"
-#include <SDL3/SDL.h>
 
 namespace Tactics
 {
@@ -28,8 +26,6 @@ namespace Tactics
 
         [[nodiscard]] auto get_move_points() const -> int;
         void set_move_points(int move_points);
-
-        auto render(SDL_Renderer *renderer, const Camera &camera, float tile_size) const -> bool;
 
     private:
         Vector2i m_position{0, 0};

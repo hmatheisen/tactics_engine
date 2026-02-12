@@ -63,14 +63,14 @@ namespace Tactics
 
     void Camera::set_viewport_size(const Vector2f &size)
     {
-        const float width = size.x;
-        const float height = size.y;
+        float width = size.x;
+        float height = size.y;
 
         if (width <= 0.0F || height <= 0.0F)
         {
             log_warning("Camera viewport dimensions must be positive");
-            m_viewport_width = std::max(width, 1.0F);
-            m_viewport_height = std::max(height, 1.0F);
+            width = std::max(width, 1.0F);
+            height = std::max(height, 1.0F);
         }
 
         m_viewport_width = width;

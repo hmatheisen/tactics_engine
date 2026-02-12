@@ -1,29 +1,41 @@
 #include "Tactics/Scenes/GridScene.hpp"
-#include "Tactics/Components/CursorEvents.hpp"
+
+#include "Tactics/Core/Events.hpp"
 #include "Tactics/Core/InputManager.hpp"
 #include "Tactics/Core/Logger.hpp"
 #include "Tactics/Core/MapGenerator.hpp"
+#include "Tactics/Renderers/CursorRenderer.hpp"
+#include "Tactics/Renderers/GridRenderer.hpp"
 
 namespace Tactics
 {
     GridScene::GridScene(IGridRepository *repository, IUnitRepository *unit_repository,
                          std::string map_name)
-        : m_repository(repository), m_unit_repository(unit_repository),
+        : m_grid_repository(repository), m_unit_repository(unit_repository),
           m_map_name(std::move(map_name)), m_running(true)
     {}
+
+    namespace
+    {
+        auto handle_map_regenerated(const Events::MapRegenerated &event) -> void
+        {
+            log_info("Map regenerated: " + event.map_name);
+            log_info("Seed: " + std::to_string(event.seed));
+        }
+    } // namespace
 
     auto GridScene::on_enter() -> bool
     {
         log_info("Entering GridScene");
 
-        if (m_repository == nullptr)
+        if (m_grid_repository == nullptr)
         {
-            log_error("Repository is null");
+            log_error("Grid repository is null");
             return false;
         }
 
         // Load grid from repository
-        auto grid_opt = m_repository->load_map(m_map_name);
+        auto grid_opt = m_grid_repository->load_map(m_map_name);
         if (!grid_opt.has_value())
         {
             log_error("Failed to load grid from repository: " + m_map_name);
@@ -31,47 +43,46 @@ namespace Tactics
         }
         m_grid = std::move(grid_opt.value());
 
-        int grid_width = 0;
-        int grid_height = 0;
-
-        grid_width = m_grid.get_width();
-        grid_height = m_grid.get_height();
+        const int grid_width = m_grid.get_width();
+        const int grid_height = m_grid.get_height();
 
         // Create cursor at center of grid
-        m_cursor.set_position({grid_width / 2, grid_height / 2});
+        m_cursor.set_position(Vector2i{grid_width / 2, grid_height / 2});
 
-        if (m_unit_repository != nullptr)
+        if (m_unit_repository == nullptr)
         {
-            std::vector<Unit> units = m_unit_repository->load_units(m_map_name);
-            if (units.empty())
-            {
-                m_unit_controller.reset_for_grid(m_grid, Vector2i{grid_width / 2, grid_height / 2});
-            }
-            else
-            {
-                m_unit_controller.set_units(m_grid, std::move(units));
-            }
+            log_error("Unit repository is null");
+            return false;
         }
-        else
-        {
-            m_unit_controller.reset_for_grid(m_grid, Vector2i{grid_width / 2, grid_height / 2});
-        }
+
+        std::vector<Unit> units = m_unit_repository->load_units(m_map_name);
+        m_unit_controller.set_units(m_grid, std::move(units));
 
         // Publish initial cursor position so camera has correct state before updates
-        publish(CursorEvents::Moved{m_cursor.get_world_position()});
+        const Vector2i cursor_grid_pos = m_cursor.get_position();
+        const Vector2f cursor_world_pos = m_cursor.get_world_position();
+        publish(Events::CursorMoved{.grid_position = GridPos{cursor_grid_pos},
+                                    .world_position = WorldPos{cursor_world_pos}});
+        publish(
+            Events::MapLoaded{.map_name = m_map_name, .width = grid_width, .height = grid_height});
 
         // Create camera at center of grid (independent of cursor position)
-        const float grid_center_x = (static_cast<float>(grid_width) * TILE_SIZE) * 0.5F;
-        const float grid_center_y = (static_cast<float>(grid_height) * TILE_SIZE) * 0.5F;
+        const float grid_center_x = (static_cast<float>(grid_width) * m_config.tile_size) * 0.5F;
+        const float grid_center_y = (static_cast<float>(grid_height) * m_config.tile_size) * 0.5F;
         m_camera = Camera({.position = {grid_center_x, grid_center_y},
                            .zoom = 1.0F,
-                           .viewport_width = VIEWPORT_WIDTH,
-                           .viewport_height = VIEWPORT_HEIGHT});
+                           .viewport_width = m_config.viewport_width,
+                           .viewport_height = m_config.viewport_height});
+
+        m_map_regenerated_subscription_id =
+            subscribe<Events::MapRegenerated>(handle_map_regenerated);
 
         log_info("Grid created: " + std::to_string(grid_width) + "x" + std::to_string(grid_height));
         log_info("Use WASD or Arrow Keys to move the cursor");
         log_info("Hold Enter and use WASD to move the camera");
         log_info("Press Q to zoom out, E to zoom in");
+        log_info("Press G to regenerate the map");
+        log_info("Press SPACE to select a unit and validate the move");
         log_info("Press ESC to quit");
 
         return true;
@@ -79,7 +90,7 @@ namespace Tactics
 
     void GridScene::on_exit()
     {
-        if (!m_repository->save_map(m_map_name, m_grid))
+        if (m_grid_repository != nullptr && !m_grid_repository->save_map(m_map_name, m_grid))
         {
             log_error("Failed to save map");
         }
@@ -91,6 +102,8 @@ namespace Tactics
                 log_error("Failed to save units");
             }
         }
+
+        unsubscribe<Events::MapRegenerated>(m_map_regenerated_subscription_id);
 
         log_info("Exiting GridScene");
     }
@@ -117,7 +130,7 @@ namespace Tactics
         {
             log_info("Regenerating map with new seed");
 
-            auto config_opt = m_repository->load_generator_config(m_map_name);
+            auto config_opt = m_grid_repository->load_generator_config(m_map_name);
             GeneratorConfig config = config_opt.value_or(GeneratorConfig::default_config());
             config.width = m_grid.get_width();
             config.height = m_grid.get_height();
@@ -126,22 +139,24 @@ namespace Tactics
             MapGenerator generator(config);
             m_grid = generator.generate();
 
-            if (!m_repository->save_map(m_map_name, m_grid))
+            if (!m_grid_repository->save_map(m_map_name, m_grid))
             {
                 log_error("Failed to save regenerated map");
             }
-            if (!m_repository->save_generator_config(m_map_name, config))
+            if (!m_grid_repository->save_generator_config(m_map_name, config))
             {
                 log_error("Failed to save generator config");
             }
 
-            int grid_width = 0;
-            int grid_height = 0;
+            const int new_grid_width = m_grid.get_width();
+            const int new_grid_height = m_grid.get_height();
+            m_cursor.set_position(Vector2i{new_grid_width / 2, new_grid_height / 2});
 
-            grid_width = m_grid.get_width();
-            grid_height = m_grid.get_height();
-            m_cursor.set_position({grid_width / 2, grid_height / 2});
-            publish(CursorEvents::Moved{m_cursor.get_world_position()});
+            const Vector2i cursor_grid_pos = m_cursor.get_position();
+            const Vector2f cursor_world_pos = m_cursor.get_world_position();
+            publish(Events::CursorMoved{.grid_position = GridPos{cursor_grid_pos},
+                                        .world_position = WorldPos{cursor_world_pos}});
+            publish(Events::MapRegenerated{.map_name = m_map_name, .seed = config.seed});
 
             m_unit_controller.on_grid_changed(m_grid);
         }
@@ -181,12 +196,16 @@ namespace Tactics
         SDL_RenderClear(renderer);
 
         // Render grid
-        m_grid.render(renderer, m_camera);
+        const bool grid_rendered =
+            GridRenderer::render(renderer, m_grid, m_camera, m_config.tile_size);
+        (void)grid_rendered;
 
-        m_unit_controller.render(renderer, m_camera, TILE_SIZE, m_grid);
+        m_unit_controller.render(renderer, m_camera, m_config.tile_size, m_grid);
 
         // Render cursor
-        m_cursor.render(renderer, m_camera, TILE_SIZE);
+        const bool cursor_rendered =
+            CursorRenderer::render(renderer, m_cursor, m_camera, m_config.tile_size);
+        (void)cursor_rendered;
     }
 
     auto GridScene::should_exit() const -> bool

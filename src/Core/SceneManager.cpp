@@ -52,7 +52,8 @@ namespace Tactics
         // Enter previous scene if it exists
         if (!m_scene_stack.empty())
         {
-            m_scene_stack.top()->on_enter();
+            const bool entered = m_scene_stack.top()->on_enter();
+            (void)entered;
         }
 
         log_debug("Scene popped, remaining scenes: " + std::to_string(m_scene_stack.size()));

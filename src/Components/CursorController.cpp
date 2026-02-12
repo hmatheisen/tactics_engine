@@ -1,6 +1,5 @@
 #include "Tactics/Components/CursorController.hpp"
-#include "Tactics/Components/Cursor.hpp"
-#include "Tactics/Components/CursorEvents.hpp"
+#include "Tactics/Core/Events.hpp"
 #include "Tactics/Core/InputManager.hpp"
 
 namespace Tactics
@@ -89,7 +88,9 @@ namespace Tactics
         if (cursor_moved)
         {
             cursor.clamp_to_grid(grid_size);
-            publish(CursorEvents::Moved{cursor.get_world_position()});
+            const Vector2i grid_position = cursor.get_position();
+            const Vector2f world_position = cursor.get_world_position();
+            publish(Events::CursorMoved{GridPos{grid_position}, WorldPos{world_position}});
         }
     }
 
@@ -124,7 +125,9 @@ namespace Tactics
         if (cursor_moved)
         {
             cursor.clamp_to_grid(grid_size);
-            publish(CursorEvents::Moved{cursor.get_world_position()});
+            const Vector2i grid_position = cursor.get_position();
+            const Vector2f world_position = cursor.get_world_position();
+            publish(Events::CursorMoved{GridPos{grid_position}, WorldPos{world_position}});
         }
     }
 

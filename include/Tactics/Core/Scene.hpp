@@ -19,7 +19,7 @@ namespace Tactics
         auto operator=(Scene &&) -> Scene & = delete;
 
         // Called when scene is entered
-        virtual auto on_enter() -> bool
+        [[nodiscard]] virtual auto on_enter() -> bool
         {
             return true;
         }
